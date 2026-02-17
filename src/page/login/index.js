@@ -18,6 +18,16 @@ export default function Login() {
         navigation.navigate(idModal)
     }
 
+    const validarCampos = (email, senha) => {
+        enviarFrom = true;
+        if (!email.value) { console.log('Nome está vazio'); // ! Evitar comandos DROP etc.. SQL
+        enviarForm = false; } else if (!senha.value) { console.log('Senha está vazia');
+        enviarForm = false; } else if (senha.value.length < 4 || senha.value.length > 10) { console.log('Senha deve ter entre 4 e 10 caracteres');
+        enviarForm = false; } 
+        if (enviarForm) { console.log('Formulário válido, enviando...');
+        }; // Aqui terá uma função responsável para ligar ou  
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.containerLogo}>
@@ -43,6 +53,7 @@ export default function Login() {
                                 autoCapitalize="none"
                                 autoCorrect={false}
                                 underlineColorAndroid="transparent" // Remove aquela linha em baixo das palavras, enquanto escrevemos!
+                                maxLength={100}
                             />
                         </View>
                     </View>
@@ -56,6 +67,7 @@ export default function Login() {
                                 value={senha}
                                 keyboardType="default"
                                 underlineColorAndroid="transparent" // Remove aquela linha em baixo das palavras, enquanto escrevemos!
+                                maxLength={20}
                             />
                         </View>
                         <Pressable onPress={() => enviar('dadoConta')}>
