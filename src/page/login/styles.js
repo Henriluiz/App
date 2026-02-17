@@ -24,16 +24,15 @@ export default StyleSheet.create ({
 
     container2: {
         flex: 1,
-        flexWrap: "wrap",
         backgroundColor: "#A383FB",
         borderTopStartRadius: 65,
         borderTopEndRadius: 65,
     },
 
     titulo: {
-        fontSize: 20,
-        marginTop: 60,
-        marginLeft: 27,
+        fontSize: 25,
+        marginTop: hp("7%"),
+        marginLeft: 25,
         color: "white",
     },
 
@@ -45,7 +44,7 @@ export default StyleSheet.create ({
 
     // Flex 3: Label em diante.
     contEntradas: { // Container central dos Inputs
-        marginTop: hp("5%"),
+        marginTop: hp("2%"),
         alignItems: "center",
         gap: hp("1%"),
     },
@@ -68,7 +67,7 @@ export default StyleSheet.create ({
     input: { // O InputText em si
         paddingLeft: 15,
         height: 45,
-        width: wp("50%"),
+        width: wp("75%"),
     },
 
     esenha: { // Esqueceu Senha
@@ -80,7 +79,8 @@ export default StyleSheet.create ({
 
     // Flex 4: Botão de entrada
     contEntra: {
-        alignSelf: "center"
+        alignSelf: "center",
+        marginTop: hp("5%")
     },
 
     botaoEntra: {
@@ -88,45 +88,43 @@ export default StyleSheet.create ({
         width: 222,
         backgroundColor: "rgba(255, 255, 255, 1)",
         borderRadius: 60,
+        justifyContent: "center",
+        alignItems: "center",
+        
     },
 
     entrarText: {
         fontSize: 25,
         color: "rgba(163, 131, 251, 1)",
-        marginLeft: 24.7,
-        marginTop: 8,
+        // marginLeft: 24.7,
+        // marginTop: 8,
     },
 
-    imgfSeta: {
-        marginTop: 8,
-    },
-
-    seta: {
-        marginTop: 8,
-        marginLeft: 13
+    iconEnviar: {
+        marginTop: hp("0.6%")
     },
 
     stylesButton: {
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between",
-        paddingRight: 50,
+        gap: wp("25%"),
     },
 
     contaNova: {
         display: "flex",
         flexDirection: "row",
-        alignSelf: "center"
+        alignSelf: "center",
+        margin: hp("0.5%")
     },
     
     textCadastre: {
         color: "rgba(255, 255, 255, 1)",
-        fontSize: 17,
+        fontSize: 15,
     },
 
     linkCadastre: {
         color: "rgba(255, 255, 255, 1)",
-        fontSize: 17,
+        fontSize: 16,
         textDecorationLine: "underline", 
         fontWeight: "bold"
     },

@@ -4,6 +4,11 @@ import { Text, View, Image, TextInput, Pressable, ImageBackground} from 'react-n
 import styles from './styles';
 import { useNavigation } from "@react-navigation/native";
 
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'; // Usa isso, no lugar de pixels ex: wp("10%") e hp("10%")
+import AntDesign from '@expo/vector-icons/AntDesign';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
+
 export default function Login() {
     const navigation = useNavigation();
 
@@ -29,7 +34,7 @@ export default function Login() {
                     <View>
                         <Text style={styles.label}>Email</Text>
                         <View style={styles.Continput}>
-                            <Image source={require('./img/email.png')}/>
+                            <MaterialIcons name="email" size={24} color="#A383FB" />
                             <TextInput
                                 style={styles.input}
                                 onChangeText={setEmail}
@@ -44,7 +49,7 @@ export default function Login() {
                     <View>
                         <Text style={styles.label}>Senha</Text>
                         <View style={styles.Continput}>
-                            <Image source={require('./img/cadeado.png')}/>
+                            <MaterialIcons name="password" size={24} color="#A383FB" />
                             <TextInput
                                 style={styles.input}
                                 onChangeText={setSenha}
@@ -63,10 +68,7 @@ export default function Login() {
                     <View style={styles.botaoEntra}>
                         <Pressable onPress={() => enviar('dadoPessoal')} style={styles.stylesButton}>
                             <Text style={styles.entrarText}>Entrar</Text>
-                            <View>
-                                <ImageBackground style={styles.imgfSeta} source={require('./img/fundoIcone.png')}/>
-                                <ImageBackground style={styles.seta} source={require('./img/seta.png')}/>
-                            </View>
+                            <AntDesign name="send" size={24} color="rgba(163, 131, 251, 1)" style={styles.iconEnviar} />
                         </Pressable>
                     </View>
                     <View style={styles.contaNova}>
