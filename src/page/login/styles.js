@@ -4,7 +4,6 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 export default StyleSheet.create ({
     container: {
         flex: 1,
-        // alignItems: "center"
     },
 
     // Flex : 1
@@ -61,12 +60,12 @@ export default StyleSheet.create ({
         alignItems: "center",
         paddingLeft: 20,
         borderRadius: 15,
+        height: hp("6%"),
         backgroundColor: "rgba(255, 255, 255, 0.8)"
     },
 
     input: { // O InputText em si
         paddingLeft: 15,
-        height: 45,
         width: wp("75%"),
     },
 
