@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'; // Usa isso, no lugar de pixels ex: wp("10%") e hp("10%")
 
 export default StyleSheet.create ({
     container: {
@@ -8,9 +9,8 @@ export default StyleSheet.create ({
 
     // Flex : 1
     logo: {
-        maxWidth: 373,
-        width: 150,
-        height: 150,
+        width: wp("35%"),
+        height: hp("25%"),
         marginTop: 25,
         alignItems: "center"
     },
@@ -45,9 +45,9 @@ export default StyleSheet.create ({
 
     // Flex 3: Label em diante.
     contEntradas: { // Container central dos Inputs
-        marginTop: 51,
-        marginLeft: 25,
-        gap: 24,
+        marginTop: hp("5%"),
+        alignItems: "center",
+        gap: hp("1%"),
     },
 
     label: {
@@ -61,16 +61,14 @@ export default StyleSheet.create ({
         flexDirection: "row",
         alignItems: "center",
         paddingLeft: 20,
-        height: 55,
-        width: 345,
         borderRadius: 15,
         backgroundColor: "rgba(255, 255, 255, 0.8)"
     },
 
     input: { // O InputText em si
         paddingLeft: 15,
-        height: 50,
-        width: 315,
+        height: 45,
+        width: wp("50%"),
     },
 
     esenha: { // Esqueceu Senha
