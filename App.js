@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -39,6 +37,20 @@ export default function App() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="dadoConta"
+        component={DadoConta}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="dadoPessoal"
+        component={DadoPessoal}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   </NavigationContainer>
  );
@@ -53,4 +65,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   }
 
-});
+});;

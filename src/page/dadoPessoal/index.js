@@ -8,7 +8,7 @@ export default function DadoPessoal({ navigation }) {
   const [nomeCompleto, setNomeCompleto] = useState("");
   const [telefone, setTelefone] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
-  const [genero, setGenero] = useState(null);
+  const [genero, setGenero] = useState("");
   const [cpf, setCpf] = useState("");
   const [erro, setErro] = useState("");
 
@@ -83,7 +83,7 @@ export default function DadoPessoal({ navigation }) {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.titulo1}>
-          ESTAMOS FELIZ POR VOCÊ ESTAR CONOSCO{" "}
+          ESTAMOS FELIZES POR VOCÊ ESTAR CONOSCO{" "}
           <Text style={styles.destaque}>AQUI!</Text>
         </Text>
 
@@ -138,7 +138,7 @@ export default function DadoPessoal({ navigation }) {
                   selectedValue={genero}
                   onValueChange={(itemValue) => setGenero(itemValue)}
                 >
-                  <Picker.Item label="Selecione" value={null} />
+                  <Picker.Item label="Selecione" value="" />
                   <Picker.Item label="Masculino" value="masculino" />
                   <Picker.Item label="Feminino" value="feminino" />
                   <Picker.Item label="Outro" value="outro" />

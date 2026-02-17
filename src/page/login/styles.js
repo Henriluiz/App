@@ -9,9 +9,9 @@ export default StyleSheet.create ({
     // Flex : 1
     logo: {
         maxWidth: 373,
-        width: 250,
-        height: 260,
-        marginTop: 20,
+        width: 150,
+        height: 150,
+        marginTop: 25,
         alignItems: "center"
     },
 
@@ -31,14 +31,14 @@ export default StyleSheet.create ({
     },
 
     titulo: {
-        fontSize: 32,
+        fontSize: 20,
         marginTop: 60,
         marginLeft: 27,
         color: "white",
     },
 
     descricao: {
-        fontSize: 24,
+        fontSize: 15,
         marginLeft: 27,
         color: "white",
     },
@@ -82,7 +82,7 @@ export default StyleSheet.create ({
 
     // Flex 4: Botão de entrada
     contEntra: {
-        margin: "auto",
+        alignSelf: "center"
     },
 
     botaoEntra: {
@@ -118,7 +118,7 @@ export default StyleSheet.create ({
     contaNova: {
         display: "flex",
         flexDirection: "row",
-        margin: "auto",
+        alignSelf: "center"
     },
     
     textCadastre: {
