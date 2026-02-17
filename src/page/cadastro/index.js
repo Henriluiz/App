@@ -1,10 +1,12 @@
 // import { StatusBar } from 'expo-status-bar';
 import { Text, View, Image, Pressable} from 'react-native';
 import styles from './styles';
+import { useNavigation } from "@react-navigation/native";
 
 export default function Cadastro() {
+    const navigation = useNavigation();
 
-    const abrir_cadastro_piscologo = (idModal) => {
+    const abrir_cadastro = (idModal) => {
         navigation.navigate(idModal)
     }
 
@@ -21,10 +23,10 @@ export default function Cadastro() {
             <Text style={styles.descricao2}>Eu sou:</Text>
             
             <View style={styles.containerBotoes}>
-                <Pressable onPress={() => abrir_cadastro('login')} style={styles.botaoPsicologo}>
+                <Pressable onPress={() => abrir_cadastro('dadoPessoal')} style={styles.botaoPsicologo}>
                     <Text style={styles.textPsicologo}>PSICÓLOGO</Text>
                 </Pressable>
-                <Pressable onPress={() => abrir_cadastro('login')} style={styles.botaoPaciente}>
+                <Pressable onPress={() => abrir_cadastro('dadoConta')} style={styles.botaoPaciente}>
                     <Text style={styles.textPaciente}>PACIENTE</Text>
                 </Pressable>
             </View>

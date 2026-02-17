@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "App",
-    "slug": "App",
+    "name": "Zenith",
+    "slug": "zenith",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",

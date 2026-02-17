@@ -1,16 +1,20 @@
 // import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Text, View, Image, TextInput, Pressable, ScrollView, ImageBackground} from 'react-native';
+import { Text, View, Image, TextInput, Pressable, ImageBackground} from 'react-native';
 import styles from './styles';
+import { useNavigation } from "@react-navigation/native";
+
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'; // Usa isso, no lugar de pixels ex: wp("10%") e hp("10%")
+import AntDesign from '@expo/vector-icons/AntDesign';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
 
 export default function Login() {
+    const navigation = useNavigation();
 
-    const [email, SetEmail] = useState(null);
-    const [senha, setSenha] = useState(null);
-    const esqueceu_senha = (idModal) => {
-        navigation.navigate(idModal)
-    }
-    const entrar = (idModal ) => {
+    const [email, setEmail] = useState("");
+    const [senha, setSenha] = useState("");
+    const enviar = (idModal) => {
         navigation.navigate(idModal)
     }
 
@@ -26,29 +30,28 @@ export default function Login() {
 
     return (
         <View style={styles.container}>
-            {/* Flex:  1 */}
             <View style={styles.containerLogo}>
                 <Image
                     style={styles.logo}
                     source={require('./img/logo.png')}/>
             </View>
-            {/* Flex: 2 */}
             <View style={styles.container2}>
 
                 <Text style={styles.titulo}>QUE BOM TER VOCÊ DE VOLTA!</Text>
                 <Text style={styles.descricao}>Sua próxima sessão está quase lá.</Text>
-                
-                {/* Container Geral dos inputs */}
+
                 <View style={styles.contEntradas}>
                     <View>
                         <Text style={styles.label}>Email</Text>
                         <View style={styles.Continput}>
-                            <Image source={require('./img/email.png')}/>
+                            <MaterialIcons name="email" size={24} color="#A383FB" />
                             <TextInput
                                 style={styles.input}
-                                onChangeText={SetEmail}
+                                onChangeText={setEmail}
                                 value={email}
                                 keyboardType="email-address"
+                                autoCapitalize="none"
+                                autoCorrect={false}
                                 underlineColorAndroid="transparent" // Remove aquela linha em baixo das palavras, enquanto escrevemos!
                                 maxLength={100}
                             />
@@ -57,32 +60,27 @@ export default function Login() {
                     <View>
                         <Text style={styles.label}>Senha</Text>
                         <View style={styles.Continput}>
-                            <Image source={require('./img/cadeado.png')}/>
+                            <MaterialIcons name="password" size={24} color="#A383FB" />
                             <TextInput
                                 style={styles.input}
                                 onChangeText={setSenha}
                                 value={senha}
-                                keyboardType="visible-password"
+                                keyboardType="default"
                                 underlineColorAndroid="transparent" // Remove aquela linha em baixo das palavras, enquanto escrevemos!
                                 maxLength={20}
                             />
                         </View>
-                        <Pressable onPress={() => esqueceu_senha('login')}>
+                        <Pressable onPress={() => enviar('dadoConta')}>
                             <Text style={styles.esenha}>Esqueci a minha senha</Text>
                         </Pressable>
                     </View>
                 </View>
-                {/* Fim do Container Inputs */}
-
-                {/* Início do botão */}
+                
                 <View style={styles.contEntra}>
                     <View style={styles.botaoEntra}>
-                        <Pressable onPress={() => validarCampos(email, senha)} style={styles.stylesButton}>
+                        <Pressable onPress={() => enviar('dadoPessoal')} style={styles.stylesButton}>
                             <Text style={styles.entrarText}>Entrar</Text>
-                            <View>
-                                <ImageBackground style={styles.imgfSeta} source={require('./img/fundoIcone.png')}/>
-                                <ImageBackground style={styles.seta} source={require('./img/seta.png')}/>
-                            </View>
+                            <AntDesign name="send" size={24} color="rgba(163, 131, 251, 1)" style={styles.iconEnviar} />
                         </Pressable>
                     </View>
                     <View style={styles.contaNova}>
@@ -90,7 +88,6 @@ export default function Login() {
                         <Text style={styles.linkCadastre}>Cadastre-se</Text>
                     </View>
                 </View>
-                {/*Final do botão*/}
 
             </View>
         </View>
