@@ -30,14 +30,14 @@ export default StyleSheet.create ({
     },
 
     titulo: {
-        fontSize: 25,
+        fontSize: wp("9%"),
         marginTop: hp("7%"),
         marginLeft: 25,
         color: "white",
     },
 
     descricao: {
-        fontSize: 15,
+        fontSize: wp("7%"),
         marginLeft: 27,
         color: "white",
     },
@@ -53,6 +53,7 @@ export default StyleSheet.create ({
         fontSize: 18,
         marginLeft: 10,
         color: "white",
+        marginTop: hp("1%"),
     },
 
     Continput: { // Um container simulando um inputText, apenas para colocar a imagem.
@@ -66,7 +67,7 @@ export default StyleSheet.create ({
 
     input: { // O InputText em si
         paddingLeft: 15,
-        height: 45,
+        height: 50,
         width: wp("75%"),
     },
 
@@ -84,8 +85,8 @@ export default StyleSheet.create ({
     },
 
     botaoEntra: {
-        height: 55,
-        width: 222,
+        height: hp("6%"),
+        width: wp("50%"),
         backgroundColor: "rgba(255, 255, 255, 1)",
         borderRadius: 60,
         justifyContent: "center",
@@ -96,12 +97,11 @@ export default StyleSheet.create ({
     entrarText: {
         fontSize: 25,
         color: "rgba(163, 131, 251, 1)",
-        // marginLeft: 24.7,
-        // marginTop: 8,
+        marginLeft: wp("3%"),
     },
 
     iconEnviar: {
-        marginTop: hp("0.6%")
+        marginTop: hp("0.6%"),
     },
 
     stylesButton: {
@@ -120,13 +120,15 @@ export default StyleSheet.create ({
     textCadastre: {
         color: "rgba(255, 255, 255, 1)",
         fontSize: 15,
+        marginTop: hp("0.6%")
     },
 
     linkCadastre: {
         color: "rgba(255, 255, 255, 1)",
         fontSize: 16,
         textDecorationLine: "underline", 
-        fontWeight: "bold"
+        fontWeight: "bold",
+        marginTop: hp("0.6%")
     },
 
 });

@@ -1,146 +1,149 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 
-export default StyleSheet.create ({
-    container: {
-        flex: 1,
-        backgroundColor: "#A383FB",
-        // alignItems: "center"
-    },
+const { width, height } = Dimensions.get("window");
 
-    header:{
-    paddingTop: 90,
-    paddingHorizontal: 27,
+export default StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#A383FB",
+  },
+
+  header: {
+    paddingTop: height * 0.05,
+    paddingHorizontal: width * 0.07,
+  },
+
+  titulo1: {
+    fontSize: width * 0.08,
+    color: "#ffffff",
+  },
+
+  destaque: {
+    color: "#9bf3ff",
+    fontSize: width * 0.09,
+    fontWeight: "bold",
+  },
+
+  descricao: {
+    fontSize: width * 0.045,
+    marginTop: height * 0.02,
+    color: "#ffffff",
+  },
+
+  card: {
+    flex: 1,
+    marginTop: height * 0.04,
+    backgroundColor: "#ffffff",
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    padding: width * 0.06,
+  },
+
+  tituloCard: {
+    fontSize: width * 0.07,
+    marginBottom: 10,
+    color: "#A383FB",
+  },
+
+  contInput: {
+    marginTop: 10,
+  },
+
+  rowWrap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+
+  colunaFlex: {
+    flex: 1,
+    minWidth: 140,
+  },
+
+  label: {
+    fontSize: width * 0.04,
+    color: "#A383FB",
+    marginTop: 15,
+  },
+
+  input: {
+    width: "100%",
+    height: 50,
+    borderColor: "#A383FB",
+    borderWidth: 1.5,
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    fontSize: width * 0.04,
+  },
+
+  pickerContainer: {
+    width: "100%",
+    height: 50,
+    borderColor: "#A383FB",
+    borderWidth: 1.5,
+    borderRadius: 12,
+    justifyContent: "center",
+  },
+
+  mensagemErro: {
+  color: "red",
+  marginTop: 5,
+  fontSize: 14,
 },
 
 
-    // Flex : 1
-    titulo1: {
-        marginTop: 60,
-        fontSize: 38,
-        color: "#ffffff",
-    },
+  containerBotoes: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: height * 0.05,
+  },
 
-        destaque: {
-        color: "#9bf3ff",
-        fontSize: 43,
-        fontWeight: "bold",
-    },
+  btnVoltar: {
+    width: width * 0.13,
+    height: width * 0.13,
+    borderRadius: 100,
+    backgroundColor: "#A383FB",
+    justifyContent: "center",
+    alignItems: "center",
+    opacity: 0.8,
+  },
 
-    descricao: {
-        fontSize: 24,
-        marginTop: 30,
-        color: "#ffffff",
-    },
+  setaVoltar: {
+    color: "#ffffff",
+    fontSize: width * 0.07,
+    fontWeight: "bold",
+  },
 
-    // Flex : 2
-    card: {
-        position: "absolute",
-        bottom: 0,
-        width: "100%",
-        height: "70%",
-        backgroundColor: "#ffffff",
-        borderTopStartRadius: 64,
-        borderTopEndRadius: 65,
-        padding:25,
-    },
-
-    tituloCard: {
-        fontSize: 32,
-        marginTop: 28,
-        marginLeft: 27,
-        color: "#A383FB",
-    },
-
-    contInput: { // Container central dos Inputs
-        marginTop: 30,
-        marginLeft: 25,
-        gap: 1,
-    },
-
-    label: {
-        fontSize: 18,
-        color: "#A383FB",
-        marginBottom: 3,
-        marginTop: 20,  
-    },
-
-    input: {
-        width: "90%",
-        height: 50,
-        borderColor: "#A383FB",
-        borderWidth: 1.5,
-        borderRadius: 12,
-        paddingHorizontal: 15,
-        fontSize: 16,
-    },
-
-    picker: {
-        borderColor: "#A383FB",
-        borderRadius: 12,
-        paddingHorizontal: 15,
-        height: 50,
-        width: "77%",
-        borderWidth: 1.5,
-    }, 
-
-    // Flex 4: Botão de entrada
-    // Adicione estes estilos ao seu StyleSheet.create
-
-containerBotoes: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginTop: 60, // Ajuste conforme necessário
-    width: '100%',
-},
-
-btnVoltar: {
-    width: 60,
+  btnProximo: {
+    flexDirection: "row",
+    backgroundColor: "#A383FB",
+    width: "70%",
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#A383FB', // Cor lilás do fundo
-    justifyContent: 'center',
-    alignItems: 'center',
-    opacity: 0.8, // Para o efeito suave da imagem
-},
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: width * 0.05,
+  },
 
-setaVoltar: {
-    color: '#ffffff',
-    fontSize: 30,
-    fontWeight: 'bold',
-},
+  textoProximo: {
+    color: "#FFFFFF",
+    fontSize: width * 0.05,
+    fontWeight: "500",
+  },
 
-btnProximo: {
-    flexDirection: 'row',
-    backgroundColor: '#A383FB',
-    width: '70%', // Ocupa a maior parte da largura
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingLeft: 40,
-    paddingRight: 10,
-},
+  circuloSeta: {
+    width: width * 0.10,
+    height: width * 0.10,
+    borderRadius: 100,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
-textoProximo: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '500',
-},
-
-circuloSeta: {
-    width: 45,
-    height: 45,
-    borderRadius: 25,
-    backgroundColor: '#FFFFFF', // Círculo branco dentro do botão
-    justifyContent: 'center',
-    alignItems: 'center',
-},
-
-setaProximo: {
-    color: '#A383FB',
-    fontSize: 25,
-    fontWeight: 'bold',
-},
+  setaProximo: {
+    color: "#A383FB",
+    fontSize: width * 0.06,
+    fontWeight: "bold",
+  },
 });

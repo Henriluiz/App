@@ -7,6 +7,7 @@ import Cadastro from "./src/page/cadastro";
 import Login from "./src/page/login";
 import DadoPessoal  from "./src/page/dadoPessoal";
 import DadoConta from "./src/page/dadoConta";
+import CadFinal from "./src/page/cadFinal";
 
 
 const Stack = createNativeStackNavigator();
@@ -47,6 +48,13 @@ export default function App() {
       <Stack.Screen
         name="dadoPessoal"
         component={DadoPessoal}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="cadFinal"
+        component={CadFinal}
         options={{
           headerShown: false,
         }}
