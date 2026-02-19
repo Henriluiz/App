@@ -44,8 +44,8 @@ export default function Login() {
             return false;
         }
     
-        if (senhaLimpa.length < 4 || senhaLimpa.length > 10) {
-            console.log("Senha deve ter entre 4 e 10 caracteres");
+        if (senhaLimpa.length < 6 || senhaLimpa.length > 25) {
+            console.log("Senha deve ter entre 6 e 25 caracteres");
             return false;
         }
 
@@ -111,6 +111,7 @@ export default function Login() {
                                 keyboardType="default"
                                 underlineColorAndroid="transparent" // Remove aquela linha em baixo das palavras, enquanto escrevemos!
                                 maxLength={20}
+                                secureTextEntry
                             />
                         </View>
                         <Pressable onPress={() => enviar('dadoConta')}>

@@ -15,7 +15,7 @@ export default function App() {
 
   return (
   <NavigationContainer>
-    <Stack.Navigator initialRouteName="splash">
+    <Stack.Navigator initialRouteName="dadoConta">
       <Stack.Screen
         name="splash"
         component={Splash}
