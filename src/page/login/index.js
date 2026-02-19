@@ -3,43 +3,104 @@ import { useState } from 'react';
 import { Text, View, Image, TextInput, Pressable } from 'react-native';
 import styles from './styles';
 import { useNavigation } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
+import auth from '@react-native-firebase/auth';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-export default function Login() {
 
+export default function Login({onLogin}) {
     const navigation = useNavigation();
 
     const [email, setEmail] = useState("");
-    const [senha, setSenha] = useState("");
+    const [password, setPassword] = useState("");
+    const [aprovado, setAprovado] = useState(false);
+    const enviar = (idModal) => {
+        navigation.navigate(idModal)
+    }
 
-    const enviar = (rota) => {
-        navigation.navigate(rota);
-    };
+    function signUp() { // Criar Conta
+        auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(() => {
+            console.log('Conta de usuário criada e iniciada!');
+        })
+        .catch(error => {
+            if (error.code === 'auth/email-already-in-use') {
+            console.log('Esse endereço de e-mail já está em uso!');
+            }
 
-    const validarCampos = () => {
-        let enviarForm = true;
+            if (error.code === 'auth/invalid-email') {
+            console.log('Esse endereço de e-mail é inválido!');
+            }
 
-        if (!email) {
-            console.log('Email está vazio');
-            enviarForm = false;
-        } 
-        else if (!senha) {
-            console.log('Senha está vazia');
-            enviarForm = false;
-        } 
-        else if (senha.length < 4 || senha.length > 10) {
-            console.log('Senha deve ter entre 4 e 10 caracteres');
-            enviarForm = false;
+            console.error(error);
+        });
+    }
+
+    function signIn() {
+        auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(() => {
+            console.log('o usuário está autenticado');
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+
+
+    const validarCampos = (email, senha) => {
+        const emailLimpo = email.trim();
+        const senhaLimpa = senha.trim();
+
+        if (!emailLimpo) {
+            console.log("Email está vazio");
+            return false;
         }
 
-        if (enviarForm) {
-            navigation.navigate('dadoPessoal');
+        // Funciona para verificar a existência de um "@"
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpo);
+        if (!emailOk) {
+            console.log("Email inválido");
+            return false;
+        }
+
+        // Verifica senha forte
+        if (!senhaLimpa) {
+            console.log("Senha está vazia");
+            return false;
+        }
+    
+        if (senhaLimpa.length < 6 || senhaLimpa.length > 25) {
+            console.log("Senha deve ter entre 6 e 25 caracteres");
+            return false;
+        }
+
+        return true;
+    };
+
+    const onSubmit = () => {
+        const ok = validarCampos(email, senha);
+        setAprovado(ok);
+
+        if (ok) {
+            console.log("Formulário válido, enviando...");
+            enviar("dadoPessoal");
         }
     };
+
 
     return (
+        <KeyboardAwareScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{ flexGrow: 1 }}
+            enableOnAndroid={true}
+            extraScrollHeight={30}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+        >
         <View style={styles.container}>
             <View style={styles.containerLogo}>
                 <Image
@@ -88,6 +149,7 @@ export default function Login() {
                                 secureTextEntry={true}
                                 underlineColorAndroid="transparent"
                                 maxLength={20}
+                                secureTextEntry
                             />
                         </View>
 
@@ -103,7 +165,7 @@ export default function Login() {
                 <View style={styles.contEntra}>
 
                     <View style={styles.botaoEntra}>
-                        <Pressable onPress={validarCampos} style={styles.stylesButton}>
+                        <Pressable onPress={onSubmit} style={styles.stylesButton}>
                             <Text style={styles.entrarText}>Entrar</Text>
                             <AntDesign
                                 name="send"
@@ -127,8 +189,8 @@ export default function Login() {
                     </View>
 
                 </View>
-
+                </View>
             </View>
-        </View>
+        </KeyboardAwareScrollView>
     );
 }
