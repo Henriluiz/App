@@ -28,7 +28,7 @@ O acesso à saúde mental no Brasil enfrenta:
 - Longas filas no SUS  
 - Alto custo na rede privada  
 - Distâncias geográficas elevadas  
-- Processos fragmentados (agenda, pagamento, atendimento separados)
+- Processos fragmentados na jornada online (busca, agenda, pagamento e atendimento separados)
 
 Essa fragmentação gera:
 - Insegurança financeira ao profissional
