@@ -107,16 +107,16 @@ npx expo start -c
 ```
 
 ---
-### 📦 Sempre que alguém adicionar uma dependência:
+## 📦 Sempre que alguém adicionar uma dependência:
 
 ```
 npx expo install nome-da-dependencia
 ```
 
-Isso evita conflitos de versão com o SDK do Expo.
+> Isso evita conflitos de versão com o SDK do Expo.
 
 ---
-### 📂 Estrutura Base do Projeto
+## 📂 Estrutura Base do Projeto
 
 ```
 /src/page
@@ -127,7 +127,7 @@ Isso evita conflitos de versão com o SDK do Expo.
 App.js
 ```
 ---
-### 🔒 Conformidade e Segurança
+## 🔒 Conformidade e Segurança
 #### A proposta do projeto considera:
 - LGPD
 - Resolução CFP 04/2020
@@ -136,7 +136,7 @@ App.js
 - Redução de no-shows via sistema estruturado
 
 ---
-### 👥 Equipe
+## 👥 Equipe
 #### Este trabalho conta com uma equipe de 8 integrantes; entretanto, a versão exclusiva Mobile foi desenvolvida por:
 
 - André César Chaves
@@ -144,7 +144,7 @@ App.js
 - Luiz Henrique Paulino Azevedo
 
 ---
-### 🏫 Instituição
+## 🏫 Instituição
 ETEC de Guaianazes – São Paulo/SP
 Curso Técnico em Desenvolvimento de Sistemas – 2025-2026 (1,5 ano)
 
