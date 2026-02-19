@@ -7,51 +7,22 @@ import Cadastro from "./src/page/cadastro";
 import Login from "./src/page/login";
 import DadoPessoal  from "./src/page/dadoPessoal";
 import DadoConta from "./src/page/dadoConta";
+import Home from "./src/page/menu";
 
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
+  if (loading) {
+    return <Splash />;
+  }
 
   return (
   <NavigationContainer>
-    <Stack.Navigator initialRouteName="dadoConta">
-      <Stack.Screen
-        name="splash"
-        component={Splash}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="cadastro"
-        component={Cadastro}
-        options={{
-            headerShown: false,
-          }}
-      />
-      <Stack.Screen
-        name="login"
-        component={Login}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="dadoConta"
-        component={DadoConta}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="dadoPessoal"
-        component={DadoPessoal}
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack.Navigator>
+    {user ? <Home closeAuthUser={setUser(false)}/> : <Login onLogin={(u) => setUser(u)}/>}
   </NavigationContainer>
  );
 

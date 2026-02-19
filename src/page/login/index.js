@@ -7,20 +7,51 @@ import styles from './styles';
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-
+import auth from '@react-native-firebase/auth';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 
-export default function Login() {
+export default function Login({onLogin}) {
     const navigation = useNavigation();
 
     const [email, setEmail] = useState("");
-    const [senha, setSenha] = useState("");
+    const [password, setPassword] = useState("");
     const [aprovado, setAprovado] = useState(false);
     const enviar = (idModal) => {
         navigation.navigate(idModal)
     }
+
+    function signUp() { // Criar Conta
+        auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(() => {
+            console.log('Conta de usuário criada e iniciada!');
+        })
+        .catch(error => {
+            if (error.code === 'auth/email-already-in-use') {
+            console.log('Esse endereço de e-mail já está em uso!');
+            }
+
+            if (error.code === 'auth/invalid-email') {
+            console.log('Esse endereço de e-mail é inválido!');
+            }
+
+            console.error(error);
+        });
+    }
+
+    function signIn() {
+        auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(() => {
+            console.log('o usuário está autenticado');
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+
 
     const validarCampos = (email, senha) => {
         const emailLimpo = email.trim();
