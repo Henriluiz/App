@@ -1,10 +1,10 @@
 import { View, Text } from "react-native";
 
-export default function Home() {
+export default function Menu( {closeAuthUser} ) {
 
     return (
       <View>
-        <Text>Teste 1</Text>
+        <Text>Home 1</Text>
       </View>
     );
   }

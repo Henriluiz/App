@@ -1,4 +1,10 @@
 const Stack = createNativeStackNavigator();
+import DadoPessoal  from "../dadoPessoal";
+import DadoConta from "../dadoConta";
+import CadFinal from "../cadFinal";
+import Login from "../login";
+import Cadastro from "../cadastro";
+
 
 export function AuthStack({ onLogin }) {
   return (
@@ -7,8 +13,9 @@ export function AuthStack({ onLogin }) {
         {(props) => <Login {...props} onLogin={onLogin} />}
       </Stack.Screen>
       <Stack.Screen name="cadastro" component={Cadastro} />
-      <Stack.Screen name="dadoConta" component={DadoConta} />
       <Stack.Screen name="dadoPessoal" component={DadoPessoal} />
+      <Stack.Screen name="dadoConta" component={DadoConta} />
+      <Stack.Screen name="cadFinal" component={CadFinal}/>
     </Stack.Navigator>
   );
 }

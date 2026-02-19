@@ -8,7 +8,8 @@ import Login from "./src/page/login";
 import DadoPessoal  from "./src/page/dadoPessoal";
 import DadoConta from "./src/page/dadoConta";
 import Menu from "./src/page/menu";
-import CadFinal from "./src/page/cadFinal";
+import AuthStack from "./src/page/authStack";
+import AppStack from "./src/page/AppStack";
 
 
 const Stack = createNativeStackNavigator();
@@ -18,12 +19,12 @@ export default function App() {
   const [user, setUser] = useState(null);
 
   if (loading) {
-    return <Splash />;
+    return <Splash closeSplash={() => setLoading(false)}/>;
   }
 
   return (
   <NavigationContainer>
-    {user ? <Home closeAuthUser={setUser(false)}/> : <Login onLogin={(u) => setUser(u)}/>}
+    {user ? <AppStack closeAuthUser={() => setUser(false)}/> : <AuthStack onLogin={(u) => setUser(u)}/>}
   </NavigationContainer>
  );
 

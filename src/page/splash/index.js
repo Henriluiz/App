@@ -5,7 +5,7 @@ import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
 
 
-export default function Splash() {
+export default function Splash( {closeSplash} ) {
   const navigation = useNavigation();
 
   const telaLogin = () => {
@@ -15,7 +15,7 @@ export default function Splash() {
 
   return (
     <View style={styles.container}>
-        <Animatable.Image animation={"bounceIn"} onAnimationEnd={() => telaLogin()} duration={3000} source={require("./icon/logo.png")}
+        <Animatable.Image animation={"bounceIn"} onAnimationEnd={() => closeSplash()} duration={3000} source={require("./icon/logo.png")}
             style={styles.ima}>
         </Animatable.Image>
       <StatusBar style="auto" />

@@ -1,5 +1,5 @@
 // import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useState } from "react";
 import { Text, View, Image, TextInput, Pressable } from 'react-native';
 import styles from './styles';
 import { useNavigation } from "@react-navigation/native";
@@ -23,10 +23,9 @@ export default function Login({onLogin}) {
     function signUp() { // Criar Conta
         auth()
         .createUserWithEmailAndPassword(email, password)
-        .then(() => {
-            console.log('Conta de usuário criada e iniciada!');
-        })
-        .catch(error => {
+        .then(userCredential => {
+            console.log('Conta de usuário criada e iniciada!'), onLogin(userCredential) 
+        }).catch(error => {
             if (error.code === 'auth/email-already-in-use') {
             console.log('Esse endereço de e-mail já está em uso!');
             }
@@ -39,7 +38,7 @@ export default function Login({onLogin}) {
         });
     }
 
-    function signIn() {
+    function signIn() { // Logar
         auth()
         .signInWithEmailAndPassword(email, password)
         .then(() => {
@@ -149,7 +148,7 @@ export default function Login({onLogin}) {
                                 secureTextEntry={true}
                                 underlineColorAndroid="transparent"
                                 maxLength={20}
-                                secureTextEntry
+                                SecureTextEntry
                             />
                         </View>
 
