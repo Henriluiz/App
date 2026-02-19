@@ -7,7 +7,8 @@ import Cadastro from "./src/page/cadastro";
 import Login from "./src/page/login";
 import DadoPessoal  from "./src/page/dadoPessoal";
 import DadoConta from "./src/page/dadoConta";
-import Home from "./src/page/menu";
+import Menu from "./src/page/menu";
+import CadFinal from "./src/page/cadFinal";
 
 
 const Stack = createNativeStackNavigator();

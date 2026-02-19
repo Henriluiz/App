@@ -1,8 +1,6 @@
 // import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Text, View, Image, TextInput, Pressable, KeyboardAvoidingView, Platform, ScrollView, Keyboard,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { Text, View, Image, TextInput, Pressable } from 'react-native';
 import styles from './styles';
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -107,14 +105,22 @@ export default function Login({onLogin}) {
             <View style={styles.containerLogo}>
                 <Image
                     style={styles.logo}
-                    source={require('./img/logo.png')}/>
+                    source={require('./img/logo.png')}
+                />
             </View>
+
             <View style={styles.container2}>
 
-                <Text style={styles.titulo}>QUE BOM TER VOCÊ DE VOLTA!</Text>
-                <Text style={styles.descricao}>Sua próxima sessão está quase lá.</Text>
+                <Text style={styles.titulo}>
+                    QUE BOM TER VOCÊ DE VOLTA!
+                </Text>
+
+                <Text style={styles.descricao}>
+                    Sua próxima sessão está quase lá.
+                </Text>
 
                 <View style={styles.contEntradas}>
+
                     <View>
                         <Text style={styles.label}>Email</Text>
                         <View style={styles.Continput}>
@@ -126,11 +132,12 @@ export default function Login({onLogin}) {
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 autoCorrect={false}
-                                underlineColorAndroid="transparent" // Remove aquela linha em baixo das palavras, enquanto escrevemos!
+                                underlineColorAndroid="transparent"
                                 maxLength={100}
                             />
                         </View>
                     </View>
+
                     <View>
                         <Text style={styles.label}>Senha</Text>
                         <View style={styles.Continput}>
@@ -139,29 +146,48 @@ export default function Login({onLogin}) {
                                 style={styles.input}
                                 onChangeText={setSenha}
                                 value={senha}
-                                keyboardType="default"
-                                underlineColorAndroid="transparent" // Remove aquela linha em baixo das palavras, enquanto escrevemos!
+                                secureTextEntry={true}
+                                underlineColorAndroid="transparent"
                                 maxLength={20}
                                 secureTextEntry
                             />
                         </View>
+
                         <Pressable onPress={() => enviar('dadoConta')}>
-                            <Text style={styles.esenha}>Esqueci a minha senha</Text>
+                            <Text style={styles.esenha}>
+                                Esqueci a minha senha
+                            </Text>
                         </Pressable>
                     </View>
+
                 </View>
-                
+
                 <View style={styles.contEntra}>
+
                     <View style={styles.botaoEntra}>
                         <Pressable onPress={onSubmit} style={styles.stylesButton}>
                             <Text style={styles.entrarText}>Entrar</Text>
-                            <AntDesign name="send" size={24} color="rgba(163, 131, 251, 1)" style={styles.iconEnviar} />
+                            <AntDesign
+                                name="send"
+                                size={24}
+                                color="rgba(163, 131, 251, 1)"
+                                style={styles.iconEnviar}
+                            />
                         </Pressable>
                     </View>
+
                     <View style={styles.contaNova}>
-                        <Text style={styles.textCadastre}>É novo por aqui? </Text>
-                        <Text style={styles.linkCadastre}>Cadastre-se</Text>
+                        <Text style={styles.textCadastre}>
+                            É novo por aqui?
+                        </Text>
+
+                        <Pressable onPress={() => enviar('cadastro')}>
+                            <Text style={styles.linkCadastre}>
+                                Cadastre-se
+                            </Text>
+                        </Pressable>
                     </View>
+
                 </View>
                 </View>
             </View>
