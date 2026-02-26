@@ -1,10 +1,12 @@
-const Stack = createNativeStackNavigator();
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import DadoPessoal  from "../dadoPessoal";
 import DadoConta from "../dadoConta";
 import CadFinal from "../cadFinal";
 import Login from "../login";
 import Cadastro from "../cadastro";
 
+const Stack = createNativeStackNavigator();
 
 export function AuthStack({ onLogin }) {
   return (

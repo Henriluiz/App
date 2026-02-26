@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 
 export default function Splash( {closeSplash} ) {

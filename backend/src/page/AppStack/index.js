@@ -1,5 +1,8 @@
-const Stack = createNativeStackNavigator();
 import Menu from "../menu";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+
+const Stack = createNativeStackNavigator();
 
 export default function AppStack() {
   return (
