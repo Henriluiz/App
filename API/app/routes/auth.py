@@ -40,24 +40,27 @@ def get_current_user(
 ):
     token = creds.credentials
 
+    print("TOKEN:", token)
+    print("SECRET:", SECRET_KEY)
+    print("ALGO:", ALGORITHM)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido 1")
 
     sub = payload.get("sub")
     if not sub:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido 2")
 
     # se sub não for número, isso evita crash silencioso
     try:
         user_id = int(sub)
     except ValueError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido 3")
 
     user = db.query(Usuario).filter(Usuario.id_usuario == user_id).first()
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido 4")
 
     return user
 

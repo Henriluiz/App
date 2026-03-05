@@ -1,10 +1,14 @@
 from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
+import os
+from dotenv import load_dotenv
 
-SECRET_KEY = "troque_isso_depois"  # depois vai pro .env
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_DAYS = 7
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_DAYS = int(os.getenv("ACCESS_TOKEN_EXPIRE_DAYS"))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -16,5 +20,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def create_access_token(subject: str) -> str:
     expire = datetime.utcnow() + timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
-    to_encode = {"sub": subject, "exp": expire}
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+    payload = {
+        "sub": subject,
+        "exp": expire
+    }
+
+    return jwt.encode(payload, SECRET_KEY, algorithm=[ALGORITHM])
