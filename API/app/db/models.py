@@ -12,3 +12,4 @@ class Usuario(Base):
     cpf = Column(String(11), nullable=False)
     tipo_usuario = Column(String(20), nullable=False)
     data_criacao_usuario = Column(Date, nullable=False)
+    
