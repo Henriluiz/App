@@ -1,0 +1,90 @@
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { Ionicons, Feather } from "@expo/vector-icons";
+import styles from "./styles";
+
+export default function HomeScreen() {
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        
+        {/* HEADER */}
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            <Text style={styles.greeting}>Boa tarde,</Text>
+            <Text style={styles.name}>Junior</Text>
+
+            <View style={styles.headerIcons}>
+              <Ionicons name="information-circle-outline" size={22} color="#fff" />
+              <Ionicons name="notifications-outline" size={22} color="#fff" style={{ marginLeft: 10 }} />
+            </View>
+          </View>
+
+          <View style={styles.sessionCard}>
+            <Text style={styles.sessionTitle}>Próxima sessão</Text>
+            <Text style={styles.sessionDate}>Hoje, às 15hrs</Text>
+
+            <TouchableOpacity style={styles.sessionButton}>
+              <Text style={styles.sessionButtonText}>Entrar na sala</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* AÇÕES RÁPIDAS */}
+        <Text style={styles.sectionTitle}>Ações rápidas</Text>
+        <View style={styles.quickActions}>
+          <TouchableOpacity style={styles.actionCard}>
+            <Feather name="edit" size={24} color="#6C63FF" />
+            <Text style={styles.actionTitle}>Agendar</Text>
+            <Text style={styles.actionSubtitle}>Nova consulta</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionCard}>
+            <Feather name="clock" size={24} color="#6C63FF" />
+            <Text style={styles.actionTitle}>Sessões</Text>
+            <Text style={styles.actionSubtitle}>Ver histórico</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* REGISTRO DE HUMOR */}
+        <Text style={styles.sectionTitle}>Registre seu humor</Text>
+        <View style={styles.moodContainer}>
+          {["sad-outline", "happy-outline", "heart-outline", "sunny-outline", "thumbs-up-outline"].map(
+            (icon, index) => (
+              <TouchableOpacity key={index} style={styles.moodButton}>
+                <Ionicons name={icon} size={22} color="#555" />
+              </TouchableOpacity>
+            )
+          )}
+        </View>
+
+        {/* PARA VOCÊ */}
+        <Text style={styles.sectionTitle}>Para você</Text>
+        <View style={styles.recommendations}>
+          <View style={styles.recommendCard}>
+            <Text style={styles.recommendText}>Técnicas de respiração</Text>
+          </View>
+
+          <View style={styles.recommendCard}>
+            <Text style={styles.recommendText}>Entendendo ansiedade</Text>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* BOTTOM NAV */}
+      <View style={styles.bottomNav}>
+        <Ionicons name="home" size={24} color="#6C63FF" />
+        <Ionicons name="heart-outline" size={24} color="#999" />
+        <Ionicons name="chatbubble-outline" size={24} color="#999" />
+        <Ionicons name="person-outline" size={24} color="#999" />
+      </View>
+    </SafeAreaView>
+  );
+}
