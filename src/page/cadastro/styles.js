@@ -44,20 +44,16 @@ export default StyleSheet.create ({
     containerBotoes: {
         textAlign: "left",
         alignItems: "flex-start",
+        marginTop: 40,
+        gap: 52,
     },
 
     descricao2: {
         textAlign: "left",
-        alignItems: "flex-start",
         fontSize: 24,
         marginTop: 21,
         marginRight: 230,
         fontWeight: "bold",
-    },
-
-    containerBotoes: {
-        marginTop: 40,
-        gap: 52,
     },
 
     botaoPsicologo: {
