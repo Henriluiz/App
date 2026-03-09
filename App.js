@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -9,37 +7,23 @@ import Cadastro from "./src/page/cadastro";
 import Login from "./src/page/login";
 import DadoPessoal  from "./src/page/dadoPessoal";
 import DadoConta from "./src/page/dadoConta";
+import Menu from "./src/page/menu";
+import CadFinal from "./src/page/cadFinal";
 
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
+  if (loading) {
+    return <Splash />;
+  }
 
   return (
   <NavigationContainer>
-    <Stack.Navigator initialRouteName="splash">
-      <Stack.Screen
-        name="splash"
-        component={Splash}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="cadastro"
-        component={Cadastro}
-        options={{
-            headerShown: false,
-          }}
-      />
-      <Stack.Screen
-        name="login"
-        component={Login}
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack.Navigator>
+    {user ? <Home closeAuthUser={setUser(false)}/> : <Login onLogin={(u) => setUser(u)}/>}
   </NavigationContainer>
  );
 
@@ -53,4 +37,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   }
 
-});
+});;

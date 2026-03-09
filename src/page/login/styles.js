@@ -1,123 +1,133 @@
 import { StyleSheet } from "react-native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'; // Usa isso, no lugar de pixels ex: wp("10%") e hp("10%")
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F6FA",
-  },
-  header: {
-    backgroundColor: "#8E7CFF",
-    padding: 20,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
-  },
-  headerTop: {
-    marginBottom: 20,
-  },
-  greeting: {
-    color: "#fff",
-    fontSize: 18,
-  },
-  name: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  headerIcons: {
-    position: "absolute",
-    right: 0,
-    top: 0,
-    flexDirection: "row",
-  },
-  sessionCard: {
-    backgroundColor: "#A99EFF",
-    borderRadius: 15,
-    padding: 15,
-  },
-  sessionTitle: {
-    color: "#fff",
-    fontSize: 14,
-  },
-  sessionDate: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 5,
-  },
-  sessionButton: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingVertical: 8,
-    alignItems: "center",
-  },
-  sessionButtonText: {
-    color: "#6C63FF",
-    fontWeight: "bold",
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 20,
-    marginHorizontal: 20,
-  },
-  quickActions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 20,
-    marginTop: 10,
-  },
-  actionCard: {
-    backgroundColor: "#fff",
-    width: "48%",
-    padding: 15,
-    borderRadius: 15,
-    elevation: 3,
-  },
-  actionTitle: {
-    fontWeight: "bold",
-    marginTop: 10,
-  },
-  actionSubtitle: {
-    fontSize: 12,
-    color: "#888",
-  },
-  moodContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 15,
-    marginHorizontal: 20,
-  },
-  moodButton: {
-    backgroundColor: "#fff",
-    padding: 10,
-    borderRadius: 50,
-    elevation: 2,
-  },
-  recommendations: {
-    flexDirection: "row",
-    margin: 20,
-    justifyContent: "space-between",
-  },
-  recommendCard: {
-    backgroundColor: "#D6D1FF",
-    width: "48%",
-    height: 100,
-    borderRadius: 15,
-    padding: 10,
-    justifyContent: "flex-end",
-  },
-  recommendText: {
-    fontWeight: "bold",
-    color: "#5A54C4",
-  },
-  bottomNav: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    padding: 15,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderColor: "#eee",
-  },
+export default StyleSheet.create ({
+    container: {
+        flex: 1,
+    },
+
+    // Flex : 1
+    logo: {
+        width: wp("35%"),
+        height: hp("25%"),
+        marginTop: 25,
+        alignItems: "center"
+    },
+
+    
+    containerLogo: {
+        alignItems: "center"
+    },
+
+    // Flex : 2
+
+    container2: {
+        flex: 1,
+        backgroundColor: "#A383FB",
+        borderTopStartRadius: 65,
+        borderTopEndRadius: 65,
+    },
+
+    titulo: {
+        fontSize: wp("9%"),
+        marginTop: hp("7%"),
+        marginLeft: 25,
+        color: "white",
+    },
+
+    descricao: {
+        fontSize: wp("7%"),
+        marginLeft: 27,
+        color: "white",
+    },
+
+    // Flex 3: Label em diante.
+    contEntradas: { // Container central dos Inputs
+        marginTop: hp("2%"),
+        alignItems: "center",
+        gap: hp("1%"),
+    },
+
+    label: {
+        fontSize: 18,
+        marginLeft: 10,
+        color: "white",
+        marginTop: hp("1%"),
+    },
+
+    Continput: { // Um container simulando um inputText, apenas para colocar a imagem.
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        paddingLeft: 20,
+        borderRadius: 15,
+        height: hp("6%"),
+        backgroundColor: "rgba(255, 255, 255, 0.8)"
+    },
+
+    input: { // O InputText em si
+        paddingLeft: 15,
+        width: wp("75%"),
+    },
+
+    esenha: { // Esqueceu Senha
+        color: "white",
+        textDecorationLine: "underline",
+        marginLeft: 10,
+        marginTop: 5,
+    },
+
+    // Flex 4: Botão de entrada
+    contEntra: {
+        alignSelf: "center",
+        marginTop: hp("5%")
+    },
+
+    botaoEntra: {
+        height: hp("6%"),
+        width: wp("50%"),
+        backgroundColor: "rgba(255, 255, 255, 1)",
+        borderRadius: 60,
+        justifyContent: "center",
+        alignItems: "center",
+        
+    },
+
+    entrarText: {
+        fontSize: 25,
+        color: "rgba(163, 131, 251, 1)",
+        marginLeft: wp("3%"),
+    },
+
+    iconEnviar: {
+        marginTop: hp("0.6%"),
+    },
+
+    stylesButton: {
+        display: "flex",
+        flexDirection: "row",
+        gap: wp("25%"),
+    },
+
+    contaNova: {
+        display: "flex",
+        flexDirection: "row",
+        alignSelf: "center",
+        margin: hp("0.5%")
+    },
+    
+    textCadastre: {
+        color: "rgba(255, 255, 255, 1)",
+        fontSize: 15,
+        marginTop: hp("0.6%")
+    },
+
+    linkCadastre: {
+        color: "rgba(255, 255, 255, 1)",
+        fontSize: 16,
+        textDecorationLine: "underline", 
+        fontWeight: "bold",
+        marginTop: hp("0.6%")
+    },
+
 });
-
-export default styles;
