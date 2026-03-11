@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 
-export default function Menu( {closeAuthUser} ) {
+export default function Home( {closeAuthUser} ) {
 
     return (
       <View>
@@ -12,7 +12,7 @@ export default function Menu( {closeAuthUser} ) {
 // * Usa a estrutura para apresentar o usuário e deslogar 
 // import { useAuth } from "../context/AuthContext";
 
-// export default function MenuScreen() {
+// export default function HomeScreen() {
 //   const { user, signOut } = useAuth();
 
 //   return (
