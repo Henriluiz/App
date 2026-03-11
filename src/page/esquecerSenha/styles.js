@@ -9,11 +9,14 @@ export default StyleSheet.create({
   },
 
   header: {
-    paddingTop: height * 0.05,
+    paddingTop: height * 0.02,
     paddingHorizontal: width * 0.07,
   },
 
+  /* ================= TITULOS ================= */
+
   titulo1: {
+    marginTop: height * 0.06,
     fontSize: width * 0.08,
     color: "#ffffff",
   },
@@ -30,9 +33,11 @@ export default StyleSheet.create({
     color: "#ffffff",
   },
 
+  /* ================= CARD ================= */
+
   card: {
     flex: 1,
-    marginTop: height * 0.04,
+    marginTop: height * 0.05,
     backgroundColor: "#ffffff",
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
@@ -41,29 +46,20 @@ export default StyleSheet.create({
 
   tituloCard: {
     fontSize: width * 0.07,
-    marginBottom: 10,
+    marginBottom: height * 0.015,
     color: "#A383FB",
   },
 
   contInput: {
-    marginTop: 10,
+    marginTop: height * 0.001,
   },
 
-  rowWrap: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-
-  colunaFlex: {
-    flex: 1,
-    minWidth: 140,
-  },
+  /* ================= INPUTS ================= */
 
   label: {
     fontSize: width * 0.04,
     color: "#A383FB",
-    marginTop: 15,
+    marginTop: height * 0.02,
   },
 
   input: {
@@ -76,43 +72,60 @@ export default StyleSheet.create({
     fontSize: width * 0.04,
   },
 
-  nicknameContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "#A383FB",
-    borderRadius: 12,
-    height: 50,
-    paddingHorizontal: 15,
-  },
-
-  arroba: {
-    color: "#A383FB",
-    fontSize: width * 0.04,
-    marginRight: 4,
-  },
-
-  nicknameInput: {
-    flex: 1,
-    width: "100%",
-    fontSize: width * 0.04,
-  },
-
-  pickerContainer: {
-    width: "100%",
-    height: 50,
-    borderColor: "#A383FB",
-    borderWidth: 1.5,
-    borderRadius: 12,
-    justifyContent: "center",
+  inputErro: {
+    borderColor: "red",
   },
 
   mensagemErro: {
-  color: "red",
-  marginTop: 5,
-  fontSize: 14,
-},
+    marginTop: height * 0.008,
+    color: "red",
+    fontSize: width * 0.035,
+  },
 
+  /* ================= CHECKBOX ================= */
+
+  containerCheckbox: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginTop: height * 0.025,
+  },
+
+  checkbox: {
+    width: width * 0.055,
+    height: width * 0.055,
+    borderWidth: 2,
+    borderColor: "#8E6CEF",
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: width * 0.025,
+  },
+
+  checkboxAtivo: {
+    backgroundColor: "#8E6CEF",
+  },
+
+  check: {
+    color: "#fff",
+    fontSize: width * 0.04,
+    fontWeight: "bold",
+  },
+
+  textoTermos: {
+    flex: 1,
+    fontSize: width * 0.035,
+    color: "#8E6CEF",
+  },
+
+  link: {
+    fontWeight: "bold",
+  },
+
+  botaoDesativado: {
+    opacity: 0.5,
+  },
+
+  /* ================= BOTÕES ================= */
 
   containerBotoes: {
     flexDirection: "row",

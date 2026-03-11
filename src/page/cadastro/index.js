@@ -19,14 +19,14 @@ export default function Cadastro() {
                 <Text style={styles.titulo}>Olá,{"\n"}</Text>
                 <Text style={styles.titulo2}>Boas vindas</Text>
             </Text>
-            <Text style={styles.descricao}>Para começarmos,{"\n"}identifeque-se:</Text>
+            <Text style={styles.descricao}>Para começarmos,{"\n"}identifique-se:</Text>
             <Text style={styles.descricao2}>Eu sou:</Text>
             
             <View style={styles.containerBotoes}>
                 <Pressable onPress={() => abrir_cadastro('dadoPessoal')} style={styles.botaoPsicologo}>
                     <Text style={styles.textPsicologo}>PSICÓLOGO</Text>
                 </Pressable>
-                <Pressable onPress={() => abrir_cadastro('dadoConta')} style={styles.botaoPaciente}>
+                <Pressable onPress={() => abrir_cadastro('dadoPessoal')} style={styles.botaoPaciente}>
                     <Text style={styles.textPaciente}>PACIENTE</Text>
                 </Pressable>
             </View>
