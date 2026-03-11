@@ -13,7 +13,6 @@ export default StyleSheet.create({
   ima: {
     width: 200,
     height: 150,
-    resizeMode: 'contain'
   },  
 
 });
