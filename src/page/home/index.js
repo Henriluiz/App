@@ -88,3 +88,17 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
+
+// * Usa a estrutura para apresentar o usuário e deslogar 
+// import { useAuth } from "../context/AuthContext";
+
+// export default function HomeScreen() {
+//   const { user, signOut } = useAuth();
+
+//   return (
+//     <View style={styles.container}>
+//       <Text style={styles.title}>Bem-vindo, {user?.nome}</Text>
+//       <Button title="Sair" onPress={signOut} />
+//     </View>
+//   );
+// }

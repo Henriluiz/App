@@ -2,6 +2,7 @@
 import { Text, View, Image, Pressable} from 'react-native';
 import styles from './styles';
 import { useNavigation } from "@react-navigation/native";
+import AbrirLinkExterno from '../../components/abrirLinkExterno';
 
 export default function Nomear() {
     const navigation = useNavigation();
@@ -23,10 +24,10 @@ export default function Nomear() {
             <Text style={styles.descricao2}>Eu sou:</Text>
             
             <View style={styles.containerBotoes}>
-                <Pressable onPress={() => abrir_cadastro('dadoPessoal')} style={styles.botaoPsicologo}>
+                <Pressable onPress={() => AbrirLinkExterno("https://www.youtube.com/")} style={styles.botaoPsicologo}>
                     <Text style={styles.textPsicologo}>PSICÓLOGO</Text>
                 </Pressable>
-                <Pressable onPress={() => abrir_cadastro('dadoConta')} style={styles.botaoPaciente}>
+                <Pressable onPress={() => abrir_cadastro('login')} style={styles.botaoPaciente}>
                     <Text style={styles.textPaciente}>PACIENTE</Text>
                 </Pressable>
             </View>

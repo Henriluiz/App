@@ -1,11 +1,11 @@
 // import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { Text, View, Image, TextInput, Pressable } from 'react-native';
+import { use, useState } from "react";
+import { Text, View, Image, TextInput, Pressable, ActivityIndicator } from 'react-native';
 import styles from './styles';
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useAuth } from "../../context/AuthContext";
 
-import auth from '@react-native-firebase/auth';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
@@ -16,40 +16,31 @@ export default function Login({onLogin}) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [aprovado, setAprovado] = useState(false);
+    const [loading, setLoading] = useState(false)
     const enviar = (idModal) => {
         navigation.navigate(idModal)
     }
 
-    function signUp() { // Criar Conta
-        auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(() => {
-            console.log('Conta de usuário criada e iniciada!');
-        })
-        .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
-            console.log('Esse endereço de e-mail já está em uso!');
+    const { signIn } = useAuth();
+
+    async function handleLogin() {
+        if (validarCampos(email, password)) {
+
+            if (!email.trim() || !password.trim()) {
+                Alert.alert("Atenção", "Preencha email e senha");
+                return;
+                }
+    
+                try {
+                    setLoading(true);
+                    await signIn(email, password);
+                } catch (error) {
+                    Alert.alert("Erro", error.message || "Não foi possível entrar");
+                } finally {
+                    setLoading(false);
             }
-
-            if (error.code === 'auth/invalid-email') {
-            console.log('Esse endereço de e-mail é inválido!');
-            }
-
-            console.error(error);
-        });
-    }
-
-    function signIn() {
-        auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(() => {
-            console.log('o usuário está autenticado');
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    }
-
+        }
+  }
 
     const validarCampos = (email, senha) => {
         const emailLimpo = email.trim();
@@ -82,7 +73,7 @@ export default function Login({onLogin}) {
     };
 
     const onSubmit = () => {
-        const ok = validarCampos(email, senha);
+        const ok = validarCampos(email, password);
         setAprovado(ok);
 
         if (ok) {
@@ -144,12 +135,12 @@ export default function Login({onLogin}) {
                             <MaterialIcons name="password" size={24} color="#A383FB" />
                             <TextInput
                                 style={styles.input}
-                                onChangeText={setSenha}
-                                value={senha}
+                                onChangeText={setPassword}
+                                value={password}
                                 secureTextEntry={true}
                                 underlineColorAndroid="transparent"
                                 maxLength={20}
-                                secureTextEntry
+                                SecureTextEntry
                             />
                         </View>
 
@@ -165,17 +156,19 @@ export default function Login({onLogin}) {
                 <View style={styles.contEntra}>
 
                     <View style={styles.botaoEntra}>
-                        <Pressable onPress={onSubmit} style={styles.stylesButton}>
+                        <Pressable onPress={handleLogin} style={styles.stylesButton}>
                             <Text style={styles.entrarText}>Entrar</Text>
-                            <AntDesign
+                            { loading ? <ActivityIndicator size="small" color="#A383FB"/>
+                            
+                            :<AntDesign
                                 name="send"
                                 size={24}
                                 color="rgba(163, 131, 251, 1)"
                                 style={styles.iconEnviar}
-                            />
+                            />}
                         </Pressable>
                     </View>
-
+                    
                     <View style={styles.contaNova}>
                         <Text style={styles.textCadastre}>
                             É novo por aqui?
