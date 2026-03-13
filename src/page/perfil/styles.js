@@ -14,6 +14,14 @@ export default StyleSheet.create({
     //height: 120,
   },
 
+
+
+
+
+
+  
+
+  //BOTÃO DE EDITAR TESTE
 botaoEditar: {
   backgroundColor: "#4400ff",
   padding: 15,
@@ -27,6 +35,13 @@ textoBotao: {
   fontWeight: "bold",
   fontSize: 16
 },
+
+
+
+
+
+
+
 
   card: {
   flex: 1,
