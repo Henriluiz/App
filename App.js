@@ -9,6 +9,7 @@ import DadoConta from "./src/page/dadoConta";
 import Menu from "./src/page/menu";
 import CadFinal from "./src/page/cadFinal";
 import EsquecerSenha from "./src/page/esquecerSenha";
+import Perfil from "./src/page/perfil";
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +26,7 @@ export default function App() {
         <Stack.Screen name="cadFinal" component={CadFinal} />
         <Stack.Screen name="menu" component={Menu} />
         <Stack.Screen name="esquecerSenha" component={EsquecerSenha} />
+        <Stack.Screen name="perfil" component={Perfil} />
 
       </Stack.Navigator>
     </NavigationContainer>

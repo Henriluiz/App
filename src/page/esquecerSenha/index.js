@@ -3,7 +3,7 @@ import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,}
 
 import styles from "./styles";
 
-export default function esquecerSenha({ navigation }) {
+export default function EsquecerSenha({ navigation }) {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [erro, setErro] = useState("");

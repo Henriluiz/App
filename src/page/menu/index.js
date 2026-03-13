@@ -2,15 +2,21 @@ import React from "react";
 import {
   View,
   Text,
-  StyleSheet,
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
+  Pressable
 } from "react-native";
+
 import { Ionicons, Feather } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
+
 import styles from "./styles";
 
-export default function Menu() {
+export default function Menu({ navigation }) {
+
+  const route = useRoute
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -80,10 +86,39 @@ export default function Menu() {
 
       {/* BOTTOM NAV */}
       <View style={styles.bottomNav}>
-        <Ionicons name="home" size={24} color="#6C63FF" />
-        <Ionicons name="heart-outline" size={24} color="#999" />
-        <Ionicons name="chatbubble-outline" size={24} color="#999" />
-        <Ionicons name="person-outline" size={24} color="#999" />
+
+        <Pressable onPress={() => navigation.navigate('menu')}>
+          <Ionicons
+            name="home"
+            size={24}
+            color={route.name === "Home" ? "#6C63FF" : "#999"}
+          />
+        </Pressable>
+
+        <Pressable onPress={() => navigation.navigate("Curtidas")}>
+          <Ionicons
+            name="heart-outline"
+            size={24}
+            color={route.name === "Curtidas" ? "#6C63FF" : "#999"}
+          />
+        </Pressable>
+
+        <Pressable onPress={() => navigation.navigate("Chat")}>
+          <Ionicons
+            name="chatbubble-outline"
+            size={24}
+            color={route.name === "Chat" ? "#6C63FF" : "#999"}
+          />
+        </Pressable>
+
+        <Pressable onPress={() => navigation.navigate('perfil')}>
+          <Ionicons
+            name="person-outline"
+            size={24}
+            color={route.name === "Perfil" ? "#6C63FF" : "#999"}
+          />
+        </Pressable>
+
       </View>
     </SafeAreaView>
   );

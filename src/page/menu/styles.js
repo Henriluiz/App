@@ -113,7 +113,8 @@ const styles = StyleSheet.create({
   bottomNav: {
     flexDirection: "row",
     justifyContent: "space-around",
-    padding: 15,
+    //padding: 15,
+    padding: 40,
     backgroundColor: "#fff",
     borderTopWidth: 1,
     borderColor: "#eee",
