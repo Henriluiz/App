@@ -108,9 +108,21 @@ export default function Perfil({ navigation }) {
                   </Text>
                 </Pressable>
               </View> 
+
             <View style={styles.container2}>
               {/* TÍTULO */}
               <View>
+                <View>
+
+                    <Pressable
+                      style={styles.botaoEditar}
+                      onPress={() => navigation.navigate("editarPerfil")}
+                    >
+                      <Text style={styles.textoBotao}>Editar Perfil</Text>
+                    </Pressable>
+
+                  </View>
+
                 <Text style={styles.tituloCard}>Suas informações</Text>
               </View>
 

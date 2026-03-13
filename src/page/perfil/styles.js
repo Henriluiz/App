@@ -10,9 +10,23 @@ export default StyleSheet.create({
 
   //ESTOU EM DUVIDA ENTRE ESSES DOIS MODOS
   header: {
-    paddingTop: height * 0.26,
+    paddingTop: height * 0.24,
     //height: 120,
   },
+
+botaoEditar: {
+  backgroundColor: "#4400ff",
+  padding: 15,
+  borderRadius: 12,
+  alignItems: "center",
+  marginTop: 20
+},
+
+textoBotao: {
+  color: "#000000",
+  fontWeight: "bold",
+  fontSize: 16
+},
 
   card: {
   flex: 1,

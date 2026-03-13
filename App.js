@@ -10,6 +10,7 @@ import Menu from "./src/page/menu";
 import CadFinal from "./src/page/cadFinal";
 import EsquecerSenha from "./src/page/esquecerSenha";
 import Perfil from "./src/page/perfil";
+import EditarPerfil from "./src/page/editarPerfil";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ export default function App() {
         <Stack.Screen name="menu" component={Menu} />
         <Stack.Screen name="esquecerSenha" component={EsquecerSenha} />
         <Stack.Screen name="perfil" component={Perfil} />
+        <Stack.Screen name="editarPerfil" component={EditarPerfil} />
 
       </Stack.Navigator>
     </NavigationContainer>
