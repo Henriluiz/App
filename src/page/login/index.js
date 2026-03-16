@@ -17,9 +17,7 @@ export default function Login({onLogin}) {
     const [password, setPassword] = useState("");
     const [aprovado, setAprovado] = useState(false);
     const [loading, setLoading] = useState(false)
-    const enviar = (idModal) => {
-        navigation.navigate(idModal)
-    }
+    
 
     const { signIn } = useAuth();
 
@@ -144,7 +142,7 @@ export default function Login({onLogin}) {
                             />
                         </View>
 
-                        <Pressable onPress={() => enviar('dadoConta')}>
+                        <Pressable>
                             <Text style={styles.esenha}>
                                 Esqueci a minha senha
                             </Text>
@@ -174,7 +172,7 @@ export default function Login({onLogin}) {
                             É novo por aqui?
                         </Text>
 
-                        <Pressable onPress={() => enviar('cadastro')}>
+                        <Pressable onPress={() => navigation.navigate("cadastroPessoal")}>
                             <Text style={styles.linkCadastre}>
                                 Cadastre-se
                             </Text>

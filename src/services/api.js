@@ -5,8 +5,8 @@ import {
   saveSession,
   clearSession,
   getStoredUser,
-} from "./authStorage";
-import { authEvents } from "./authEvents";
+} from "./auth-stogare";
+import { authEvents } from "./auth-events";
 
 const api = axios.create({
   baseURL: "http://10.0.2.2:8000", // troque conforme seu ambiente

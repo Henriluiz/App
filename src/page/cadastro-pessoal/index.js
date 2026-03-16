@@ -72,7 +72,7 @@ export default function CadastroPessoal({ navigation }) {
 
   function enviar() {
     if (!validarCampos()) return;
-    navigation.navigate("dadoConta");
+    navigation.navigate("cadastroConta");
   }
 
   /* ================= RENDER ================= */

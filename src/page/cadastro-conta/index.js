@@ -2,14 +2,17 @@ import React, { useState } from "react";
 import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,
 } from "react-native";
 import styles from "./styles";
+import { useNavigation } from "@react-navigation/native";
 
-export default function CadastroConta({ navigation }) {
+
+export default function CadastroConta() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [erro, setErro] = useState("");
   const [aceitoTermos, setAceitoTermos] = useState(false);
 
+  const navigation = useNavigation();
   /* =========================
      VALIDAÇÃO
   ========================== */
@@ -57,7 +60,7 @@ export default function CadastroConta({ navigation }) {
     }
 
     setErro("");
-    navigation.navigate("cadFinal");
+    navigation.navigate("cadastroFin");
   }
 
   function Strength(senha) {

@@ -15,7 +15,7 @@ export default function Splash() {
 
   return (
     <View style={styles.container}>
-        <Animatable.Image animation={"bounceIn"} onAnimationEnd={() => navigation.replace('login')} duration={3000} source={require("./icon/logo.png")}
+        <Animatable.Image animation={"bounceIn"} onAnimationEnd={() => navigation.navigate("login")} duration={3000} source={require("./icon/logo.png")}
             style={styles.ima}>
         </Animatable.Image>
       <StatusBar style="auto" />

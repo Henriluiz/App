@@ -10,7 +10,7 @@ export default function CadastroFin() {
     const navigation = useNavigation();
 
     const finalizar = () => {
-        navigation.navigate('login');
+        navigation.navigate("login");
     };
 
     return (
