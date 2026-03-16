@@ -22,7 +22,7 @@ export default function Nomear() {
                 <Text style={styles.titulo}>Olá,{"\n"}</Text>
                 <Text style={styles.titulo2}>Boas vindas</Text>
             </Text>
-            <Text style={styles.descricao}>Para começarmos,{"\n"}identifeque-se:</Text>
+            <Text style={styles.descricao}>Para começarmos,{"\n"}identifique-se:</Text>
             <Text style={styles.descricao2}>Eu sou:</Text>
             
             <View style={styles.containerBotoes}>

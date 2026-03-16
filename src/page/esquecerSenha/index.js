@@ -2,38 +2,14 @@ import React, { useState } from "react";
 import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,} from "react-native";
 
 import styles from "./styles";
-import { useNavigation } from "@react-navigation/native";
 
-
-export default function CadastroConta() {
-  const [email, setEmail] = useState("");
+export default function EsquecerSenha({ navigation }) {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [erro, setErro] = useState("");
   const [aceitoTermos, setAceitoTermos] = useState(false);
 
-  const navigation = useNavigation();
-  /* =========================
-     VALIDAÇÃO EMAIL
-  ========================== */
-  const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  function validarEmail(texto) {
-    setEmail(texto);
-
-    if (!texto) {
-      setErro("O email é obrigatório.");
-      return;
-    }
-
-    if (!regexEmail.test(texto)) {
-      setErro("Digite um email válido.");
-      return;
-    }
-
-    setErro("");
-  }
-
+ 
   /* =========================
      FORÇA DA SENHA
   ========================== */
@@ -59,13 +35,8 @@ export default function CadastroConta() {
   ========================== */
 
   function enviar() {
-    if (!email || !senha || !confirmarSenha) {
+    if (!senha || !confirmarSenha) {
       setErro("Preencha todos os campos.");
-      return;
-    }
-
-    if (!regexEmail.test(email)) {
-      setErro("Digite um email válido.");
       return;
     }
 
@@ -85,7 +56,8 @@ export default function CadastroConta() {
     }
 
     setErro("");
-    navigation.navigate("cadastroFin");
+
+    navigation.navigate("login");
   }
 
   /* =========================
@@ -106,38 +78,20 @@ export default function CadastroConta() {
           {/* HEADER */}
           <View style={styles.header}>
             <Text style={styles.titulo1}>
-              ESTAMOS FELIZ POR VOCÊ ESTAR CONOSCO{" "}
+              ESQUECEU SUA SENHA? CRIE OUTRA{" "}
               <Text style={styles.destaque}>AQUI!</Text>
             </Text>
 
             <Text style={styles.descricao}>
-              Sua jornada de saúde mental começa agora.
+              Sua jornada de saúde mental não para.
             </Text>
           </View>
 
           {/* CARD */}
           <View style={styles.card}>
-            <Text style={styles.tituloCard}>Dados da Conta</Text>
+            <Text style={styles.tituloCard}>Crie Uma Nova Senha</Text>
 
             <View style={styles.contInput}>
-              {/* EMAIL */}
-              <Text style={styles.label}>Email</Text>
-
-              <TextInput
-                value={email}
-                onChangeText={validarEmail}
-                style={[
-                  styles.input,
-                  erro && erro.toLowerCase().includes("email")
-                    ? styles.inputErro
-                    : null,
-                ]}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                placeholder="Digite seu email"
-              />
-
               {/* SENHA */}
               <Text style={styles.label}>Crie uma senha</Text>
 

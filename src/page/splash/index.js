@@ -10,9 +10,6 @@ import { useEffect } from 'react';
 export default function Splash() {
   const navigation = useNavigation();
 
-  // ! Verifica se o caminho do gpt, passará de qualquer forma pelo splash, ou apenas se o user
-  // ! Não tiver login
-
   return (
     <View style={styles.container}>
         <Animatable.Image animation={"bounceIn"} onAnimationEnd={() => navigation.navigate("login")} duration={3000} source={require("./icon/logo.png")}
