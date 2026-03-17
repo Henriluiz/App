@@ -2,11 +2,12 @@ import React from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
   Pressable
 } from "react-native";
+
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";

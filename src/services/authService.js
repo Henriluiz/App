@@ -33,3 +33,11 @@ export async function logout() {
   return response.data;
 
 }
+
+export async function patchPerfil(data) {
+
+  const response = await api.patch("/perfil", data);
+
+  return response.data;
+  
+}

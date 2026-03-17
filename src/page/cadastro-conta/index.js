@@ -90,9 +90,9 @@ export default function CadastroConta({ route }) {
 
         console.log("Usuário criado:", response);
 
-        alert("Cadastro realizado com sucesso");
+        // alert("Cadastro realizado com sucesso");
 
-        navigation.navigate("login");
+        navigation.navigate("cadastroFin");
 
     } catch (error) {
         console.log(error);

@@ -11,7 +11,7 @@ export default function Nomear() {
         navigation.navigate(idModal)
     }
 
-    const linkExterno = "www.google.com"
+    const linkExterno = "https://rodrigo-uxzz.github.io/Zenith_Web/"
 
     return (
         <View style={styles.container}>
