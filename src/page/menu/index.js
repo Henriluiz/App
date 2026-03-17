@@ -10,12 +10,30 @@ import {
 
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 import styles from "./styles";
 
 export default function Menu({ navigation }) {
 
   const route = useRoute
+
+  const { user } = useAuth();
+  useEffect(() => {
+
+    async function load() {
+
+      const data = await getPerfil();
+
+      setUser(data);
+
+    }
+
+    load();
+
+  }, []);
+  // -----------------
 
   return (
     <SafeAreaView style={styles.container}>
@@ -25,7 +43,7 @@ export default function Menu({ navigation }) {
         <View style={styles.header}>
           <View style={styles.headerTop}>
             <Text style={styles.greeting}>Boa tarde,</Text>
-            <Text style={styles.name}>Junior</Text>
+            <Text style={styles.name}>{user?.nome}</Text>
 
             <View style={styles.headerIcons}>
               <Ionicons name="information-circle-outline" size={22} color="#fff" />

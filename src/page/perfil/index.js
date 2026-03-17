@@ -17,9 +17,13 @@ import { Picker } from "@react-native-picker/picker";
 import { useRoute } from "@react-navigation/native";
 import styles from "./styles";
 
+import { useAuth } from "../../context/AuthContext";
+
 export default function Perfil({ navigation }) {
   
   const route = useRoute
+
+  const { user, signOut} = useAuth();
   const [foto, setFoto] = useState("https://i.pravatar.cc/150");
   const [nome, setNome] = useState("Junior");
   const [sobrenome, setSobrenome] = useState("Silva");
@@ -34,20 +38,22 @@ export default function Perfil({ navigation }) {
   const [menuAberto, setMenuAberto] = useState(false);
   
 
-  function formatarNickname(text) {
-    return text
-      .toLowerCase()
-      .replace(/\s/g, "")
-      .replace(/[^a-z0-9_]/g, "");
-  }
+  const convDataBR = (dataIso) => {
+    // Exemplo: "2023-12-25" -> "25/12/2023"
+    if (!dataIso) return '';
+    
+    const [ano, mes, dia] = dataIso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  };
 
-  function formatarTelefone(text) {
-    return text
-      .replace(/\D/g, "")
-      .replace(/^(\d{2})(\d)/g, "($1) $2")
-      .replace(/(\d{5})(\d)/, "$1-$2")
-      .slice(0, 15);
-  }
+  const formatarCpf = (numero) => {
+    // Remove tudo que não é número
+    const cpf = numero.replace(/\D/g, '');
+    
+    // Aplica máscara: 000.000.000-00
+    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  };
+
 
   function formatarData(text) {
     return text
@@ -56,6 +62,11 @@ export default function Perfil({ navigation }) {
       .replace(/(\d{2})(\d)/, "$1/$2")
       .slice(0, 10);
   }
+
+  const capitalize = (str) => { // Não apague, usada para o Gênero
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
 
   return (
     <KeyboardAvoidingView
@@ -94,15 +105,15 @@ export default function Perfil({ navigation }) {
             </View>
 
             <View>
-              <Text style={styles.nomePessoa}>{nome}</Text>
+              <Text style={styles.nomePessoa}>{user?.nome}</Text>
             </View>
 
             <View>
-              <Text style={styles.nickname}>@{nickname}</Text>
+              <Text style={styles.nickname}>@{user?.username}</Text>
             </View>
 
             <View style={styles.botaoEditar}>
-            <Pressable onPress={() => setEditando(!editando)}>
+            <Pressable onPress={() => navigation.navigate("editarPerfil")}>
                   <Text style={{ color: "#000000", fontWeight: "bold" }}>
                     {editando ? "Salvar" : "Editar Perfil"}
                   </Text>
@@ -116,23 +127,6 @@ export default function Perfil({ navigation }) {
             <View style={styles.container2}>
               {/* TÍTULO E BOTAO TESTE DE EDITAR*/}
               <View>
-
-                <View>
-                    <Pressable
-                      style={styles.botaoEditar}
-                      onPress={() => navigation.navigate("editarPerfil")}
-                    >
-                      <Text style={styles.textoBotao}>Editar Perfil</Text>
-                    </Pressable>
-                  </View>
-
-
-
-
-
-
-
-
                 <Text style={styles.tituloCard}>Suas informações</Text>
               </View>
 
@@ -141,37 +135,8 @@ export default function Perfil({ navigation }) {
 
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Nome</Text>
-
-                  <TextInput
-                    style={[
-                      styles.input,
-                      editando && styles.inputEditando
-                    ]}
-                    value={nome}
-                    onChangeText={setNome}
-                    editable={editando}
-                  />
+                  <Text style={styles.dados}>{user?.nome}</Text>
                 </View>
-
-                <View style={styles.colunaFlex}>
-                  <Text style={styles.label}>Sobrenome</Text>
-
-                  <TextInput
-                    style={[
-                      styles.input,
-                      editando && styles.inputEditando
-                    ]}
-                    value={sobrenome}
-                    onChangeText={setSobrenome}
-                    editable={editando}
-                  />
-                </View>
-
-              </View>
-
-
-              {/* NICKNAME E GÊNERO */}
-              <View style={styles.rowWrap}>
 
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Nickname</Text>
@@ -183,75 +148,49 @@ export default function Perfil({ navigation }) {
 
                     <Text style={styles.arroba}>@</Text>
 
-                    <TextInput
-                      style={styles.nicknameInput}
-                      value={nickname}
-                      editable={editando}
-                      onChangeText={(text) =>
-                        setNickname(formatarNickname(text))
-                      }
-                      autoCapitalize="none"
-                      maxLength={30}
-                    />
+                    <Text style={[styles.dados, {textAlign: "left"}]}>{user?.username}</Text>
 
                   </View>
+                </View>
+              </View>
+
+
+              {/* EMAIL E GÊNERO */}
+              <View style={styles.rowWrap}>
+
+                <View>
+                {/* EMAIL */}
+                  <Text style={styles.label}>Email</Text>
+
+                  <Text style={styles.dadoEmail}>{user?.email}</Text>
                 </View>
 
 
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Gênero</Text>
 
-                  <View style={[
-                    styles.pickerContainer
-                  ]}>
-
-                    <Picker
-                      selectedValue={genero}
-                      onValueChange={(itemValue) =>
-                        setGenero(itemValue)
-                      }
-                    >
-                      <Picker.Item label="Selecione" value="" />
-                      <Picker.Item label="Masculino" value="masculino" />
-                      <Picker.Item label="Feminino" value="feminino" />
-                      <Picker.Item label="Outro" value="outro" />
-                    </Picker>
-
+                  <View>
+                    <Text style={styles.dados}>{capitalize(user?.genero)}</Text>
                   </View>
                 </View>
 
               </View>
 
-
-              {/* EMAIL */}
-              <Text style={styles.label}>Email</Text>
-
-              <TextInput
-                onChangeText={setEmail}
-                value={email}
-                style={[
-                  styles.inputEmail,
-                  editando && styles.inputEditando
-                ]}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                editable={editando}
-              />
+              
 
 
               {/* SENHA E TELEFONE */}
-              <View style={styles.rowWrap}>
+              <View style={[styles.rowWrap, {marginTop: -15}]}>
 
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Senha</Text>
 
-                  <TextInput
+                  <TextInput // ! Uso temporário desse método
                     onChangeText={setSenha}
                     value={senha}
                     style={[
                       styles.input,
-                      editando && styles.inputEditando
+                      editando && styles.inputEditando, {textAlign: "center"}
                     ]}
                     secureTextEntry
                     editable={editando}
@@ -262,55 +201,26 @@ export default function Perfil({ navigation }) {
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Telefone</Text>
 
-                  <TextInput
-                    style={[
-                      styles.input,
-                      editando && styles.inputEditando
-                    ]}
-                    keyboardType="phone-pad"
-                    value={telefone}
-                    editable={editando}
-                    onChangeText={(text) =>
-                    setTelefone(formatarTelefone(text))
-                    }
-                  />
+                  <Text style={[styles.dados, {fontSize: 15}]}>{user?.telefone}</Text>
                 </View>
 
               </View>
 
 
               {/* CPF E DATA */}
-              <View style={styles.rowWrap}>
+              <View style={[styles.rowWrap, {marginBottom: 15}]}>
 
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>CPF</Text>
 
-                  <MaskedTextInput
-                    mask="999.999.999-99"
-                    value={cpf}
-                    onChangeText={(text) => setCpf(text)}
-                    keyboardType="numeric"
-                    style={[
-                      styles.input
-                    ]}
-                  />
+                  <Text style={[styles.dados, {textAlign: "center"}]}>{formatarCpf(user?.cpf)}</Text>
                 </View>
 
 
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Data de Nascimento</Text>
 
-                  <TextInput
-                    style={[
-                      styles.input
-                    ]}
-                    keyboardType="numeric"
-                    maxLength={10}
-                    value={dataNascimento}
-                    onChangeText={(text) =>
-                      setDataNascimento(formatarData(text))
-                    }
-                  />
+                  <Text style={[styles.dados, {textAlign: "center"}]}>{convDataBR(user?.data_nascimento)}</Text>
                 </View>
 
               </View>
@@ -358,27 +268,27 @@ export default function Perfil({ navigation }) {
 
       </View>
           <Modal
-  visible={menuAberto}
-  animationType="slide"
-  transparent={false}
->
-  <View style={styles.modalContainer}>
+            visible={menuAberto}
+            animationType="slide"
+            transparent={false}
+          >
+            <View style={styles.modalContainer}>
 
-    <Pressable
-      style={styles.fecharModal}
-      onPress={() => setMenuAberto(false)}
-    >
-      <Ionicons name="close" size={30} color="#000" />
-    </Pressable>
+              <Pressable
+                style={styles.fecharModal}
+                onPress={() => setMenuAberto(false)}
+              >
+                <Ionicons name="close" size={30} color="#000" />
+              </Pressable>
 
-    <Text style={styles.modalTitulo}>Menu</Text>
-    
-    <Pressable style={styles.opcao}>
-      <Text>Sair</Text>
-    </Pressable>
+              <Text style={styles.modalTitulo}>Menu</Text>
+              
+              <Pressable style={styles.opcao} onPress={() => signOut()}>
+                <Text>Sair</Text>
+              </Pressable>
 
-  </View>
-</Modal>
+            </View>
+          </Modal>
       </View>
 
     </KeyboardAvoidingView>

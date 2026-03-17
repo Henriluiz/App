@@ -3,23 +3,26 @@ import { Text, View, Image, TextInput, Pressable } from "react-native";
 import styles from "./styles";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useAuth } from "../../context/AuthContext";
 
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-export default function Login({ onLogin }) {
+export default function Login() {
   const navigation = useNavigation();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { signIn } = useAuth();
+
+  const [login, setLogin] = useState(""); // * Login aqui é o Email!!
+  const [senha, setSenha] = useState("");
 
   const enviar = (tela) => {
     navigation.navigate(tela);
   };
 
   const validarCampos = () => {
-    const emailLimpo = email.trim();
-    const senhaLimpa = password.trim();
+    const emailLimpo = login.trim();
+    const senhaLimpa = senha.trim();
 
     if (!emailLimpo) {
       console.log("Email vazio");
@@ -46,15 +49,11 @@ export default function Login({ onLogin }) {
     return true;
   };
 
-  const onSubmit = () => {
+  const onSubmit = async() => {
     if (validarCampos()) {
-      console.log("Login válido");
+      console.log("Campos válido");
 
-      if (onLogin) {
-        onLogin({ email });
-      }
-
-      navigation.navigate("menu");
+      await signIn(login, senha)
     }
   };
 
@@ -88,8 +87,8 @@ export default function Login({ onLogin }) {
 
                 <TextInput
                   style={styles.input}
-                  onChangeText={setEmail}
-                  value={email}
+                  onChangeText={setLogin}
+                  value={login}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -106,8 +105,8 @@ export default function Login({ onLogin }) {
 
                 <TextInput
                   style={styles.input}
-                  onChangeText={setPassword}
-                  value={password}
+                  onChangeText={setSenha}
+                  value={senha}
                   secureTextEntry
                   maxLength={20}
                 />
@@ -121,7 +120,7 @@ export default function Login({ onLogin }) {
 
           <View style={styles.contEntra}>
             <View style={styles.botaoEntra}>
-              <Pressable onPress={onSubmit} style={styles.stylesButton}>
+              <Pressable onPress={() => onSubmit()} style={styles.stylesButton}>
                 <Text style={styles.entrarText}>Entrar</Text>
 
                 <AntDesign

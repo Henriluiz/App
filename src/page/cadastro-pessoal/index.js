@@ -77,7 +77,14 @@ export default function CadastroPessoal({ navigation }) {
 
   function enviar() {
     if (!validarCampos()) return;
-    navigation.navigate("cadastroConta");
+    navigation.navigate("cadastroConta", {
+      nome: nomeCompleto,
+      nickname: nickname,
+      telefone: telefone,
+      dataNasc: dataNascimento,
+      genero: genero,
+      cpf: cpf,
+    });
   }
 
   /* ================= RENDER ================= */
@@ -170,9 +177,9 @@ export default function CadastroPessoal({ navigation }) {
                       }
                     >
                       <Picker.Item label="Selecione" value="" />
-                      <Picker.Item label="Masculino" value="masculino" />
-                      <Picker.Item label="Feminino" value="feminino" />
-                      <Picker.Item label="Outro" value="outro" />
+                      <Picker.Item label="Masculino" value="MASCULINO" />
+                      <Picker.Item label="Feminino" value="FEMININO" />
+                      <Picker.Item label="Outro" value="OUTRO" />
                     </Picker>
                   </View>
                 </View>
