@@ -1,52 +1,15 @@
 import React, { useState } from "react";
 import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,} from "react-native";
+
 import styles from "./styles";
-import { useNavigation } from "@react-navigation/native";
-import { cadastroPaciente } from "../../services/authService";
 
-
-export default function CadastroConta({ route }) {
-  const [email, setEmail] = useState("");
+export default function EsquecerSenha({ navigation }) {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [erro, setErro] = useState("");
   const [aceitoTermos, setAceitoTermos] = useState(false);
 
-  const {nome, nickname, telefone, dataNasc, genero, cpf} = route.params;
-
-  const navigation = useNavigation();
-  /* =========================
-     VALIDAÇÃO EMAIL
-  ========================== */
-  const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  function validarEmail(texto) {
-    setEmail(texto);
-
-    if (!texto) {
-      setErro("O email é obrigatório.");
-      return;
-    }
-
-    if (!regexEmail.test(texto)) {
-      setErro("Digite um email válido.");
-      return;
-    }
-
-    setErro("");
-  }
-
-  const convData = (dataBr) => {
-    // Exemplo: "25/12/2023" -> "2023-12-25"
-    const partes = dataBr.split('/');
-    return `${partes[2]}-${partes[1]}-${partes[0]}`;
-  };
-
-  const limparCpf = (cpf) => {
-    // Remove tudo que não for número
-    return cpf.replace(/\D/g, '');
-  };
-
+ 
   /* =========================
      FORÇA DA SENHA
   ========================== */
@@ -71,52 +34,14 @@ export default function CadastroConta({ route }) {
      ENVIO
   ========================== */
 
-  const enviar = async () => {
-    validarCampos()
-    try {
-        const data = {
-          nome,
-          username: nickname, // A API espera 'username', não 'nickname'
-          email,
-          telefone,
-          genero,
-          senha,               // A API espera 'senha'
-          data: convData(dataNasc),       // A API espera 'data', não 'dataNasc'
-          cpf: limparCpf(cpf),
-          termos: aceitoTermos ? true : false // Converte boolean para 0/1 se necessário
-        };
-        console.log("📤 Dados enviados:", JSON.stringify(data, null, 2));
-        const response = await cadastroPaciente(data);
-
-        console.log("Usuário criado:", response);
-
-        alert("Cadastro realizado com sucesso");
-
-        navigation.navigate("login");
-
-    } catch (error) {
-        console.log(error);
-        console.log("ERRO COMPLETO: ", error.response?.data)
-        alert("Erro ao cadastrar");
-    }
-
-  };
-
-  // Validação!
-
-  function validarCampos() {
-    if (!email || !senha || !confirmarSenha) {
+  function enviar() {
+    if (!senha || !confirmarSenha) {
       setErro("Preencha todos os campos.");
       return;
     }
 
-    if (!regexEmail.test(email)) {
-      setErro("Digite um email válido.");
-      return;
-    }
-
-    if (senha.length < 8) {
-      setErro("A senha deve ter pelo menos 8 caracteres.");
+    if (senha.length < 6) {
+      setErro("A senha deve ter pelo menos 6 caracteres.");
       return;
     }
 
@@ -131,6 +56,8 @@ export default function CadastroConta({ route }) {
     }
 
     setErro("");
+
+    navigation.navigate("login");
   }
 
   /* =========================
@@ -151,38 +78,20 @@ export default function CadastroConta({ route }) {
           {/* HEADER */}
           <View style={styles.header}>
             <Text style={styles.titulo1}>
-              ESTAMOS FELIZ POR VOCÊ ESTAR CONOSCO{" "}
+              ESQUECEU SUA SENHA? CRIE OUTRA{" "}
               <Text style={styles.destaque}>AQUI!</Text>
             </Text>
 
             <Text style={styles.descricao}>
-              Sua jornada de saúde mental começa agora.
+              Sua jornada de saúde mental não para.
             </Text>
           </View>
 
           {/* CARD */}
           <View style={styles.card}>
-            <Text style={styles.tituloCard}>Dados da Conta</Text>
+            <Text style={styles.tituloCard}>Crie Uma Nova Senha</Text>
 
             <View style={styles.contInput}>
-              {/* EMAIL */}
-              <Text style={styles.label}>Email</Text>
-
-              <TextInput
-                value={email}
-                onChangeText={validarEmail}
-                style={[
-                  styles.input,
-                  erro && erro.toLowerCase().includes("email")
-                    ? styles.inputErro
-                    : null,
-                ]}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                placeholder="Digite seu email"
-              />
-
               {/* SENHA */}
               <Text style={styles.label}>Crie uma senha</Text>
 
@@ -250,7 +159,7 @@ export default function CadastroConta({ route }) {
                   !aceitoTermos && styles.botaoDesativado,
                 ]}
               >
-                <Text style={styles.textoProximo}>Cadastrar</Text>
+                <Text style={styles.textoProximo}>Próximo</Text>
 
                 <View style={styles.circuloSeta}>
                   <Text style={styles.setaProximo}>{">"}</Text>

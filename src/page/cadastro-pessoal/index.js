@@ -11,6 +11,7 @@ export default function CadastroPessoal({ navigation }) {
   const [genero, setGenero] = useState("");
   const [cpf, setCpf] = useState("");
   const [erro, setErro] = useState("");
+  const [nickname, setNickname] = useState("");
 
   /* ================= FORMATADORES ================= */
 
@@ -36,6 +37,10 @@ export default function CadastroPessoal({ navigation }) {
       2,
       4
     )}/${numeros.slice(4, 8)}`;
+  }
+  
+  function formatarNickname(text) {
+    return text.toLowerCase().replace(/\s/g, "").replace(/[^a-z0-9_]/g, "");
   }
 
   /* ================= VALIDAÇÃO ================= */
@@ -72,7 +77,14 @@ export default function CadastroPessoal({ navigation }) {
 
   function enviar() {
     if (!validarCampos()) return;
-    navigation.navigate("dadoConta");
+    navigation.navigate("cadastroConta", {
+      nome: nomeCompleto,
+      nickname: nickname,
+      telefone: telefone,
+      dataNasc: dataNascimento,
+      genero: genero,
+      cpf: cpf,
+    });
   }
 
   /* ================= RENDER ================= */
@@ -111,6 +123,21 @@ export default function CadastroPessoal({ navigation }) {
                 value={nomeCompleto}
                 onChangeText={setNomeCompleto}
               />
+              {/* Nickname */}
+              <Text style={styles.label}>Nickname</Text>
+
+              <View style={styles.nicknameContainer}>
+                <Text style={styles.arroba}>@</Text>
+
+              <TextInput
+                style={styles.nicknameInput}
+                value={nickname}
+                onChangeText={(text)=> setNickname(formatarNickname(text))
+                }
+                autoCapitalize="none"
+                maxLength={30}
+              />
+              </View>
 
               {/* Telefone */}
               <Text style={styles.label}>Telefone</Text>
@@ -150,9 +177,9 @@ export default function CadastroPessoal({ navigation }) {
                       }
                     >
                       <Picker.Item label="Selecione" value="" />
-                      <Picker.Item label="Masculino" value="masculino" />
-                      <Picker.Item label="Feminino" value="feminino" />
-                      <Picker.Item label="Outro" value="outro" />
+                      <Picker.Item label="Masculino" value="MASCULINO" />
+                      <Picker.Item label="Feminino" value="FEMININO" />
+                      <Picker.Item label="Outro" value="OUTRO" />
                     </Picker>
                   </View>
                 </View>

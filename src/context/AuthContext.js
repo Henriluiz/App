@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login as loginService, getMe } from "../services/auth-service";
+import { login, getPerfil, logout } from "../services/authService";
 import {
   saveSession,
   clearSession,
-  getAccessToken,
-  getStoredUser,
-} from "../services/auth-stogare";
-import { authEvents } from "../services/auth-events";
+  getToken,
+  getUser,
+} from "../services/authStogare";
+import { authEvents } from "../services/authEvents";
 
 const AuthContext = createContext({});
 
@@ -14,51 +14,56 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  async function signIn(email, password) {
-    const data = await loginService(email, password);
+  async function signIn(loginInput, senha) {
 
-    const accessToken = data.accessToken || data.token;
-    const refreshToken = data.refreshToken;
-    const userData = data.user;
+    const data = await login(loginInput, senha);
 
-    await saveSession({
-      accessToken,
-      refreshToken,
-      user: userData,
-    });
+    const token = data.access_token;
+    const user = data.user;
 
-    setUser(userData);
+    await saveSession(token, user);
+
+    setUser(user);
+
   }
 
   async function signOut() {
+
+    try {
+      await logout();
+    } catch (e) {}
+
     await clearSession();
+
     setUser(null);
+
   }
 
-  async function bootstrap() {
+  const bootstrap = async () => {
+
     try {
-      const token = await getAccessToken();
-      const storedUser = await getStoredUser();
+
+      const token = await getToken();
 
       if (!token) {
         setUser(null);
         return;
       }
 
-      if (storedUser) {
-        setUser(storedUser);
-      }
+      const user = await getUser();
+      setUser(user);
 
-      try {
-        const freshUser = await getMe();
-        setUser(freshUser);
-      } catch (error) {
-        await clearSession();
-        setUser(null);
-      }
+    } catch (error) {
+
+      console.log("Erro no bootstrap", error);
+      setUser(null);
+
     } finally {
+
       setLoading(false);
+
     }
+
   }
 
   useEffect(() => {

@@ -1,20 +1,21 @@
 import axios from "axios";
-import {
-  getAccessToken,
-  getRefreshToken,
-  saveSession,
-  clearSession,
-  getStoredUser,
-} from "./authStorage";
-import { authEvents } from "./authEvents";
+import { getToken, clearSession } from "./authStogare";
 
 const api = axios.create({
-  baseURL: "http://10.0.2.2:8000", // troque conforme seu ambiente
+  baseURL: "http://10.0.2.2:8000/api", // ! Seguir a tabela abaixo
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+// | ambiente         | URL correta |
+// | ---------------- | ----------- |
+// | Expo Web         | localhost   |
+// | celular físico   | IP do PC    |
+// | emulador Android | 10.0.2.2    |
+// | iOS simulator    | localhost   |
+
 
 let isRefreshing = false;
 let failedQueue = [];
@@ -32,103 +33,33 @@ function processQueue(error, token = null) {
 }
 
 // 1) Adiciona access token em toda requisição
-api.interceptors.request.use(
-  async (config) => {
-    const token = await getAccessToken();
+api.interceptors.request.use(async (config) => {
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  const token = await getToken();
 
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+
+});
 
 // 2) Intercepta 401 e tenta refresh
 api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  response => response,
 
-    if (!error.response) {
-      return Promise.reject(error);
-    }
+  async error => {
 
-    const status = error.response.status;
+    if (error.response?.status === 401) {
 
-    const isRefreshRequest =
-      originalRequest?.url?.includes("/auth/refresh");
-
-    if (status !== 401 || isRefreshRequest) {
-      return Promise.reject(error);
-    }
-
-    if (originalRequest._retry) {
-      return Promise.reject(error);
-    }
-
-    originalRequest._retry = true;
-
-    if (isRefreshing) {
-      return new Promise((resolve, reject) => {
-        failedQueue.push({
-          resolve,
-          reject,
-        });
-      })
-        .then((newAccessToken) => {
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          return api(originalRequest);
-        })
-        .catch((err) => Promise.reject(err));
-    }
-
-    isRefreshing = true;
-
-    try {
-      const refreshToken = await getRefreshToken();
-
-      if (!refreshToken) {
-        throw new Error("Refresh token não encontrado");
-      }
-
-      const refreshResponse = await axios.post(
-        "http://10.0.2.2:8000/auth/refresh",
-        {
-          refresh_token: refreshToken,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          timeout: 10000,
-        }
-      );
-
-      const { accessToken, refreshToken: newRefreshToken } = refreshResponse.data;
-
-      const storedUser = await getStoredUser();
-
-      await saveSession({
-        accessToken,
-        refreshToken: newRefreshToken ?? refreshToken,
-        user: storedUser,
-      });
-
-      api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-      processQueue(null, accessToken);
-
-      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-      return api(originalRequest);
-    } catch (refreshError) {
-      processQueue(refreshError, null);
       await clearSession();
-      authEvents.emit("logout");
-      return Promise.reject(refreshError);
-    } finally {
-      isRefreshing = false;
+
+      console.log("Sessão expirada");
+
     }
+
+    return Promise.reject(error);
   }
 );
 
