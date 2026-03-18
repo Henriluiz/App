@@ -229,4 +229,119 @@ iconeEditar: {
     borderBottomWidth: 1,
     borderColor: "#eee",
   },
+
+  botaoExcluir: {
+    flex: 1,
+    backgroundColor: "#FFF",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+    marginRight: 10,
+    padding: 30
+  },
+    
+    textoExcluir: {
+    color: "#FF4B4B",
+    fontWeight: "bold",
+  },
+
+  // _____ SOBRE O MODAL DE CONFIRMAÇÃO DE DELETE_______
+  overlay: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  
+  modalContainer2: {
+    width: '85%',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+  },
+
+  iconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#fee',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  icon: {
+    fontSize: 30,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+  },
+  warningText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  userInfo: {
+    fontSize: 14,
+    color: '#999',
+    marginBottom: 15,
+  },
+
+  confirmContainer: {
+    width: '100%',
+    marginBottom: 20,
+  },
+  confirmText: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+  },
+  boldText: {
+    fontWeight: 'bold',
+    color: '#ff4444',
+  },
+  confirmInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 14,
+    marginTop: 8,
+    textAlign: 'center',
+  },
+
+  
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  cancelButton: {
+    backgroundColor: '#f0f0f0',
+  },
+  cancelButtonText: {
+    color: '#666',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  deleteButton: {
+    backgroundColor: '#ff4444',
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+
 });

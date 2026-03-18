@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout } from "../services/authService";
+import { login, getPerfil, logout, deleteConta } from "../services/authService";
 import {
   saveSession,
   clearSession,
@@ -9,6 +9,8 @@ import {
 import { authEvents } from "../services/authEvents";
 
 const AuthContext = createContext({});
+
+// * SEMPRE QUE FOR ADD UMA FUNCÃO NOVA, ADD ELE NO AuthContext.Provider
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -35,6 +37,20 @@ export function AuthProvider({ children }) {
 
     await clearSession();
 
+    setUser(null);
+
+  }
+
+  // Deletar a conta
+  async function removeAccount() {
+
+    try {
+      await deleteConta();
+    } catch (e) {
+      console.log("Erro ao deletar conta", e);
+    }
+
+    await clearSession();
     setUser(null);
 
   }
@@ -90,6 +106,7 @@ export function AuthProvider({ children }) {
         loading,
         signIn,
         signOut,
+        removeAccount
       }}
     >
       {children}

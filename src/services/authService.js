@@ -39,5 +39,10 @@ export async function patchPerfil(data) {
   const response = await api.patch("/perfil", data);
 
   return response.data;
-  
+
+}
+
+export async function deleteConta() {
+  const response = await api.delete("/delete");
+  return response.data;
 }

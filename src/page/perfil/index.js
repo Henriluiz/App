@@ -8,7 +8,9 @@ import {
   Platform,
   Pressable,
   Image,
-  Modal
+  Modal,
+  ActivityIndicator,
+  Alert
 } from "react-native";
 
 import { MaskedTextInput } from "react-native-mask-text";
@@ -16,6 +18,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import { useRoute } from "@react-navigation/native";
 import styles from "./styles";
+import { useAuth } from "../../context/AuthContext";
+import { clearSession } from "../../services/authStogare";
 
 export default function Perfil({ navigation }) {
   
@@ -30,9 +34,16 @@ export default function Perfil({ navigation }) {
   const [telefone, setTelefone] = useState("(11) 99999-9999");
   const [cpf, setCpf] = useState("00000000000");
   const [dataNascimento, setDataNascimento] = useState("09/02/2005");
+
+  // Status
   const [editando, setEditando] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
-  
+  const [confirmText, setConfirmText] = useState("");
+  const [modalDel, setModalDel] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState(false);
+
+  const { user, removeAccount} = useAuth();
 
   function formatarNickname(text) {
     return text
@@ -56,6 +67,32 @@ export default function Perfil({ navigation }) {
       .replace(/(\d{2})(\d)/, "$1/$2")
       .slice(0, 10);
   }
+
+  const handleDelete = async () => {
+    setLoading(true);
+    if (confirmText.toUpperCase() == "DELETAR") {
+      console.log("COM1")
+      try {
+        // Chama a função de deleção (pode ser uma API)
+        console.log("COMECEI")
+        await removeAccount();
+        console.log("TERMINEI")
+        
+        // Se a deleção for bem sucedida, faz logout
+        await clearSession();
+        
+        Alert.alert('Sucesso', 'Conta deletada com sucesso');
+      } catch (error) {
+        Alert.alert('Erro', 'Não foi possível deletar a conta. Tente novamente.');
+        console.log(error);
+        setLoading(false)
+      } 
+    }
+    else {
+      setErro(true)
+    }
+    setLoading(false)
+  };
 
   return (
     <KeyboardAvoidingView
@@ -115,29 +152,10 @@ export default function Perfil({ navigation }) {
 
             <View style={styles.container2}>
               {/* TÍTULO E BOTAO TESTE DE EDITAR*/}
-              <View>
-
-                <View>
-                    <Pressable
-                      style={styles.botaoEditar}
-                      onPress={() => navigation.navigate("editarPerfil")}
-                    >
-                      <Text style={styles.textoBotao}>Editar Perfil</Text>
-                    </Pressable>
-                  </View>
-
-
-
-
-
-
-
-
-                <Text style={styles.tituloCard}>Suas informações</Text>
-              </View>
-
+              <Text style={styles.tituloCard}>Suas informações</Text>
               {/* NOME E SOBRENOME */}
               <View style={styles.rowWrap}>
+                
 
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Nome</Text>
@@ -363,12 +381,89 @@ export default function Perfil({ navigation }) {
 
             <Text style={styles.modalTitulo}>Menu</Text>
             
+            <Pressable
+              style={styles.opcao}
+              onPress={() => navigation.navigate("editarPerfil")}
+            >
+              <Text>Editar Perfil</Text>
+            </Pressable>
+            
             <Pressable style={styles.opcao}>
-              <Text>Sair</Text>
+              <Text style={styles.textoBotao}>Sair</Text>
+            </Pressable>
+
+            <Pressable style={styles.botaoExcluir} onPress={() => setModalDel(true)}>
+              <Text style={styles.textoExcluir}>Excluir conta</Text>
             </Pressable>
 
           </View>
         </Modal>
+
+        {/* Teste! */}
+        <Modal transparent={true} visible={modalDel} animationType='fade' style={{backgroundColor:"rgba (0,0,0,0.5)"}}>
+          <View style={styles.overlay}>
+            <View style={styles.modalContainer2}>
+            {/* Ícone de aviso */}
+              <View style={styles.iconContainer}>
+                <Text style={styles.icon}>⚠️</Text>
+              </View>
+
+              {/* Título */}
+              <Text style={styles.title}>Deletar Conta</Text>
+
+              {/* Mensagem de aviso */}
+              <Text style={styles.warningText}>
+                Tem certeza que deseja deletar sua conta?
+              </Text>
+
+              {/* Informação do usuário (opcional) */}
+              {user?.email && (
+                <Text style={styles.userInfo}>
+                  {user.email}
+                </Text>
+              )}
+
+              <View style={styles.confirmContainer}>
+                <Text style={styles.confirmText}>
+                    Digite <Text style={styles.boldText}>DELETAR</Text> para confirmar
+                  </Text>
+                  <TextInput
+                    style={styles.confirmInput}
+                    placeholder="DELETAR"
+                    value={confirmText}
+                    onChangeText={setConfirmText}
+                  />
+
+                  { erro ? <Text>Digite corretamente!</Text> : <Text></Text>
+
+                  }
+              </View>
+
+              <View style={styles.buttonContainer}>
+                <Pressable
+                  style={[styles.button, styles.cancelButton]}
+                  onPress={() => [setModalDel(false),  setConfirmText("")]}
+                  disabled={loading}
+                >
+                  <Text style={styles.cancelButtonText}>Cancelar</Text>
+                </Pressable>
+
+                <Pressable
+                  style={[styles.button, styles.deleteButton]}
+                  onPress={() => handleDelete()}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="#fff" size="small" />
+                  ) : (
+                    <Text style={styles.deleteButtonText}>Sim, deletar</Text>
+                  )}
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
       </View>
 
     </KeyboardAvoidingView>
