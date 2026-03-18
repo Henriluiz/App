@@ -1,15 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import {
-  Text,
-  View,
-  TextInput,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Image,
-  Modal,
-  ActivityIndicator,
+  Text,View, TextInput, ScrollView, KeyboardAvoidingView,
+  Platform, Pressable, Image, Modal, ActivityIndicator,
   Alert
 } from "react-native";
 
@@ -19,31 +11,30 @@ import { Picker } from "@react-native-picker/picker";
 import { useRoute } from "@react-navigation/native";
 import styles from "./styles";
 import { useAuth } from "../../context/AuthContext";
-import { clearSession } from "../../services/authStogare";
+import { clearSession, saveSession, getToken } from "../../services/authStogare";
 
 export default function Perfil({ navigation }) {
   
   const route = useRoute
   const [foto, setFoto] = useState("https://i.pravatar.cc/150");
-  const [nome, setNome] = useState("Junior");
-  const [sobrenome, setSobrenome] = useState("Silva");
-  const [nickname, setNickname] = useState("junior_silva");
-  const [genero, setGenero] = useState("masculino");
-  const [email, setEmail] = useState("juninhosilva190@gmail.com");
-  const [senha, setSenha] = useState("123456");
-  const [telefone, setTelefone] = useState("(11) 99999-9999");
-  const [cpf, setCpf] = useState("00000000000");
-  const [dataNascimento, setDataNascimento] = useState("09/02/2005");
-
+  const [nome, setNome] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [genero, setGenero] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+  
   // Status
   const [editando, setEditando] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
   const [confirmText, setConfirmText] = useState("");
-  const [modalDel, setModalDel] = useState(true);
+  const [modalDel, setModalDel] = useState(false);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState(false);
 
-  const { user, removeAccount} = useAuth();
+  const { user, removeAccount, signOut, updateUser} = useAuth();
 
   function formatarNickname(text) {
     return text
@@ -68,15 +59,37 @@ export default function Perfil({ navigation }) {
       .slice(0, 10);
   }
 
+  const capitalize = (str) => {
+    if (!str) return ''; // Retorna vazio se a string for falsy (null, undefined, etc.)
+    
+    return str
+      .toLowerCase() // Converte toda a string para minúsculas
+      .split(' ') // Divide a string em um array de palavras
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitaliza cada palavra
+      .join(' '); // Junta as palavras novamente em uma string
+  };
+
+  const formatCPF = (cpf) => {
+    if (!cpf) return ''; // Retorna vazio se o CPF for falsy
+
+    // Remove tudo que não for dígito
+    const numericCPF = cpf.replace(/\D/g, '');
+
+    // Aplica a máscara: XXX.XXX.XXX-XX
+    return numericCPF
+      .slice(0, 11) // Limita a 11 caracteres
+      .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona o primeiro ponto
+      .replace(/(\d{3})(\d)/, '$1.$2') // Adiciona o segundo ponto
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Adiciona o traço
+  };
+
   const handleDelete = async () => {
     setLoading(true);
     if (confirmText.toUpperCase() == "DELETAR") {
-      console.log("COM1")
+      
       try {
         // Chama a função de deleção (pode ser uma API)
-        console.log("COMECEI")
         await removeAccount();
-        console.log("TERMINEI")
         
         // Se a deleção for bem sucedida, faz logout
         await clearSession();
@@ -93,6 +106,53 @@ export default function Perfil({ navigation }) {
     }
     setLoading(false)
   };
+
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      console.log("Começo")
+      const userNv = await updateUser({
+        nome,
+        email,
+        telefone,
+      });
+      console.log("Update terminado")
+
+      // // Filtra apenas os campos que foram alterados
+      // const changedData = Object.keys(userNv).reduce((acc, key) => {
+      //   if (userNv[key] !== user[key]) {
+      //     acc[key] = userNv[key];
+      //   }
+      //   return acc;
+      // }, {});
+
+      // // Se houver mudanças, envia para a API
+      // if (Object.keys(changedData).length > 0) {
+      //   const updatedUser = await updateUser(changedData); // ← Envia só o que mudou
+      //   setCurrentUserData(updatedUser); // Atualiza o estado com a resposta
+      // }
+
+      setEditando(false);
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      setNome(user.nome || "");
+      setNickname(user.username || "");
+      setEmail(user.email || "");
+      setTelefone(user.telefone || "");
+      setGenero(user.genero || "");
+      setSenha(user.senha || "123456"); // Não deixa a senha aqui
+      setCpf(user.cpf || "");
+      setDataNascimento(user.data_nascimento || "");
+    }
+  }, [user]);
 
   return (
     <KeyboardAvoidingView
@@ -131,20 +191,20 @@ export default function Perfil({ navigation }) {
             </View>
 
             <View>
-              <Text style={styles.nomePessoa}>{nome}</Text>
+              <Text style={styles.nomePessoa}>{user.nome}</Text>
             </View>
 
             <View>
               <Text style={styles.nickname}>@{nickname}</Text>
             </View>
 
-            <View style={styles.botaoEditar}>
-            <Pressable onPress={() => setEditando(!editando)}>
-                  <Text style={{ color: "#000000", fontWeight: "bold" }}>
-                    {editando ? "Salvar" : "Editar Perfil"}
-                  </Text>
-                </Pressable>
-              </View> 
+            {editando ? <View style={styles.botaoEditar}>
+              <Pressable onPress={editando ? handleSave : () => setEditando(true)}>
+                <Text style={{ color: "#000000", fontWeight: "bold" }}>
+                  Salvar
+                </Text>
+              </Pressable>
+            </View> : <View></View> }
 
 
 
@@ -179,9 +239,11 @@ export default function Perfil({ navigation }) {
                     editando && styles.nicknameEditando
                   ]}>
 
+                    
                     <Text style={styles.arroba}>@</Text>
+                    <Text style={{marginTop: 2}}>{user.username}</Text>
 
-                    <TextInput
+                    {/* <TextInput
                       style={styles.nicknameInput}
                       value={nickname}
                       editable={editando}
@@ -190,7 +252,7 @@ export default function Perfil({ navigation }) {
                       }
                       autoCapitalize="none"
                       maxLength={30}
-                    />
+                    /> */}
 
                   </View>
                 </View>
@@ -199,6 +261,28 @@ export default function Perfil({ navigation }) {
 
 
               {/* NICKNAME E GÊNERO */}
+              <View style={styles.rowWrap}>
+
+                <View style={styles.colunaFlex}>
+                  <Text style={styles.label}>CPF</Text>
+
+                  <Text style={{marginTop: 10}}>{formatCPF(user.cpf)}</Text>
+                </View>
+
+
+                <View style={styles.colunaFlex}>
+                  <Text style={styles.label}>Gênero</Text>
+
+                  <Text style={{marginTop: 10, textAlign:"center"}}>{user.genero}</Text>
+                </View>
+
+              </View>
+
+
+              
+
+
+              {/* SENHA E TELEFONE */}
               <View style={styles.rowWrap}>
 
                 <View>
@@ -221,53 +305,6 @@ export default function Perfil({ navigation }) {
 
 
                 <View style={styles.colunaFlex}>
-                  <Text style={styles.label}>Gênero</Text>
-
-                  <View style={[
-                    styles.pickerContainer
-                  ]}>
-
-                    <Picker
-                      selectedValue={genero}
-                      onValueChange={(itemValue) =>
-                        setGenero(itemValue)
-                      }
-                    >
-                      <Picker.Item label="Selecione" value="" />
-                      <Picker.Item label="Masculino" value="masculino" />
-                      <Picker.Item label="Feminino" value="feminino" />
-                      <Picker.Item label="Outro" value="outro" />
-                    </Picker>
-
-                  </View>
-                </View>
-
-              </View>
-
-
-              
-
-
-              {/* SENHA E TELEFONE */}
-              <View style={styles.rowWrap}>
-
-                <View style={styles.colunaFlex}>
-                  <Text style={styles.label}>Senha</Text>
-
-                  <TextInput
-                    onChangeText={setSenha}
-                    value={senha}
-                    style={[
-                      styles.input,
-                      editando && styles.inputEditando
-                    ]}
-                    secureTextEntry
-                    editable={editando}
-                  />
-                </View>
-
-
-                <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Telefone</Text>
 
                   <TextInput
@@ -276,7 +313,7 @@ export default function Perfil({ navigation }) {
                       editando && styles.inputEditando
                     ]}
                     keyboardType="phone-pad"
-                    value={telefone}
+                    value={formatarTelefone(telefone)}
                     editable={editando}
                     onChangeText={(text) =>
                     setTelefone(formatarTelefone(text))
@@ -289,22 +326,6 @@ export default function Perfil({ navigation }) {
 
               {/* CPF E DATA */}
               <View style={styles.rowWrap}>
-
-                <View style={styles.colunaFlex}>
-                  <Text style={styles.label}>CPF</Text>
-
-                  <MaskedTextInput
-                    mask="999.999.999-99"
-                    value={cpf}
-                    onChangeText={(text) => setCpf(text)}
-                    keyboardType="numeric"
-                    style={[
-                      styles.input
-                    ]}
-                  />
-                </View>
-
-
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Data de Nascimento</Text>
 
@@ -334,7 +355,7 @@ export default function Perfil({ navigation }) {
 
         <Pressable onPress={() => navigation.navigate('menu')}>
           <Ionicons
-            name="home"
+            name="home-outline"
             size={24}
             color={route.name === "Home" ? "#6C63FF" : "#999"}
           />
@@ -348,7 +369,8 @@ export default function Perfil({ navigation }) {
           />
         </Pressable>
 
-        <Pressable onPress={() => navigation.navigate("Chat")}>
+        <Pressable> 
+          {/* onPress={() => navigation.navigate("Chat")} */}
           <Ionicons
             name="chatbubble-outline"
             size={24}
@@ -358,7 +380,7 @@ export default function Perfil({ navigation }) {
 
         <Pressable onPress={() => navigation.navigate('perfil')}>
           <Ionicons
-            name="person-outline"
+            name="person"
             size={24}
             color={route.name === "Perfil" ? "#6C63FF" : "#999"}
           />
@@ -383,12 +405,13 @@ export default function Perfil({ navigation }) {
             
             <Pressable
               style={styles.opcao}
-              onPress={() => navigation.navigate("editarPerfil")}
+              onPress={() => [setEditando(!editando), setMenuAberto(false)]}
             >
               <Text>Editar Perfil</Text>
             </Pressable>
             
-            <Pressable style={styles.opcao}>
+            
+            <Pressable style={styles.opcao} onPress={() => signOut()}>
               <Text style={styles.textoBotao}>Sair</Text>
             </Pressable>
 

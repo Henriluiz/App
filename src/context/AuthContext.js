@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta } from "../services/authService";
+import { login, getPerfil, logout, deleteConta, patchPerfil } from "../services/authService";
 import {
   saveSession,
   clearSession,
@@ -29,6 +29,7 @@ export function AuthProvider({ children }) {
 
   }
 
+  // Deslogar
   async function signOut() {
 
     try {
@@ -53,6 +54,25 @@ export function AuthProvider({ children }) {
     await clearSession();
     setUser(null);
 
+  }
+
+
+  async function updateUser(data) {
+    try {
+      console.log("Testa1")
+      const updatedUser = await patchPerfil(data);
+      console.log("Testa2")
+      
+      setUser(updatedUser);
+      
+      console.log("Testa3")
+      await saveSession(await getToken(), updatedUser);
+      console.log("Testa4")
+
+    } catch (error) {
+      console.log("Erro ao atualizar usuário", error);
+      throw error;
+    }
   }
 
   const bootstrap = async () => {
@@ -106,7 +126,8 @@ export function AuthProvider({ children }) {
         loading,
         signIn,
         signOut,
-        removeAccount
+        removeAccount,
+        updateUser
       }}
     >
       {children}

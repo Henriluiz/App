@@ -111,7 +111,8 @@ iconeEditar: {
   },
 
   colunaFlex: {
-    flex: 1,
+    flex: 1, // Divide o espaço igualmente
+    // alignItems: 'center', // Centraliza o conteúdo horizontalmente
   },
 
   label: {

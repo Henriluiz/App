@@ -36,9 +36,9 @@ export async function logout() {
 
 export async function patchPerfil(data) {
 
-  const response = await api.patch("/perfil", data);
+  const response = await api.patch("/update", data);
 
-  return response.data;
+  return response.data.user;
 
 }
 
