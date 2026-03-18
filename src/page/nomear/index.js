@@ -2,13 +2,16 @@
 import { Text, View, Image, Pressable} from 'react-native';
 import styles from './styles';
 import { useNavigation } from "@react-navigation/native";
+import {LinkService} from '../../components/abrirLinkExterno';
 
-export default function Cadastro() {
+export default function Nomear() {
     const navigation = useNavigation();
 
     const abrir_cadastro = (idModal) => {
         navigation.navigate(idModal)
     }
+
+    const linkExterno = "www.google.com"
 
     return (
         <View style={styles.container}>
@@ -19,14 +22,14 @@ export default function Cadastro() {
                 <Text style={styles.titulo}>Olá,{"\n"}</Text>
                 <Text style={styles.titulo2}>Boas vindas</Text>
             </Text>
-            <Text style={styles.descricao}>Para começarmos,{"\n"}identifeque-se:</Text>
+            <Text style={styles.descricao}>Para começarmos,{"\n"}identifique-se:</Text>
             <Text style={styles.descricao2}>Eu sou:</Text>
             
             <View style={styles.containerBotoes}>
-                <Pressable onPress={() => abrir_cadastro('dadoPessoal')} style={styles.botaoPsicologo}>
+                <Pressable onPress={() => LinkService.open(linkExterno)} style={styles.botaoPsicologo}>
                     <Text style={styles.textPsicologo}>PSICÓLOGO</Text>
                 </Pressable>
-                <Pressable onPress={() => abrir_cadastro('dadoConta')} style={styles.botaoPaciente}>
+                <Pressable onPress={() => abrir_cadastro("login")} style={styles.botaoPaciente}>
                     <Text style={styles.textPaciente}>PACIENTE</Text>
                 </Pressable>
             </View>

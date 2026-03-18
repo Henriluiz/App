@@ -1,196 +1,147 @@
-// import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { Text, View, Image, TextInput, Pressable } from 'react-native';
-import styles from './styles';
+import { useState } from "react";
+import { Text, View, Image, TextInput, Pressable } from "react-native";
+import styles from "./styles";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useAuth } from "../../context/AuthContext";
 
-import auth from '@react-native-firebase/auth';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AntDesign from "@expo/vector-icons/AntDesign";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+export default function Login() {
+  const navigation = useNavigation();
 
-export default function Login({onLogin}) {
-    const navigation = useNavigation();
+  const { signIn } = useAuth();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [aprovado, setAprovado] = useState(false);
-    const enviar = (idModal) => {
-        navigation.navigate(idModal)
+  const [login, setLogin] = useState(""); // * Login aqui é o Email!!
+  const [senha, setSenha] = useState("");
+
+  const enviar = (tela) => {
+    navigation.navigate(tela);
+  };
+
+  const validarCampos = () => {
+    const emailLimpo = login.trim();
+    const senhaLimpa = senha.trim();
+
+    if (!emailLimpo) {
+      console.log("Email vazio");
+      return false;
     }
 
-    function signUp() { // Criar Conta
-        auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(() => {
-            console.log('Conta de usuário criada e iniciada!');
-        })
-        .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
-            console.log('Esse endereço de e-mail já está em uso!');
-            }
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpo);
 
-            if (error.code === 'auth/invalid-email') {
-            console.log('Esse endereço de e-mail é inválido!');
-            }
-
-            console.error(error);
-        });
+    if (!emailOk) {
+      console.log("Email inválido");
+      return false;
     }
 
-    function signIn() {
-        auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(() => {
-            console.log('o usuário está autenticado');
-        })
-        .catch(error => {
-            console.error(error);
-        });
+    if (!senhaLimpa) {
+      console.log("Senha vazia");
+      return false;
     }
 
+    if (senhaLimpa.length < 6) {
+      console.log("Senha muito curta");
+      return false;
+    }
 
-    const validarCampos = (email, senha) => {
-        const emailLimpo = email.trim();
-        const senhaLimpa = senha.trim();
+    return true;
+  };
 
-        if (!emailLimpo) {
-            console.log("Email está vazio");
-            return false;
-        }
+  const onSubmit = async() => {
+    if (validarCampos()) {
+      console.log("Campos válido");
 
-        // Funciona para verificar a existência de um "@"
-        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpo);
-        if (!emailOk) {
-            console.log("Email inválido");
-            return false;
-        }
+      await signIn(login, senha)
+    }
+  };
 
-        // Verifica senha forte
-        if (!senhaLimpa) {
-            console.log("Senha está vazia");
-            return false;
-        }
-    
-        if (senhaLimpa.length < 6 || senhaLimpa.length > 25) {
-            console.log("Senha deve ter entre 6 e 25 caracteres");
-            return false;
-        }
+  return (
+    <KeyboardAwareScrollView
+      style={{ flex: 1 }}
+      contentContainerStyle={{ flexGrow: 1 }}
+      enableOnAndroid={true}
+      extraScrollHeight={30}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.container}>
+        <View style={styles.containerLogo}>
+          <Image style={styles.logo} source={require("./img/logo.png")} />
+        </View>
 
-        return true;
-    };
+        <View style={styles.container2}>
+          <Text style={styles.titulo}>QUE BOM TER VOCÊ DE VOLTA!</Text>
 
-    const onSubmit = () => {
-        const ok = validarCampos(email, senha);
-        setAprovado(ok);
+          <Text style={styles.descricao}>
+            Sua próxima sessão está quase lá.
+          </Text>
 
-        if (ok) {
-            console.log("Formulário válido, enviando...");
-            enviar("dadoPessoal");
-        }
-    };
+          <View style={styles.contEntradas}>
+            <View>
+              <Text style={styles.label}>Email</Text>
 
+              <View style={styles.Continput}>
+                <MaterialIcons name="email" size={24} color="#A383FB" />
 
-    return (
-        <KeyboardAwareScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{ flexGrow: 1 }}
-            enableOnAndroid={true}
-            extraScrollHeight={30}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-        >
-        <View style={styles.container}>
-            <View style={styles.containerLogo}>
-                <Image
-                    style={styles.logo}
-                    source={require('./img/logo.png')}
+                <TextInput
+                  style={styles.input}
+                  onChangeText={setLogin}
+                  value={login}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  maxLength={100}
                 />
+              </View>
             </View>
 
-            <View style={styles.container2}>
+            <View>
+              <Text style={styles.label}>Senha</Text>
 
-                <Text style={styles.titulo}>
-                    QUE BOM TER VOCÊ DE VOLTA!
-                </Text>
+              <View style={styles.Continput}>
+                <MaterialIcons name="password" size={24} color="#A383FB" />
 
-                <Text style={styles.descricao}>
-                    Sua próxima sessão está quase lá.
-                </Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={setSenha}
+                  value={senha}
+                  secureTextEntry
+                  maxLength={20}
+                />
+              </View>
 
-                <View style={styles.contEntradas}>
-
-                    <View>
-                        <Text style={styles.label}>Email</Text>
-                        <View style={styles.Continput}>
-                            <MaterialIcons name="email" size={24} color="#A383FB" />
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={setEmail}
-                                value={email}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                underlineColorAndroid="transparent"
-                                maxLength={100}
-                            />
-                        </View>
-                    </View>
-
-                    <View>
-                        <Text style={styles.label}>Senha</Text>
-                        <View style={styles.Continput}>
-                            <MaterialIcons name="password" size={24} color="#A383FB" />
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={setSenha}
-                                value={senha}
-                                secureTextEntry={true}
-                                underlineColorAndroid="transparent"
-                                maxLength={20}
-                                secureTextEntry
-                            />
-                        </View>
-
-                        <Pressable onPress={() => enviar('dadoConta')}>
-                            <Text style={styles.esenha}>
-                                Esqueci a minha senha
-                            </Text>
-                        </Pressable>
-                    </View>
-
-                </View>
-
-                <View style={styles.contEntra}>
-
-                    <View style={styles.botaoEntra}>
-                        <Pressable onPress={onSubmit} style={styles.stylesButton}>
-                            <Text style={styles.entrarText}>Entrar</Text>
-                            <AntDesign
-                                name="send"
-                                size={24}
-                                color="rgba(163, 131, 251, 1)"
-                                style={styles.iconEnviar}
-                            />
-                        </Pressable>
-                    </View>
-
-                    <View style={styles.contaNova}>
-                        <Text style={styles.textCadastre}>
-                            É novo por aqui?
-                        </Text>
-
-                        <Pressable onPress={() => enviar('cadastro')}>
-                            <Text style={styles.linkCadastre}>
-                                Cadastre-se
-                            </Text>
-                        </Pressable>
-                    </View>
-
-                </View>
-                </View>
+              <Pressable onPress={() => enviar("esquecerSenha")}>
+                <Text style={styles.esenha}>Esqueci a minha senha</Text>
+              </Pressable>
             </View>
-        </KeyboardAwareScrollView>
-    );
+          </View>
+
+          <View style={styles.contEntra}>
+            <View style={styles.botaoEntra}>
+              <Pressable onPress={() => onSubmit()} style={styles.stylesButton}>
+                <Text style={styles.entrarText}>Entrar</Text>
+
+                <AntDesign
+                  name="send"
+                  size={24}
+                  color="rgba(163, 131, 251, 1)"
+                  style={styles.iconEnviar}
+                />
+              </Pressable>
+            </View>
+
+            <View style={styles.contaNova}>
+              <Text style={styles.textCadastre}>É novo por aqui?</Text>
+
+              <Pressable onPress={() => enviar("cadastroPessoal")}>
+                <Text style={styles.linkCadastre}>Cadastre-se</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </View>
+    </KeyboardAwareScrollView>
+  );
 }

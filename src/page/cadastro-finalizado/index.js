@@ -5,12 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-export default function Login() {
+export default function CadastroFin() {
 
     const navigation = useNavigation();
 
     const finalizar = () => {
-        navigation.navigate('login');
+        navigation.navigate("login");
     };
 
     return (
