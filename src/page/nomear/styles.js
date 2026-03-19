@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'; // Usa isso, no lugar de pixels ex: wp("10%") e hp("10%")
 
 export default StyleSheet.create ({
     container: {
@@ -8,27 +9,27 @@ export default StyleSheet.create ({
 
     // Flex : 1
     logo: {
-        maxWidth: 373,
-        width: 250,
-        height: 260,
+        width: wp("35%"),
+        height: hp("25%"),
         marginTop: 20,
+        alignItems: "center"
     },
 
     // Flex : 2
 
     titulo: {
         textAlign: "center",
-        fontSize: 70,
+        fontSize: 53,
         color: "#A383FB",
     },
 
     caixaTitulos: {
-        padding: 20,
+        padding: 15,
         top: -30,
     },
 
     titulo2: {
-        fontSize: 53,
+        fontSize: 50,
         color: 'black',
     },
 
@@ -44,14 +45,14 @@ export default StyleSheet.create ({
     containerBotoes: {
         textAlign: "left",
         alignItems: "flex-start",
-        marginTop: 40,
-        gap: 52,
+        marginTop: hp("6%"),
+        gap: 35,
     },
 
     descricao2: {
         textAlign: "left",
         fontSize: 24,
-        marginTop: 21,
+        marginTop: 30,
         marginRight: 230,
         fontWeight: "bold",
     },
