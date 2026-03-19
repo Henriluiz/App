@@ -1,9 +1,9 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Home from "../page/home"
+
+import Menu from "../page/menu";
 import Perfil from "../page/perfil"
 import EditarPerfil from "../page/editarPerfil";
-import Menu from "../page/menu";
 
 const Stack = createNativeStackNavigator();
 

@@ -16,7 +16,7 @@ import { clearSession, saveSession, getToken } from "../../services/authStogare"
 export default function Perfil({ navigation }) {
   
   const route = useRoute
-  const [foto, setFoto] = useState("https://i.pravatar.cc/150");
+  const [foto, setFoto] = useState(null);
   const [nome, setNome] = useState("");
   const [nickname, setNickname] = useState("");
   const [genero, setGenero] = useState("");
@@ -189,10 +189,9 @@ export default function Perfil({ navigation }) {
 
           <View style={styles.card}>
             <View style={styles.fotoContainer}>
-              <Image
-                source={{ uri: foto }}
-                style={styles.fotoPerfil}
-              />
+              <View style={styles.fotoPerfil}>
+                <Ionicons name="person-outline" size={50} color="white"  style={styles.fotoPerfil2}/>
+              </View>
 
               {editando && (
                 <View style={styles.iconeEditar}>
@@ -203,11 +202,11 @@ export default function Perfil({ navigation }) {
             </View>
 
             <View>
-              <Text style={styles.nomePessoa}>{nome}</Text>
+              <Text style={styles.nomePessoa}>{user.nome}</Text>
             </View>
 
             <View>
-              <Text style={styles.nickname}>@{nickname}</Text>
+              <Text style={styles.nickname}>@{user.username}</Text>
             </View>
 
             {editando ? <View style={styles.botaoEditar}>
@@ -238,7 +237,7 @@ export default function Perfil({ navigation }) {
                       editando && styles.inputEditando
                     ]}
                     value={capitalize(nome)}
-                    onChangeText={capitalize(setNome)}
+                    onChangeText={setNome}
                     editable={editando}
                   />
                 </View>

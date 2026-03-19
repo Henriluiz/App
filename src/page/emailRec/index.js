@@ -5,13 +5,15 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   StatusBar,
   Image,
+  Pressable,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons'; // Certifique-se de ter o expo-icons
+import styles from "./styles";
 
-export default function EmailRec() {
+export default function EmailRec({ navigation }) {
   const [email, setEmail] = useState('');
 
   return (
@@ -43,103 +45,16 @@ export default function EmailRec() {
 
         <View style={styles.buttonRow}>
         
-          <TouchableOpacity style={styles.backButton}>
+          <Pressable style={styles.backButton} onPress={() => navigation.navigate("login")}>
             <Ionicons name="chevron-back" size={24} color="white" />
-          </TouchableOpacity>
+          </Pressable>
 
       
-          <TouchableOpacity style={styles.sendButton}>
+          <Pressable style={styles.sendButton} onPress={() => navigation.navigate("esquecerSenha")}>
             <Text style={styles.sendButtonText}>Enviar</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#A88BFA', 
-  },
-  header: {
-    height: '38%',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingBottom: 12,
-  },
-  logoImage: {
-    width: 540,
-    height: 440,
-    marginBottom: -100,
-  },
-
-  formContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-    borderTopLeftRadius: 60,
-    borderTopRightRadius: 60,
-    paddingHorizontal: 30,
-    paddingTop: 50,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#A88BFA',
-    textAlign: 'center',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#BDBDBD',
-    textAlign: 'center',
-    marginBottom: 40,
-  },
-  inputGroup: {
-    marginBottom: 30,
-  },
-  label: {
-    color: '#A88BFA',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1.5,
-    borderColor: '#A88BFA',
-    borderRadius: 15,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    color: '#333',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  backButton: {
-    backgroundColor: '#A88BFA',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    opacity: 0.8,
-  },
-  sendButton: {
-    backgroundColor: '#A88BFA',
-    flex: 1,
-    marginLeft: 15,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sendButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});

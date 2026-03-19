@@ -48,6 +48,13 @@ fotoPerfil: {
   borderRadius: 60,
   borderWidth: 4,
   borderColor: "#fff",
+  backgroundColor: "#6C63FF"
+},
+
+fotoPerfil2: {
+  width: "100%",
+  height: "100%",
+  margin: 40,
 },
 
 iconeEditar: {

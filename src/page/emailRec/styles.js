@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#A88BFA', // Cor de fundo roxa do topo
+    backgroundColor: '#A88BFA', 
   },
   header: {
     height: '38%',

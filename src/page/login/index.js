@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, View, Image, TextInput, Pressable } from "react-native";
+import { Text, View, Image, TextInput, Pressable, ActivityIndicator } from "react-native";
 import styles from "./styles";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -15,6 +15,8 @@ export default function Login() {
 
   const [login, setLogin] = useState(""); // * Login aqui é o Email!!
   const [senha, setSenha] = useState("");
+  
+  const [loading, setLoading] = useState(false);
 
   const enviar = (tela) => {
     navigation.navigate(tela);
@@ -50,11 +52,15 @@ export default function Login() {
   };
 
   const onSubmit = async() => {
+    setLoading(true)
     if (validarCampos()) {
       console.log("Campos válido");
 
-      await signIn(login, senha)
+      try {
+        await signIn(login, senha)
+      } catch (e){}
     }
+    setLoading(false)
   };
 
   return (
@@ -122,18 +128,22 @@ export default function Login() {
             <View style={styles.botaoEntra}>
               <Pressable onPress={() => onSubmit()} style={styles.stylesButton}>
                 <Text style={styles.entrarText}>Entrar</Text>
-
-                <AntDesign
-                  name="send"
-                  size={24}
-                  color="rgba(163, 131, 251, 1)"
-                  style={styles.iconEnviar}
-                />
+                {loading ? (
+                  <ActivityIndicator color="rgba(163, 131, 251, 1)" size="small" />
+                ) : (
+                  <AntDesign
+                    name="send"
+                    size={24}
+                    color="rgba(163, 131, 251, 1)"
+                    style={styles.iconEnviar}
+                  />
+                )}
+                
               </Pressable>
             </View>
 
             <View style={styles.contaNova}>
-              <Text style={styles.textCadastre}>É novo por aqui?</Text>
+              <Text style={styles.textCadastre}>É novo por aqui? </Text>
 
               <Pressable onPress={() => enviar("cadastroPessoal")}>
                 <Text style={styles.linkCadastre}>Cadastre-se</Text>
