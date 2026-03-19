@@ -122,7 +122,6 @@ export default function Perfil({ navigation }) {
   const handleSave = async () => {
     try {
       setLoading(true);
-      console.log("Começo")
       const userNv = await updateUser({
         nome,
         email,

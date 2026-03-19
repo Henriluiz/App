@@ -59,16 +59,13 @@ export function AuthProvider({ children }) {
 
   async function updateUser(data) {
     try {
-      console.log("Testa1")
+
       const updatedUser = await patchPerfil(data);
-      console.log("Testa2")
       
       setUser(updatedUser);
       
-      console.log("Testa3")
       await saveSession(await getToken(), updatedUser);
-      console.log("Testa4")
-
+      
     } catch (error) {
       console.log("Erro ao atualizar usuário", error);
       throw error;
