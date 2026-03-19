@@ -18,7 +18,22 @@ import styles from "./styles";
 
 export default function Menu({ navigation }) {
 
-  const route = useRoute
+  const route = useRoute();
+
+  const capitalize = (str) => {
+    // Verifica se str existe e é uma string
+    if (!str || typeof str !== 'string') return '';
+    
+    // Remove espaços extras e verifica se não está vazia
+    const trimmedStr = str.trim();
+    if (trimmedStr.length === 0) return '';
+    
+    return trimmedStr
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
 
   const { user } = useAuth();
   useEffect(() => {
@@ -44,7 +59,7 @@ export default function Menu({ navigation }) {
         <View style={styles.header}>
           <View style={styles.headerTop}>
             <Text style={styles.greeting}>Boa tarde,</Text>
-            <Text style={styles.name}>{user?.nome}</Text>
+            <Text style={styles.name}>{capitalize(user?.nome)}</Text>
 
             <View style={styles.headerIcons}>
               <Ionicons name="information-circle-outline" size={22} color="#fff" />
@@ -114,7 +129,8 @@ export default function Menu({ navigation }) {
           />
         </Pressable>
 
-        <Pressable onPress={() => navigation.navigate("Curtidas")}>
+        <Pressable>
+          {/* onPress={() => navigation.navigate("Curtidas")} */}
           <Ionicons
             name="heart-outline"
             size={24}
@@ -122,7 +138,8 @@ export default function Menu({ navigation }) {
           />
         </Pressable>
 
-        <Pressable onPress={() => navigation.navigate("Chat")}>
+        <Pressable>
+          {/*  onPress={() => navigation.navigate("Chat")} */}
           <Ionicons
             name="chatbubble-outline"
             size={24}

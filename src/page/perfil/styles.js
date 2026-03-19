@@ -104,9 +104,17 @@ iconeEditar: {
     marginHorizontal: height * 0.02,
   },
 
+  colunaEsquerda: {
+    width: 150, // Largura fixa
+  },
+
+  colunaDireita: {
+    width: 150, // Largura fixa
+  },
+
   rowWrap: {
     flexDirection: "row",
-    gap: 10,
+    gap: 15,
     marginTop: 5,
   },
 
@@ -141,12 +149,9 @@ iconeEditar: {
 
   dadoEmail: {
     width: "100%",
-    height: 50,
-    borderColor: "transparent",
-    borderWidth: 1.5,
-    borderRadius: 12,
-    paddingHorizontal: 15,
     fontSize: width * 0.04,
+    marginTop: 5,
+    textAlign: "left",
 },
 
   pickerContainer: {
@@ -169,7 +174,7 @@ iconeEditar: {
     borderWidth: 1.5,
     borderColor: "transparent",
     borderRadius: 12,
-    height: 25,
+    height: 30,
     paddingHorizontal: 12,
   },
 

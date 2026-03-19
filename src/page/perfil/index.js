@@ -51,22 +51,34 @@ export default function Perfil({ navigation }) {
       .slice(0, 15);
   }
 
-  function formatarData(text) {
-    return text
-      .replace(/\D/g, "")
-      .replace(/(\d{2})(\d)/, "$1/$2")
-      .replace(/(\d{2})(\d)/, "$1/$2")
-      .slice(0, 10);
+  function formatarData(dataISO) {
+    if (!dataISO) return "";
+    
+    // Se for uma data ISO completa (YYYY-MM-DDTHH:mm:ss.sssZ)
+    const data = new Date(dataISO);
+    
+    if (isNaN(data.getTime())) return ""; // Data inválida
+    
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês começa em 0
+    const ano = data.getFullYear();
+    
+    return `${dia}/${mes}/${ano}`;
   }
 
   const capitalize = (str) => {
-    if (!str) return ''; // Retorna vazio se a string for falsy (null, undefined, etc.)
+    // Verifica se str existe e é uma string
+    if (!str || typeof str !== 'string') return '';
     
-    return str
-      .toLowerCase() // Converte toda a string para minúsculas
-      .split(' ') // Divide a string em um array de palavras
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitaliza cada palavra
-      .join(' '); // Junta as palavras novamente em uma string
+    // Remove espaços extras e verifica se não está vazia
+    const trimmedStr = str.trim();
+    if (trimmedStr.length === 0) return '';
+    
+    return trimmedStr
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   const formatCPF = (cpf) => {
@@ -143,7 +155,7 @@ export default function Perfil({ navigation }) {
 
   useEffect(() => {
     if (user) {
-      setNome(user.nome || "");
+      setNome(capitalize(user.nome) || "");
       setNickname(user.username || "");
       setEmail(user.email || "");
       setTelefone(user.telefone || "");
@@ -191,7 +203,7 @@ export default function Perfil({ navigation }) {
             </View>
 
             <View>
-              <Text style={styles.nomePessoa}>{user.nome}</Text>
+              <Text style={styles.nomePessoa}>{nome}</Text>
             </View>
 
             <View>
@@ -222,11 +234,11 @@ export default function Perfil({ navigation }) {
 
                   <TextInput
                     style={[
-                      styles.input,
+                      {marginTop: -5},
                       editando && styles.inputEditando
                     ]}
-                    value={nome}
-                    onChangeText={setNome}
+                    value={capitalize(nome)}
+                    onChangeText={capitalize(setNome)}
                     editable={editando}
                   />
                 </View>
@@ -236,12 +248,12 @@ export default function Perfil({ navigation }) {
 
                   <View style={[
                     styles.nicknameContainer,
-                    editando && styles.nicknameEditando
+                    // editando && styles.nicknameEditando
                   ]}>
 
                     
-                    <Text style={styles.arroba}>@</Text>
-                    <Text style={{marginTop: 2}}>{user.username}</Text>
+                    <Text style={[styles.arroba, {marginTop: 2}]}>@</Text>
+                    <Text style={{marginTop: 5}}>{user.username}</Text>
 
                     {/* <TextInput
                       style={styles.nicknameInput}
@@ -266,14 +278,14 @@ export default function Perfil({ navigation }) {
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>CPF</Text>
 
-                  <Text style={{marginTop: 10}}>{formatCPF(user.cpf)}</Text>
+                  <Text style={{marginTop: 5}}>{formatCPF(user.cpf)}</Text>
                 </View>
 
 
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Gênero</Text>
 
-                  <Text style={{marginTop: 10, textAlign:"center"}}>{user.genero}</Text>
+                  <Text style={{marginTop: 5, textAlign:"left"}}>{capitalize(user.genero)}</Text>
                 </View>
 
               </View>
@@ -285,31 +297,36 @@ export default function Perfil({ navigation }) {
               {/* SENHA E TELEFONE */}
               <View style={styles.rowWrap}>
 
-                <View>
+                <View style={styles.colunaEsquerda}>
                   {/* EMAIL */}
                   <Text style={styles.label}>Email</Text>
 
-                  <TextInput
+                  {editando ? <TextInput
                     onChangeText={setEmail}
                     value={email}
                     style={[
-                      styles.inputEmail,
+                      styles.dadoEmail,
                       editando && styles.inputEditando
                     ]}
                     keyboardType="email-address"
                     autoCapitalize="none"
                     autoCorrect={false}
                     editable={editando}
-                  />
+                  /> : <Text 
+                    numberOfLines={1} 
+                    ellipsizeMode="tail"  // 'tail' coloca ... no final
+                    style={styles.dadoEmail}
+                  >
+                    {email}
+                  </Text>}
                 </View>
 
 
-                <View style={styles.colunaFlex}>
+                <View style={styles.colunaDireita}>
                   <Text style={styles.label}>Telefone</Text>
 
                   <TextInput
-                    style={[
-                      styles.input,
+                    style={[{marginTop: -5},
                       editando && styles.inputEditando
                     ]}
                     keyboardType="phone-pad"
@@ -335,7 +352,8 @@ export default function Perfil({ navigation }) {
                     ]}
                     keyboardType="numeric"
                     maxLength={10}
-                    value={dataNascimento}
+                    editable={editando}
+                    value={formatarData(dataNascimento)}
                     onChangeText={(text) =>
                       setDataNascimento(formatarData(text))
                     }
@@ -361,7 +379,8 @@ export default function Perfil({ navigation }) {
           />
         </Pressable>
 
-        <Pressable onPress={() => navigation.navigate("Curtidas")}>
+        <Pressable>
+          {/* onPress={() => navigation.navigate("Curtidas")} */}
           <Ionicons
             name="heart-outline"
             size={24}
