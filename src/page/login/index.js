@@ -112,7 +112,7 @@ export default function Login() {
                 />
               </View>
 
-              <Pressable onPress={() => enviar("esquecerSenha")}>
+              <Pressable onPress={() => enviar("emailRec")}>
                 <Text style={styles.esenha}>Esqueci a minha senha</Text>
               </Pressable>
             </View>
