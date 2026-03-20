@@ -78,7 +78,7 @@ export default function Login() {
         </View>
 
         <View style={styles.container2}>
-          <Text style={styles.titulo}>QUE BOM TER VOCÊ DE VOLTA!</Text>
+          <Text style={styles.titulo}>Que bom ter você de volta!</Text>
 
           <Text style={styles.descricao}>
             Sua próxima sessão está quase lá.
