@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken, clearSession } from "./authStogare";
 
 const api = axios.create({
-  baseURL: "http://10.0.2.2:8000/api", // ! Seguir a tabela abaixo
+  baseURL: "http://127.0.0.1:8000/api", // ! Seguir a tabela abaixo
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

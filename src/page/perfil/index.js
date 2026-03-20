@@ -13,6 +13,8 @@ import styles from "./styles";
 import { useAuth } from "../../context/AuthContext";
 import { clearSession, saveSession, getToken } from "../../services/authStogare";
 
+import NavBar from "../../components/NavBar";
+
 export default function Perfil({ navigation }) {
   
   const route = useRoute
@@ -367,44 +369,12 @@ export default function Perfil({ navigation }) {
 
 
         {/* BOTTOM NAV */}
-        <View style={styles.bottomNav}>
+        <NavBar 
+          tela = "perfil"
+        />
 
-        <Pressable onPress={() => navigation.navigate('menu')}>
-          <Ionicons
-            name="home-outline"
-            size={24}
-            color={route.name === "Home" ? "#6C63FF" : "#999"}
-          />
-        </Pressable>
 
-        <Pressable>
-          {/* onPress={() => navigation.navigate("Curtidas")} */}
-          <Ionicons
-            name="heart-outline"
-            size={24}
-            color={route.name === "Curtidas" ? "#6C63FF" : "#999"}
-          />
-        </Pressable>
-
-        <Pressable> 
-          {/* onPress={() => navigation.navigate("Chat")} */}
-          <Ionicons
-            name="chatbubble-outline"
-            size={24}
-            color={route.name === "Chat" ? "#6C63FF" : "#999"}
-          />
-        </Pressable>
-
-        <Pressable onPress={() => navigation.navigate('perfil')}>
-          <Ionicons
-            name="person"
-            size={24}
-            color={route.name === "Perfil" ? "#6C63FF" : "#999"}
-          />
-        </Pressable>
-
-      </View>
-          <Modal
+        <Modal
           visible={menuAberto}
           animationType="slide"
           transparent={false}

@@ -7,12 +7,13 @@ export default StyleSheet.create({
       backgroundColor: '#A288FF', 
     },
     header: {
-      height: '30%',
-      justifyContent: 'center',
+      height: '38%',
+      justifyContent: 'flex-end',
       alignItems: 'center',
+      paddingBottom: 12,
     },
     logoImage: {
-        width: wp("35%"),
+        width: wp("54%"),
         height: hp("25%"),
         marginTop: 25,
         alignItems: "center"

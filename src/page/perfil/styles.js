@@ -202,15 +202,6 @@ iconeEditar: {
     fontSize: width * 0.04,
 },
 
-  bottomNav: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    //padding: 15,
-    padding: 25,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderColor: "#eee",
-},
   topo: {
     position: "absolute",
     top: 25,

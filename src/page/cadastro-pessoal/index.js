@@ -52,6 +52,8 @@ export default function CadastroPessoal({ navigation }) {
   /* ================= VALIDAÇÃO ================= */
 
   function validarCampos() {
+    // ! Verificar se o cpf ou nickname já existe no banco de dados! Isso teve ser feito pela API.
+
     if (!nomeCompleto.trim()) {
       setErro("Digite seu nome completo.");
       return false;

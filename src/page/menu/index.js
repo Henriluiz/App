@@ -2,7 +2,6 @@ import React from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   Pressable
 } from "react-native";
@@ -13,6 +12,8 @@ import { Ionicons, Feather } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+
+import NavBar from "../../components/NavBar";
 
 import styles from "./styles";
 
@@ -71,26 +72,26 @@ export default function Menu({ navigation }) {
             <Text style={styles.sessionTitle}>Próxima sessão</Text>
             <Text style={styles.sessionDate}>Hoje, às 15hrs</Text>
 
-            <TouchableOpacity style={styles.sessionButton}>
+            <Pressable style={styles.sessionButton}>
               <Text style={styles.sessionButtonText}>Entrar na sala</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 
         {/* AÇÕES RÁPIDAS */}
         <Text style={styles.sectionTitle}>Ações rápidas</Text>
         <View style={styles.quickActions}>
-          <TouchableOpacity style={styles.actionCard}>
+          <Pressable style={styles.actionCard}>
             <Feather name="edit" size={24} color="#6C63FF" />
             <Text style={styles.actionTitle}>Agendar</Text>
             <Text style={styles.actionSubtitle}>Nova consulta</Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity style={styles.actionCard}>
+          <Pressable style={styles.actionCard}>
             <Feather name="clock" size={24} color="#6C63FF" />
             <Text style={styles.actionTitle}>Sessões</Text>
             <Text style={styles.actionSubtitle}>Ver histórico</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* REGISTRO DE HUMOR */}
@@ -98,9 +99,9 @@ export default function Menu({ navigation }) {
         <View style={styles.moodContainer}>
           {["sad-outline", "happy-outline", "heart-outline", "sunny-outline", "thumbs-up-outline"].map(
             (icon, index) => (
-              <TouchableOpacity key={index} style={styles.moodButton}>
+              <Pressable key={index} style={styles.moodButton}>
                 <Ionicons name={icon} size={22} color="#555" />
-              </TouchableOpacity>
+              </Pressable>
             )
           )}
         </View>
@@ -118,44 +119,9 @@ export default function Menu({ navigation }) {
         </View>
       </ScrollView>
 
-      {/* BOTTOM NAV */}
-      <View style={styles.bottomNav}>
-
-        <Pressable onPress={() => navigation.navigate('menu')}>
-          <Ionicons
-            name="home"
-            size={24}
-            color={route.name === "Home" ? "#6C63FF" : "#999"}
-          />
-        </Pressable>
-
-        <Pressable>
-          {/* onPress={() => navigation.navigate("Curtidas")} */}
-          <Ionicons
-            name="heart-outline"
-            size={24}
-            color={route.name === "Curtidas" ? "#6C63FF" : "#999"}
-          />
-        </Pressable>
-
-        <Pressable>
-          {/*  onPress={() => navigation.navigate("Chat")} */}
-          <Ionicons
-            name="chatbubble-outline"
-            size={24}
-            color={route.name === "Chat" ? "#6C63FF" : "#999"}
-          />
-        </Pressable>
-
-        <Pressable onPress={() => navigation.navigate('perfil')}>
-          <Ionicons
-            name="person-outline"
-            size={24}
-            color={route.name === "Perfil" ? "#6C63FF" : "#999"}
-          />
-        </Pressable>
-
-      </View>
+      <NavBar 
+        tela = "home"
+      />
     </SafeAreaView>
   );
 }

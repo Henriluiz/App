@@ -110,15 +110,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#5A54C4",
   },
-  bottomNav: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    //padding: 15,
-    padding: 25, // 25 é Mais natural
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderColor: "#eee",
-  },
 });
 
 export default styles;
