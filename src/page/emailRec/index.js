@@ -50,7 +50,7 @@ export default function EmailRec({ navigation }) {
           </Pressable>
 
       
-          <Pressable style={styles.sendButton} onPress={() => navigation.navigate("esquecerSenha")}>
+          <Pressable style={styles.sendButton} onPress={() => navigation.navigate("verificationCode")}>
             <Text style={styles.sendButtonText}>Enviar</Text>
           </Pressable>
         </View>

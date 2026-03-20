@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,}from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { MaskedTextInput } from "react-native-mask-text";
+import { cpf } from 'cpf-cnpj-validator';
 import styles from "./styles";
 
 export default function CadastroPessoal({ navigation }) {
@@ -9,11 +10,16 @@ export default function CadastroPessoal({ navigation }) {
   const [telefone, setTelefone] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
   const [genero, setGenero] = useState("");
-  const [cpf, setCpf] = useState("");
+  const [numcpf, setNumCpf] = useState("");
   const [erro, setErro] = useState("");
   const [nickname, setNickname] = useState("");
 
   /* ================= FORMATADORES ================= */
+
+  const validarCpf = (numeroCpf) => {
+    // Retorna true se for válido, false se não
+    return cpf.isValid(numeroCpf);
+  };
 
   function formatarTelefone(text) {
     const numeros = text.replace(/\D/g, "");
@@ -66,7 +72,10 @@ export default function CadastroPessoal({ navigation }) {
       return false;
     }
 
-    if (cpf.length !== 14) {
+    if (numcpf.length !== 14) {
+      setErro("CPF deve conter 11 dígitos, Sem as pontuanções.");
+      return false;
+    } else if (!validarCpf(numcpf)) {
       setErro("Digite um CPF válido.");
       return false;
     }
@@ -83,7 +92,7 @@ export default function CadastroPessoal({ navigation }) {
       telefone: telefone,
       dataNasc: dataNascimento,
       genero: genero,
-      cpf: cpf,
+      cpf: numcpf,
     });
   }
 
@@ -189,8 +198,8 @@ export default function CadastroPessoal({ navigation }) {
               <Text style={styles.label}>CPF</Text>
               <MaskedTextInput
                 mask="999.999.999-99"
-                value={cpf}
-                onChangeText={(text) => setCpf(text)}
+                value={numcpf}
+                onChangeText={(text) => setNumCpf(text)}
                 keyboardType="numeric"
                 style={styles.input}
               />
