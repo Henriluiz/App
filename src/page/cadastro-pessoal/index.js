@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,}from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { MaskedTextInput } from "react-native-mask-text";
 import { cpf } from 'cpf-cnpj-validator';
 import styles from "./styles";
 
+import {useAuth} from "../../context/AuthContext"
+
 export default function CadastroPessoal({ navigation }) {
+  const { verificarDisponibilidade } = useAuth()
+
   const [nomeCompleto, setNomeCompleto] = useState("");
   const [telefone, setTelefone] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
@@ -14,11 +18,24 @@ export default function CadastroPessoal({ navigation }) {
   const [erro, setErro] = useState("");
   const [nickname, setNickname] = useState("");
 
+  // Um erro diferente para cada, para se exibido em baixo de seus inputs correspondente
+  const [erroNome, setErroNome] = useState("");
+  const [erroNick, setErroNick] = useState("");
+  const [erroFone, setErroFone] = useState("");
+  const [erroData, setErroData] = useState("");
+  const [errogenero, setErroGenero] = useState("");
+  const [erroCpf, setErroCpf] = useState("");
+
   /* ================= FORMATADORES ================= */
 
   const validarCpf = (numeroCpf) => {
     // Retorna true se for válido, false se não
     return cpf.isValid(numeroCpf);
+  };
+
+  const limparCpf = (cpf) => {
+    // Remove tudo que não for número
+    return cpf.replace(/\D/g, '');
   };
 
   function formatarTelefone(text) {
@@ -51,51 +68,78 @@ export default function CadastroPessoal({ navigation }) {
 
   /* ================= VALIDAÇÃO ================= */
 
-  function validarCampos() {
-    // ! Verificar se o cpf ou nickname já existe no banco de dados! Isso teve ser feito pela API.
+  async function verUserCpf() { // Verificar se nickname e cpf existem no banco (de um mesmo user ou diferentes)
+    const disponivel = await verificarDisponibilidade(nickname, limparCpf(numcpf));
+    
+    return {
+      usernameDisponivel: disponivel.usernameDisponivel,
+      cpfDisponivel: disponivel.cpfDisponivel 
+    }
+  }
 
+  async function validarCampos() {
     if (!nomeCompleto.trim()) {
-      setErro("Digite seu nome completo.");
+      setErroNome("Digite seu nome completo.");
       return false;
     }
 
     if (telefone.length < 14) {
-      setErro("Digite um telefone válido.");
+      setErroFone("Digite um telefone válido.");
       return false;
     }
 
     if (dataNascimento.length !== 10) {
-      setErro("Digite uma data válida.");
+      setErroData("Digite uma data válida.");
       return false;
     }
 
     if (!genero) {
-      setErro("Selecione um gênero.");
+      setErroGenero("Selecione um gênero.");
       return false;
     }
 
     if (numcpf.length !== 14) {
-      setErro("CPF deve conter 11 dígitos, Sem as pontuanções.");
+      setErroCpf("CPF deve conter 11 dígitos, Sem as pontuanções.");
       return false;
     } else if (!validarCpf(numcpf)) {
-      setErro("Digite um CPF válido.");
+      setErroCpf("Digite um CPF válido.");
       return false;
     }
 
+    const {usernameDisponivel, cpfDisponivel} = await verUserCpf()
+    console.log(usernameDisponivel)
+    console.log(cpfDisponivel)
+    if(!usernameDisponivel) {
+      setErroNick("O nickname já é existe!")
+      return false;
+    }
+
+    if (!cpfDisponivel){
+      setErroCpf("O cpf já é existe!")
+      return false;
+    }
+    // Criar os erros diferentes lá embaixo de cada input (Luiz)
     setErro("");
+    setErroNome("");
+    setErroNick("");
+    setErroFone("");
+    setErroData("");
+    setErroGenero("");
+    setErroCpf("");
     return true;
   }
 
   function enviar() {
-    if (!validarCampos()) return;
-    navigation.navigate("cadastroConta", {
-      nome: nomeCompleto,
-      nickname: nickname,
-      telefone: telefone,
-      dataNasc: dataNascimento,
-      genero: genero,
-      cpf: numcpf,
-    });
+    if (!validarCampos()) {
+      navigation.navigate("cadastroConta", {
+        nome: nomeCompleto,
+        nickname: nickname,
+        telefone: telefone,
+        dataNasc: dataNascimento,
+        genero: genero,
+        cpf: numcpf,
+      });
+    }
   }
 
   /* ================= RENDER ================= */

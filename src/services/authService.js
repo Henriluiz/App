@@ -34,6 +34,17 @@ export async function logout() {
 
 }
 
+export async function getUserCPF(username, cpf) {
+  
+  const response = await api.post("/verificarUserCPF", {
+    username,
+    cpf,
+  });
+
+  return response.data;
+
+}
+
 export async function patchPerfil(data) {
 
   const response = await api.patch("/update", data);

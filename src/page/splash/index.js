@@ -8,7 +8,7 @@ export default function Splash() {
   return (
     <View style={styles.container}>
         <Animatable.Image animation={"bounceIn"} duration={3000} source={require("./icon/logo.png")}
-            style={styles.ima}>
+            style={styles.ima} resizeMode='contain'>
         </Animatable.Image>
       <StatusBar style="auto" />
     </View>

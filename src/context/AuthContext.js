@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta, patchPerfil } from "../services/authService";
+import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF} from "../services/authService";
 import {
   saveSession,
   clearSession,
@@ -7,6 +7,7 @@ import {
   getUser,
 } from "../services/authStogare";
 import { authEvents } from "../services/authEvents";
+import { errorMonitor } from "events";
 
 const AuthContext = createContext({});
 
@@ -56,7 +57,7 @@ export function AuthProvider({ children }) {
 
   }
 
-
+  // Atualizar nome, email e telefone do usuário
   async function updateUser(data) {
     try {
 
@@ -69,6 +70,26 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.log("Erro ao atualizar usuário", error);
       throw error;
+    }
+  }
+
+  async function verificarDisponibilidade(username, cpf) {
+    try {
+      const verificacao = await getUserCPF(username, cpf);
+
+      return {
+        usernameDisponivel: verificacao.username_disponivel,
+        cpfDisponivel: verificacao.cpf_disponivel,
+      };
+
+    } catch (e) {
+      console.error("ERRO COMPLETO (verificarDisponibilidade):", e.response?.data);
+
+      return {
+        usernameDisponivel: false,
+        cpfDisponivel: false,
+        erro: true
+      };
     }
   }
 
@@ -124,7 +145,8 @@ export function AuthProvider({ children }) {
         signIn,
         signOut,
         removeAccount,
-        updateUser
+        updateUser,
+        verificarDisponibilidade
       }}
     >
       {children}
