@@ -7,11 +7,29 @@ export default StyleSheet.create ({
         alignItems: "center"
     },
 
+    containerImg: {
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(163, 131, 251, 1)",
+        width: "100%",
+        borderBottomLeftRadius: 85,
+        borderBottomEndRadius: 85,
+        marginBottom: hp("4%")
+    },
+
+    containertext: {
+        // backgroundColor: "red",
+        // justifyContent: "flex-start",
+        // paddingInline: wp("5%"),
+        width: wp("80%"),
+        marginBottom: hp("4.5%"),
+    },
+
     // Flex : 1
     logo: {
         width: wp("35%"),
         height: hp("25%"),
-        marginTop: 20,
+        marginTop: hp("3.5%"),
         alignItems: "center"
     },
 
@@ -24,12 +42,11 @@ export default StyleSheet.create ({
     },
 
     caixaTitulos: {
-        padding: 15,
-        top: -30,
+        top: -20,
     },
 
     titulo2: {
-        fontSize: 50,
+        fontSize: 45,
         color: 'black',
     },
 
@@ -37,59 +54,73 @@ export default StyleSheet.create ({
 
     descricao: {
         fontSize: 32,
-        fontFamily: "Arial",
-        marginRight: 44,
+        textAlign: "left"
+        // fontFamily: "Arial",
+
     },
 
     // Flex : 4
     containerBotoes: {
         textAlign: "left",
         alignItems: "flex-start",
-        marginTop: hp("6%"),
-        gap: 35,
+        gap: hp("3.5%"),
     },
 
     descricao2: {
-        textAlign: "left",
+        textAlign: "center",
         fontSize: 24,
-        marginTop: 30,
-        marginRight: 230,
+        // marginTop: 30,
+        // marginRight: 230,
         fontWeight: "bold",
     },
 
     botaoPsicologo: {
-        width: 315,
-        height: 50,
-        backgroundColor: "rgba(163, 131, 251, 0.5)",
+        width: wp("80%"),
+        height: hp("6.5%"),
+        backgroundColor: "rgba(163, 131, 251, 1)",
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 15,
-        borderColor: "rgba(163, 131, 251, 1)",
-        borderWidth: 3,
+        // borderWidth: 3,
+
+        // Sombra, essa é menor por ser menos relevante!
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
     },
 
     textPsicologo: {
         fontSize: 24,
         fontFamily: "Arial",
-        color: "#484848",
+        color: "white",
         fontWeight: "bold"
     },
 
     botaoPaciente: {
-        width: 315,
-        height: 50,
-        backgroundColor: "rgba(172, 244, 226, 0.4)",
+        width: wp("80%"),
+        height: hp("6.5%"),
+        backgroundColor: "rgba(71, 184, 171, 1)",
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 15,
         borderColor: "rgba(172, 244, 226, 1)",
-        borderWidth: 3,
+        // borderWidth: 3,
+        
+        // Sombra
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 5,
+
     },
 
     textPaciente: {
         fontSize: 24,
         fontFamily: "Arial",
-        color: "#484848",
+        color: "white",
         fontWeight: "bold"
     }
 });

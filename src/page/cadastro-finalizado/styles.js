@@ -26,33 +26,31 @@ export default StyleSheet.create({
         backgroundColor: "#A383FB",
         borderTopStartRadius: wp("18%"),
         borderTopEndRadius: wp("18%"),
+        justifyContent:"center",
     },
 
     titulo: {
         fontSize: wp("10%"),
-        marginTop: hp("7%"),
-        marginLeft: wp("4%"),
+        marginTop: hp("4%"),
+        textAlign: "center",
         color: "white",
+        fontWeight: "bold"
     },
 
-    descricao: {
-        fontSize: wp("5%"),
-        marginTop: hp("2%"),
-        marginLeft: wp("4%"),
-        color: "white",
+    containerCheck: {
+        flex: 0.65,
+        justifyContent: "center",
+        alignItems: "center",
     },
 
-    subdescricao: {
-        fontSize: wp("4%"),
-        marginTop: hp("2%"),
-        marginLeft: wp("4%"),
-        color: "rgba(255, 255, 255, 1)",
+    check: {
+        width: wp("37%"),
+        height: hp("19%"),
     },
 
     // Flex 4: Botão de entrada
     contEntra: {
         alignSelf: "center",
-        marginTop: hp("30%")
     },
 
     botaoEntra: {

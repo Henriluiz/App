@@ -72,7 +72,9 @@ export default function CadastroConta({ route }) {
   ========================== */
 
   const enviar = async () => {
-    validarCampos()
+    if(!validarCampos()) {
+      return false;
+    }
     try {
         const data = {
           nome,
@@ -131,6 +133,7 @@ export default function CadastroConta({ route }) {
     }
 
     setErro("");
+    return true
   }
 
   /* =========================

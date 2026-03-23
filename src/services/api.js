@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken, clearSession } from "./authStogare";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api", // ! Seguir a tabela abaixo
+  baseURL: "http://192.168.18.99:8000/api", // ! Seguir a tabela abaixo
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -15,7 +15,8 @@ const api = axios.create({
 // | celular físico   | IP do PC    |
 // | emulador Android | 10.0.2.2    |
 // | iOS simulator    | localhost   |
-
+//                          +
+//                      :8000/api
 
 let isRefreshing = false;
 let failedQueue = [];

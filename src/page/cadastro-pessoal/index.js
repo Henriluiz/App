@@ -69,12 +69,26 @@ export default function CadastroPessoal({ navigation }) {
   /* ================= VALIDAÇÃO ================= */
 
   async function verUserCpf() { // Verificar se nickname e cpf existem no banco (de um mesmo user ou diferentes)
-    const disponivel = await verificarDisponibilidade(nickname, limparCpf(numcpf));
-    
-    return {
-      usernameDisponivel: disponivel.usernameDisponivel,
-      cpfDisponivel: disponivel.cpfDisponivel 
+    // validação antes
+    if (!nickname.trim() || !numcpf.trim()) {
+      return null; // erro esperado → nem chama API
     }
+    try {
+
+      const disponivel = await verificarDisponibilidade(nickname, limparCpf(numcpf));
+      
+
+      return {
+        usernameDisponivel: disponivel.usernameDisponivel,
+        cpfDisponivel: disponivel.cpfDisponivel,
+        erro: disponivel.erro
+      }
+
+    } catch (e) {
+      console.log("ERRO COMPLETO: (verUserCpf)", e);
+
+      return null; // importante
+    } 
   }
 
   async function validarCampos() {
@@ -82,22 +96,33 @@ export default function CadastroPessoal({ navigation }) {
       setErroNome("Digite seu nome completo.");
       return false;
     }
+    setErroNome("");
+
+    if (!nickname.trim()){
+      setErroNick("Digite um nickname.")
+      return false
+    }
+    setErroNick("");
+    
 
     if (telefone.length < 14) {
       setErroFone("Digite um telefone válido.");
       return false;
     }
+    setErroFone("");
 
     if (dataNascimento.length !== 10) {
       setErroData("Digite uma data válida.");
       return false;
     }
+    setErroData("");
 
     if (!genero) {
       setErroGenero("Selecione um gênero.");
       return false;
     }
-
+    setErroGenero("");
+    
     if (numcpf.length !== 14) {
       setErroCpf("CPF deve conter 11 dígitos, Sem as pontuanções.");
       return false;
@@ -105,41 +130,53 @@ export default function CadastroPessoal({ navigation }) {
       setErroCpf("Digite um CPF válido.");
       return false;
     }
+    
+    
+    // Um proteção caso houve uma falha e retorne null
+    const result = await verUserCpf();
 
-    const {usernameDisponivel, cpfDisponivel} = await verUserCpf()
+    if (!result) {
+      console.log("Erro ao verificar dados, possivelmente não teve dados para enviar!");
+      return;
+    }
+    
+
+    const { usernameDisponivel, cpfDisponivel, erro } = result;
     console.log(usernameDisponivel)
     console.log(cpfDisponivel)
-    if(!usernameDisponivel) {
+    console.log(erro)
+    // --
+
+    if (!usernameDisponivel) {
       setErroNick("O nickname já é existe!")
       return false;
     }
+    setErroNick("");
 
     if (!cpfDisponivel){
       setErroCpf("O cpf já é existe!")
       return false;
     }
-    // Criar os erros diferentes lá embaixo de cada input (Luiz)
-    setErro("");
-    setErroNome("");
-    setErroNick("");
-    setErroFone("");
-    setErroData("");
-    setErroGenero("");
     setErroCpf("");
+    console.log("Passei!!")
     return true;
   }
 
-  function enviar() {
-    if (!validarCampos()) {
-      navigation.navigate("cadastroConta", {
-        nome: nomeCompleto,
-        nickname: nickname,
-        telefone: telefone,
-        dataNasc: dataNascimento,
-        genero: genero,
-        cpf: numcpf,
-      });
-    }
+  async function enviar() {
+    const valido = await validarCampos();
+
+    if (!valido) return;
+    
+    console.log("Entrei 2!!")
+    navigation.navigate("cadastroConta", {
+      nome: nomeCompleto,
+      nickname: nickname,
+      telefone: telefone,
+      dataNasc: dataNascimento,
+      genero: genero,
+      cpf: numcpf,
+    });
+
   }
 
   /* ================= RENDER ================= */
@@ -178,6 +215,9 @@ export default function CadastroPessoal({ navigation }) {
                 value={nomeCompleto}
                 onChangeText={setNomeCompleto}
               />
+              {erroNome ? (
+                <Text style={styles.mensagemErro}>{erroNome}</Text>
+              ) : null}
               {/* Nickname */}
               <Text style={styles.label}>Nickname</Text>
 
@@ -192,6 +232,9 @@ export default function CadastroPessoal({ navigation }) {
                 autoCapitalize="none"
                 maxLength={30}
               />
+              {erroNick ? (
+                <Text style={styles.mensagemErro}>{erroNick}</Text>
+              ) : null}
               </View>
 
               {/* Telefone */}
@@ -204,6 +247,9 @@ export default function CadastroPessoal({ navigation }) {
                   setTelefone(formatarTelefone(text))
                 }
               />
+              {erroFone ? (
+                <Text style={styles.mensagemErro}>{erroFone}</Text>
+              ) : null}
 
               {/* Data + Gênero */}
               <View style={styles.rowWrap}>
@@ -220,6 +266,9 @@ export default function CadastroPessoal({ navigation }) {
                       setDataNascimento(formatarData(text))
                     }
                   />
+                  {erroData ? (
+                    <Text style={styles.mensagemErro}>{erroData}</Text>
+                  ) : null}
                 </View>
 
                 <View style={styles.colunaFlex}>
@@ -237,6 +286,9 @@ export default function CadastroPessoal({ navigation }) {
                       <Picker.Item label="Outro" value="OUTRO" />
                     </Picker>
                   </View>
+                  {errogenero ? (
+                    <Text style={styles.mensagemErro}>{errogenero}</Text>
+                  ) : null}
                 </View>
               </View>
 
@@ -251,8 +303,8 @@ export default function CadastroPessoal({ navigation }) {
               />
 
               {/* ERRO */}
-              {erro ? (
-                <Text style={styles.mensagemErro}>{erro}</Text>
+              {erroCpf ? (
+                <Text style={styles.mensagemErro}>{erroCpf}</Text>
               ) : null}
             </View>
 
