@@ -36,38 +36,38 @@ export default StyleSheet.create({
     borderTopRightRadius: 40,
   },
 
-fotoContainer: {
-  alignItems: "center",
-  marginTop: -60,
-  marginBottom: 10,
-},
+  fotoContainer: {
+    alignItems: "center",
+    marginTop: -60,
+    marginBottom: 10,
+  },
 
-fotoPerfil: {
-  width: 140,
-  height: 140,
-  borderRadius: 60,
-  borderWidth: 4,
-  borderColor: "#fff",
-  backgroundColor: "#6C63FF"
-},
+  fotoPerfil: {
+    width: 140,
+    height: 140,
+    borderRadius: 60,
+    borderWidth: 4,
+    borderColor: "#fff",
+    backgroundColor: "#6C63FF"
+  },
 
-fotoPerfil2: {
-  width: "100%",
-  height: "100%",
-  margin: 40,
-},
+  fotoPerfil2: {
+    width: "100%",
+    height: "100%",
+    margin: 40,
+  },
 
-iconeEditar: {
-  position: "absolute",
-  bottom: 5,
-  right: width * 0.35,
-  backgroundColor: "#A383FB",
-  width: 28,
-  height: 28,
-  borderRadius: 14,
-  alignItems: "center",
-  justifyContent: "center",
-},
+  iconeEditar: {
+    position: "absolute",
+    bottom: 5,
+    right: width * 0.35,
+    backgroundColor: "#A383FB",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
   nomePessoa: {
     color: "#ffffff",
