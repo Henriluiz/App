@@ -29,6 +29,14 @@ export default StyleSheet.create({
         alignItems: "center"
     },
 
+    titulo: {
+      fontSize: width * 0.08,
+      marginBottom: hp("7%"),
+      textAlign: "center",
+      color: "#A383FB",
+      fontWeight: "bold"
+    },
+
     fotoContainer: {
         alignItems: "center",
         justifyContent: "center",
@@ -42,7 +50,7 @@ export default StyleSheet.create({
         borderRadius: 100,
         borderWidth: 4,
         borderColor: "#fff",
-        backgroundColor: "#6C63FF"
+        backgroundColor: "#A383FB"
     },
 
     fotoPerfil2: {
@@ -66,20 +74,21 @@ export default StyleSheet.create({
     },
 
     btn: {
-        width: wp("45%"),
-        height: hp("4%"),
+        width: wp("50%"),
+        height: hp("5%"),
         borderColor: "#A383FB",
         borderWidth: 1.5,
         borderRadius: 12,
         fontSize: width * 0.14,
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#A383FB",
     },
 
     mensagemErro: {
-    color: "red",
-    marginTop: 5,
-    fontSize: 14,
+      color: "red",
+      marginTop: 5,
+      fontSize: 14,
     },
 
 
@@ -87,6 +96,13 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: height * 0.05,
+  },
+  containerBotoes2: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: wp("7%"),
+    marginTop: hp("10%"),
   },
 
   btnVoltar: {
@@ -103,6 +119,7 @@ export default StyleSheet.create({
     color: "#ffffff",
     fontSize: width * 0.07,
     fontWeight: "bold",
+    marginBottom: 4,
   },
 
   btnProximo: {
@@ -135,5 +152,6 @@ export default StyleSheet.create({
     color: "#A383FB",
     fontSize: width * 0.06,
     fontWeight: "bold",
+    marginBottom: 4,
   },
 });

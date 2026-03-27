@@ -72,11 +72,7 @@ export default function Perfil({ navigation }) {
     // Verifica se str existe e é uma string
     if (!str || typeof str !== 'string') return '';
     
-    // Remove espaços extras e verifica se não está vazia
-    const trimmedStr = str.trim();
-    if (trimmedStr.length === 0) return '';
-    
-    return trimmedStr
+    return str
       .toLowerCase()
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -218,10 +214,6 @@ export default function Perfil({ navigation }) {
               </Pressable>
             </View> : <View></View> }
 
-
-
-
-
             <View style={styles.container2}>
               {/* TÍTULO E BOTAO TESTE DE EDITAR*/}
               <Text style={styles.tituloCard}>Suas informações</Text>
@@ -237,8 +229,9 @@ export default function Perfil({ navigation }) {
                       {marginTop: -5},
                       editando && styles.inputEditando
                     ]}
-                    value={capitalize(nome)}
-                    onChangeText={setNome}
+                    value={nome}
+                    onChangeText={(text) => setNome(text)}              // sem capitalize
+                    onBlur={() => setNome(capitalize(nome))}  
                     editable={editando}
                   />
                 </View>

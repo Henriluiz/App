@@ -168,7 +168,7 @@ export default function CadastroPessoal({ navigation }) {
     if (!valido) return;
     
     console.log("Entrei 2!!")
-    navigation.navigate("cadastroConta", {
+    navigation.navigate("cadastroFoto", {
       nome: nomeCompleto,
       nickname: nickname,
       telefone: telefone,

@@ -1,14 +1,19 @@
 import React, { use, useState } from "react";
 import {Text,View,Image,Pressable,ScrollView,KeyboardAvoidingView,Platform,}from "react-native";
 import styles from "./styles";
+import { useNavigation } from "@react-navigation/native";
 
 import { Ionicons } from "@expo/vector-icons";
 import {useAuth} from "../../context/AuthContext"
 
-export default function CadastroFoto({ navigation }) {
+export default function CadastroFoto({ route }) {
   const { verificarDisponibilidade } = useAuth()
 
   const [imagem, setImagem] = useState(null);
+
+  const {nome, nickname, telefone, dataNasc, genero, cpf} = route.params;
+
+  const navigation = useNavigation();
 
   const solicitarPermissoes = async () => {
     const camera = await ImagePicker.requestCameraPermissionsAsync();
@@ -53,6 +58,20 @@ export default function CadastroFoto({ navigation }) {
     }
   };
 
+  async function enviar() {
+
+      console.log("Entrei 3!!")
+      navigation.navigate("cadastroConta", {
+        nome: nome,
+        nickname: nickname,
+        telefone: telefone,
+        dataNasc: dataNasc,
+        genero: genero,
+        cpf: cpf,
+      });
+  
+    }
+
   /* ================= RENDER ================= */
 
   return (
@@ -65,10 +84,13 @@ export default function CadastroFoto({ navigation }) {
         </View>
       </View>
       <View style={styles.container2}>
+        <Text style={styles.titulo}>Adicione sua foto</Text>
         <View style={styles.fotoContainer}>
-          <View style={styles.fotoPerfil}>
-            <Ionicons name="person-outline" size={75} color="white"  style={styles.fotoPerfil2}/>
-          </View>
+          <Pressable style={styles.fotoPerfil} onPress={tirarFoto}>
+            {imagem ?
+              <Image source={{ uri: imagem }} style={styles.imagem}/> : <Ionicons name="person-outline" size={75} color="white"  style={styles.fotoPerfil2}/>
+            }
+          </Pressable>
 
           <View style={styles.iconeEditar}>
             <Ionicons name="camera" size={16} color="#fff" />
@@ -77,22 +99,22 @@ export default function CadastroFoto({ navigation }) {
         </View>
         <View style={styles.containerBotoes}> 
 
-          <Pressable onPress={escolherDaGaleria} style={styles.btn} ><Text style={{fontSize: 20}}>🖼️  Escolher da Galeria</Text></Pressable>
+          <Pressable onPress={escolherDaGaleria} style={styles.btn}>
+            <Text style={{fontSize: 20, color: "white"}}>Escolher da Galeria</Text>
+          </Pressable>
 
-          {imagem && (
-            <Image source={{ uri: imagem }} style={styles.imagem} />
-          )}
+          
         </View>
-        <View style={styles.containerBotoes}>
+        <View style={styles.containerBotoes2}>
           <Pressable
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate("cadastroPessoal")}
             style={styles.btnVoltar}
           >
             <Text style={styles.setaVoltar}>{"<"}</Text>
           </Pressable>
 
-          <Pressable style={styles.btnProximo}>
-            <Text style={styles.textoProximo}>Próximo</Text>
+          <Pressable style={styles.btnProximo} onPress={enviar}>
+            {imagem ? <Text style={styles.textoProximo}>Próximo</Text> : <Text style={styles.textoProximo}>Pular</Text>}
 
             <View style={styles.circuloSeta}>
               <Text style={styles.setaProximo}>{">"}</Text>

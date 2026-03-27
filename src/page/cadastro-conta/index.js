@@ -239,7 +239,7 @@ export default function CadastroConta({ route }) {
             {/* BOTÕES */}
             <View style={styles.containerBotoes}>
               <Pressable
-                onPress={() => navigation.goBack()}
+                onPress={() => navigation.navigate("cadastroFoto")}
                 style={styles.btnVoltar}
               >
                 <Text style={styles.setaVoltar}>{"<"}</Text>
