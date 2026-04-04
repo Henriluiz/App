@@ -8,25 +8,8 @@ export default StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
 
-  //ESTOU EM DUVIDA ENTRE ESSES DOIS MODOS
   header: {
     paddingTop: height * 0.15,
-    //height: 120,
-  },
-
-  //BOTÃO DE EDITAR TESTE
-  botaoEditar: {
-    backgroundColor: "#4400ff",
-    padding: 15,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 20
-  },
-
-  textoBotao: {
-    color: "#000000",
-    fontWeight: "bold",
-    fontSize: 16
   },
 
   card: {
@@ -39,14 +22,14 @@ export default StyleSheet.create({
   fotoContainer: {
     alignItems: "center",
     marginTop: -60,
-    marginBottom: 10,
+    marginBottom: 15,
   },
 
   fotoPerfil: {
     width: 140,
     height: 140,
     borderRadius: 60,
-    borderWidth: 4,
+    borderWidth: 3,
     borderColor: "#fff",
     backgroundColor: "#6C63FF"
   },
@@ -57,54 +40,35 @@ export default StyleSheet.create({
     margin: 40,
   },
 
-  iconeEditar: {
-    position: "absolute",
-    bottom: 5,
-    right: width * 0.35,
-    backgroundColor: "#A383FB",
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
   nomePessoa: {
     color: "#ffffff",
     fontSize: 25,
-    marginBottom: 5,
+    marginBottom: 8,
     textAlign: "center",
   },
 
   nickname: {
     fontSize: 20,
-    marginBottom: 15,
+    marginBottom: 20,
     textAlign: "center",
     color: "white",
     fontWeight: "bold"
   },
 
-  botaoEditar: {
-    backgroundColor: "#ffffff",
-    width: "25%",
-    height: 25,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-  },
-
   tituloCard: {
     fontSize: width * 0.07,
     color: "#A383FB",
-    marginTop: height * 0.03,
+    marginTop: height * 0.04,
+    marginBottom: 10,
     marginHorizontal: 20,
   },
 
+  // 🔥 MAIS ESPAÇO GERAL
   container2: {
     flex: 1,
-    marginTop: height * 0.03,
+    marginTop: height * 0.04,
     paddingHorizontal: 20,
+    paddingBottom: 40,
     backgroundColor: "#ffffff",
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
@@ -112,95 +76,74 @@ export default StyleSheet.create({
   },
 
   colunaEsquerda: {
-    width: 150, // Largura fixa
+    width: 150,
   },
 
   colunaDireita: {
-    width: 150, // Largura fixa
+    width: 150,
   },
 
+  // 🔥 MAIS ESPAÇO ENTRE LINHAS
   rowWrap: {
     flexDirection: "row",
     gap: 15,
-    marginTop: 5,
+    marginTop: 20,
   },
 
   colunaFlex: {
-    flex: 1, // Divide o espaço igualmente
-    // alignItems: 'center', // Centraliza o conteúdo horizontalmente
+    flex: 1,
   },
 
+  // 🔥 LABEL MAIS ESPAÇADO
   label: {
     fontSize: width * 0.04,
     color: "#000000",
     marginTop: 10,
-    marginBottom: 5,
+    marginBottom: 8,
+    fontWeight: "600",
   },
 
   dados: {
     width: "100%",
-    height: 25,
+    height: 30,
     borderColor: "transparent",
     borderWidth: 1.5,
     borderRadius: 12,
-    paddingHorizontal: 5,
+    paddingHorizontal: 8,
     fontSize: width * 0.04,
     textAlignVertical: "center",
-    textAlign: "center",
-},
+  },
 
   inputEditando: {
     borderWidth: 1.5,
     borderColor: "#A383FB",
-},
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+  },
 
   dadoEmail: {
     width: "100%",
     fontSize: width * 0.04,
     marginTop: 5,
     textAlign: "left",
-},
-
-  pickerContainer: {
-    width: "100%",
-    height: 50,
-    borderColor: "transparent",
-    borderWidth: 1.5,
-    borderRadius: 12,
-    justifyContent: "center",
-},
-
-  pickerEditando: {
-    borderWidth: 1.5,
-    borderColor: "#A383FB",
-},
+  },
 
   nicknameContainer: {
     flexDirection: "row",
-    alignItems: "left",
+    alignItems: "center",
     borderWidth: 1.5,
     borderColor: "transparent",
     borderRadius: 12,
-    height: 30,
+    height: 35,
     paddingHorizontal: 12,
   },
-
-  nicknameEditando: {
-    borderWidth: 1.5,
-    borderColor: "#A383FB",
-},
 
   arroba: {
     color: "#999",
     fontSize: width * 0.04,
     marginRight: 4,
-},
-
-  nicknameInput: {
-    flex: 1,
-    width: "100%",
-    fontSize: width * 0.04,
-},
+  },
 
   topo: {
     position: "absolute",
@@ -214,19 +157,19 @@ export default StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 60,
     paddingHorizontal: 20,
-},
+  },
 
   fecharModal: {
     position: "absolute",
     top: 50,
     right: 20,
-},
+  },
 
   modalTitulo: {
     fontSize: 28,
     fontWeight: "bold",
     marginBottom: 40,
-},
+  },
 
   opcao: {
     paddingVertical: 20,
@@ -237,26 +180,24 @@ export default StyleSheet.create({
   botaoExcluir: {
     flex: 1,
     backgroundColor: "#FFF",
-    padding: 15,
+    padding: 30,
     borderRadius: 12,
     alignItems: "center",
     marginRight: 10,
-    padding: 30
   },
-    
-    textoExcluir: {
+
+  textoExcluir: {
     color: "#FF4B4B",
     fontWeight: "bold",
   },
 
-  // _____ SOBRE O MODAL DE CONFIRMAÇÃO DE DELETE_______
   overlay: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(0,0,0,0.5)",
   },
-  
+
   modalContainer2: {
     width: '85%',
     backgroundColor: '#fff',
@@ -274,21 +215,25 @@ export default StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
   },
+
   icon: {
     fontSize: 30,
   },
+
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 10,
   },
+
   warningText: {
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
     marginBottom: 10,
   },
+
   userInfo: {
     fontSize: 14,
     color: '#999',
@@ -299,15 +244,18 @@ export default StyleSheet.create({
     width: '100%',
     marginBottom: 20,
   },
+
   confirmText: {
     fontSize: 14,
     color: '#666',
     textAlign: 'center',
   },
+
   boldText: {
     fontWeight: 'bold',
     color: '#ff4444',
   },
+
   confirmInput: {
     borderWidth: 1,
     borderColor: '#ddd',
@@ -318,12 +266,12 @@ export default StyleSheet.create({
     textAlign: 'center',
   },
 
-  
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
   },
+
   button: {
     flex: 1,
     paddingVertical: 12,
@@ -331,17 +279,21 @@ export default StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 5,
   },
+
   cancelButton: {
     backgroundColor: '#f0f0f0',
   },
+
   cancelButtonText: {
     color: '#666',
     fontSize: 16,
     fontWeight: '600',
   },
+
   deleteButton: {
     backgroundColor: '#ff4444',
   },
+
   deleteButtonText: {
     color: '#fff',
     fontSize: 16,
