@@ -13,9 +13,9 @@ export default function AppNavigator() {
     <Stack.Navigator 
       screenOptions={{ headerShown: false }}
     >
-      <Stack.Screen name="menu" component={Menu} />
+      {/* <Stack.Screen name="menu" component={Menu} />
       <Stack.Screen name="perfil" component={Perfil} />
-      <Stack.Screen name="editarPerfil" component={EditarPerfil} />
+      <Stack.Screen name="editarPerfil" component={EditarPerfil} /> */}
       <Stack.Screen name="visualizarPsi" component={VisualizarPsi} />
     </Stack.Navigator>
   );

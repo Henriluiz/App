@@ -6,6 +6,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
+import * as Animatable from 'react-native-animatable';
 import NavBar from "../../components/NavBar";
 
 export default function VisualizarPsi({ navigation }) {
@@ -146,43 +147,42 @@ export default function VisualizarPsi({ navigation }) {
 
         </ScrollView>
 
-        <NavBar tela="visualizarPsi" />
+        {/* <NavBar tela="visualizarPsi" /> */}
 
         {/* MODAL ESTILO INSTAGRAM */}
         <Modal
           visible={menuAberto}
-          animationType="slide"
           transparent={true}
         >
-          <Pressable
-            style={styles.modalOverlay}
-            onPress={() => setMenuAberto(false)}
-          >
-            <View style={styles.bottomSheet}>
+          <View style={styles.modalOverlay}>
+            <Animatable.View animation={"fadeInUp"} duration={800} style={{flex: 1, justifyContent: "flex-end"}}
+            >
+              <View style={styles.bottomSheet}>
 
-              <View style={styles.handle} />
+                <View style={styles.handle} />
 
-              <Text style={styles.modalTitulo}>Opções</Text>
+                <Text style={styles.modalTitulo}>Opções</Text>
 
-              <Pressable style={styles.opcao}>
-                <Text style={styles.textoOpcao}>Ver avaliações</Text>
-              </Pressable>
+                <Pressable style={styles.opcao}>
+                  <Text style={styles.textoOpcao}>Ver avaliações</Text>
+                </Pressable>
 
-              <Pressable style={styles.opcao}>
-                <Text style={styles.textoOpcao}>Agendar consulta</Text>
-              </Pressable>
+                <Pressable style={styles.opcao}>
+                  <Text style={styles.textoOpcao}>Agendar consulta</Text>
+                </Pressable>
 
-              <Pressable
-                style={[styles.opcao, { marginTop: 10 }]}
-                onPress={() => setMenuAberto(false)}
-              >
-                <Text style={[styles.textoOpcao, { color: "red" }]}>
-                  Cancelar
-                </Text>
-              </Pressable>
+                <Pressable
+                  style={[styles.opcao, { marginTop: 10 }]}
+                  onPress={() => setMenuAberto(false)}
+                >
+                  <Text style={[styles.textoOpcao, { color: "red" }]}>
+                    Cancelar
+                  </Text>
+                </Pressable>
 
-            </View>
-          </Pressable>
+              </View>
+            </Animatable.View>
+          </View>
         </Modal>
 
       </View>
