@@ -1,182 +1,56 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable
-} from "react-native";
-
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { Ionicons, Feather } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
-import { useNavigation } from '@react-navigation/native';
+import { View, Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import styles from "./styles";
 
 export default function NavBar({ tela }) {
+  const navigation = useNavigation();
+  const route = useRoute();
 
-    const navigation = useNavigation();
-    const route = useRoute();
+  // 🔥 CONFIGURAÇÃO DOS BOTÕES
+  const tabs = [
+    {
+      key: "home",
+      icon: tela === "home" ? "home" : "home-outline",
+      route: "menu",
+    },
+    {
+      key: "pesquisa",
+      icon: tela === "pesquisa" ? "search" : "search-outline",
+      route: "pesquisa",
+    },
+    {
+      key: "chat",
+      icon: tela === "chat" ? "chatbubble" : "chatbubble-outline",
+      route: "chat", // 🔥 IMPORTANTE: cria essa rota depois
+    },
+    {
+      key: "perfil",
+      icon: tela === "perfil" ? "person" : "person-outline",
+      route: "perfil",
+    },
+  ];
 
-    return (
-    <View>
-
-        {tela === 'home' && (
-            <View style={styles.bottomNav}>
-                <Pressable onPress={() => navigation.navigate('menu')}>
-                    <Ionicons
-                    name="home"
-                    size={24}
-                    color={route.name === "Home" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable>
-                    {/* onPress={() => navigation.navigate("Curtidas")} */}
-                    <Ionicons
-                    name="heart-outline"
-                    size={24}
-                    color={route.name === "Curtidas" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable>
-                    {/*  onPress={() => navigation.navigate("Chat")} */}
-                    <Ionicons
-                    name="chatbubble-outline"
-                    size={24}
-                    color={route.name === "Chat" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable onPress={() => navigation.navigate('perfil')}>
-                    <Ionicons
-                    name="person-outline"
-                    size={24}
-                    color={route.name === "Perfil" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-
-            </View>
-        )}
-
-        {tela === 'central' && (
-            <View style={styles.bottomNav}>
-                <Pressable onPress={() => navigation.navigate('menu')}>
-                    <Ionicons
-                    name="home-outline"
-                    size={24}
-                    color={route.name === "Home" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable>
-                    {/* onPress={() => navigation.navigate("Central")} */}
-                    <Ionicons
-                    name="heart"
-                    size={24}
-                    color={route.name === "Central" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable>
-                    {/*  onPress={() => navigation.navigate("Chat")} */}
-                    <Ionicons
-                    name="chatbubble-outline"
-                    size={24}
-                    color={route.name === "Chat" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable onPress={() => navigation.navigate('perfil')}>
-                    <Ionicons
-                    name="person-outline"
-                    size={24}
-                    color={route.name === "Perfil" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-
-            </View>
-        )}
-
-        {tela === 'chat' && (
-            <View style={styles.bottomNav}>
-                <Pressable onPress={() => navigation.navigate('menu')}>
-                    <Ionicons
-                    name="home-outline"
-                    size={24}
-                    color={route.name === "Home" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable>
-                    {/* onPress={() => navigation.navigate("Curtidas")} */}
-                    <Ionicons
-                    name="heart-outline"
-                    size={24}
-                    color={route.name === "Curtidas" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable>
-                    {/*  onPress={() => navigation.navigate("Chat")} */}
-                    <Ionicons
-                    name="chatbubble"
-                    size={24}
-                    color={route.name === "Chat" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable onPress={() => navigation.navigate('perfil')}>
-                    <Ionicons
-                    name="person-outline"
-                    size={24}
-                    color={route.name === "Perfil" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-
-            </View>
-        )}
-
-        {tela === 'perfil' && (
-            <View style={styles.bottomNav}>
-                <Pressable onPress={() => navigation.navigate('menu')}>
-                    <Ionicons
-                    name="home-outline"
-                    size={24}
-                    color={route.name === "Home" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable>
-                    {/* onPress={() => navigation.navigate("Curtidas")} */}
-                    <Ionicons
-                    name="heart-outline"
-                    size={24}
-                    color={route.name === "Curtidas" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable>
-                    {/*  onPress={() => navigation.navigate("Chat")} */}
-                    <Ionicons
-                    name="chatbubble-outline"
-                    size={24}
-                    color={route.name === "Chat" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-    
-                <Pressable onPress={() => navigation.navigate('perfil')}>
-                    <Ionicons
-                    name="person"
-                    size={24}
-                    color={route.name === "Perfil" ? "#6C63FF" : "#999"}
-                    />
-                </Pressable>
-
-            </View>
-        )}
-    </View>        
+  return (
+    <View style={styles.bottomNav}>
+      {tabs.map((tab) => (
+        <Pressable
+          key={tab.key}
+          onPress={() => {
+            if (route.name !== tab.route) {
+              navigation.navigate(tab.route);
+            }
+          }}
+        >
+          <Ionicons
+            name={tab.icon}
+            size={24}
+            color={tela === tab.key ? "#5DE2D4" : "#999"}
+          />
+        </Pressable>
+      ))}
+    </View>
   );
 }
