@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF} from "../services/authService";
+import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPiscologo} from "../services/authService";
 import {
   saveSession,
   clearSession,
   getToken,
-  getUser,
+  getUser, 
 } from "../services/authStogare";
 import { authEvents } from "../services/authEvents";
 import { errorMonitor } from "events";
@@ -91,7 +91,25 @@ export function AuthProvider({ children }) {
         erro: true
       };
     }
-  }
+  };
+
+  async function verPsicologo(id) {
+    try {
+      const perfil = await PerfilPiscologo(id);
+
+      return {
+        user: perfil.user,
+        psicologo: perfil.psicologo,
+      };
+    } catch (e) {
+      console.error("ERRO COMPLETO (verPsicologo):", e.response?.data);
+
+      return {
+        user: false,
+        psicologo: false
+      };
+    }
+  };
 
   const bootstrap = async () => {
 
@@ -146,7 +164,8 @@ export function AuthProvider({ children }) {
         signOut,
         removeAccount,
         updateUser,
-        verificarDisponibilidade
+        verificarDisponibilidade,
+        verPsicologo
       }}
     >
       {children}

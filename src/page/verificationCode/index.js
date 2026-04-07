@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,12 +10,17 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from "./styles";
+import { useNavigation } from "@react-navigation/native";
+import {verificarCodigo} from "../../services/authService";
 
-export default function VerificationCode() {
+export default function VerificationCode({ route }) {
   const [code, setCode] = useState(['', '', '', '', '']);
   const inputs = useRef([]);
 
-  
+  const navigation = useNavigation();
+
+  const {email} = route.params;
+
   const handleCodeChange = (text, index) => {
     const newCode = [...code];
     newCode[index] = text;
@@ -24,6 +29,16 @@ export default function VerificationCode() {
     if (text !== '' && index < 4) {
       inputs.current[index + 1].focus();
     }
+  };
+
+  async function authCodigo() {
+    const response = await verificarCodigo(email, code.join(''));
+    console.log(response);
+
+    if (response) {
+      navigation.navigate("esquecerSenha")
+    }
+
   };
 
   return (

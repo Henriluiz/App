@@ -1,34 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text, View, ScrollView, KeyboardAvoidingView,
   Platform, Pressable, Modal
 } from "react-native";
 
+import { useAuth } from "../../context/AuthContext"
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import * as Animatable from 'react-native-animatable';
-import NavBar from "../../components/NavBar";
 
 export default function VisualizarPsi({ navigation }) {
 
   const [menuAberto, setMenuAberto] = useState(false);
+  const [user, setUser] = useState(null);
+  const [psicologo, setPsicologo] = useState(null)
+  const [loading, setLoading] = useState(true);
 
-  const user = {
-    nome: "Dr. João Silva",
-    username: "joaopsi",
-    avaliacao: 4.9,
-    totalAvaliacoes: 267,
-    tempoExperiencia: "5 anos",
-    pacientes: "+300 pacientes atendidos",
-    sobre: "Psicólogo dedicado ao cuidado da saúde mental, com foco no acolhimento, escuta ativa e desenvolvimento pessoal.",
-    especialidades: "Ansiedade, Autoestima, Relacionamentos",
-    abordagem: "Terapia Cognitivo-Comportamental, Abordagem Humanista",
-    atende: "Adultos, Adolescentes",
-    formacao: "Psicologia - USP",
-    crp: "06/12345",
-    experiencia: "5 anos atendendo pacientes com foco em terapia cognitivo-comportamental e abordagem humanista.",
-    valor: "R$ 80,00 por sessão"
-  };
+  const {verPsicologo} = useAuth();
+
+  useEffect(() => {
+    async function fetchPsicologo() {
+      try {
+        const response = await verPsicologo(23);
+        setUser(response.data.user);
+        setPsicologo(response.data.psicologo);
+
+      } catch (error) {
+        console.log("Erro ao buscar psicólogo", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPsicologo();
+  }, [id]); // importante
+
+  if (loading) return <p>Carregando...</p>;
+  if (!user) return <p>Erro ao carregar dados</p>;
+
 
   return (
     <KeyboardAvoidingView
@@ -104,7 +113,7 @@ export default function VisualizarPsi({ navigation }) {
 
               <View style={styles.rowWrap}>
                 <Text style={styles.label}>Sobre</Text>
-                <Text style={styles.texto}>{user.sobre}</Text>
+                <Text style={styles.texto}>{psicologo.biografia}</Text>
               </View>
 
               <View style={styles.rowWrap}>
@@ -124,12 +133,12 @@ export default function VisualizarPsi({ navigation }) {
 
               <View style={styles.rowWrap}>
                 <Text style={styles.label}>Formação</Text>
-                <Text style={styles.texto}>{user.formacao}</Text>
+                <Text style={styles.texto}>{psicologo.grau_formacao}</Text>
               </View>
 
               <View style={styles.rowWrap}>
                 <Text style={styles.label}>CRP</Text>
-                <Text style={styles.texto}>{user.crp}</Text>
+                <Text style={styles.texto}>{psicologo.crp}</Text>
               </View>
 
               <View style={styles.rowWrap}>
@@ -139,7 +148,7 @@ export default function VisualizarPsi({ navigation }) {
 
               <View style={styles.rowWrap}>
                 <Text style={styles.label}>Valor</Text>
-                <Text style={styles.texto}>{user.valor}</Text>
+                <Text style={styles.texto}>{psicologo.preco_sessao}</Text>
               </View>
 
             </View>
