@@ -14,6 +14,8 @@ const styles = StyleSheet.create({
   headerTop: {
     marginBottom: 20,
   },
+
+  
   greeting: {
     color: "#fff",
     fontSize: 18,

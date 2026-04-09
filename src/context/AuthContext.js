@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPiscologo} from "../services/authService";
+import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo} from "../services/authService";
 import {
   saveSession,
   clearSession,
@@ -95,14 +95,14 @@ export function AuthProvider({ children }) {
 
   async function verPsicologo(id) {
     try {
-      const perfil = await PerfilPiscologo(id);
+      const perfil = await PerfilPsicologo(id);
 
       return {
         user: perfil.user,
         psicologo: perfil.psicologo,
       };
     } catch (e) {
-      console.error("ERRO COMPLETO (verPsicologo):", e.response?.data);
+      console.error("ERRO COMPLETO (verPsicólogo):", e.response?.data);
 
       return {
         user: false,

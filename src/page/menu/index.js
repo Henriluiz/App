@@ -76,6 +76,7 @@ export default function Menu({ navigation }) {
               <Text style={styles.sessionButtonText}>Entrar na sala</Text>
             </Pressable>
           </View>
+          
         </View>
 
         {/* AÇÕES RÁPIDAS */}
