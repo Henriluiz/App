@@ -15,9 +15,9 @@ export default function AppNavigator() {
       initialRouteName="pesquisa"
       screenOptions={{ headerShown: false }}
     >
-      <Stack.Screen name="menu" component={Menu} />
+      {/* <Stack.Screen name="menu" component={Menu} />
       <Stack.Screen name="perfil" component={Perfil} />
-      <Stack.Screen name="editarPerfil" component={EditarPerfil} />
+      <Stack.Screen name="editarPerfil" component={EditarPerfil} /> */}
       <Stack.Screen name="visualizarPsi" component={VisualizarPsi} />
       <Stack.Screen name="pesquisa" component={Pesquisa} />
     </Stack.Navigator>

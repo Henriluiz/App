@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -9,30 +9,22 @@ import {
   Modal
 } from "react-native";
 
+import { useAuth } from "../../context/AuthContext"
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
+import NavBar from "../../components/NavBar";
 
 export default function VisualizarPsi({ navigation }) {
   const [menuAberto, setMenuAberto] = useState(false);
 
-  // 🔹 ESTADOS PARA AGENDAMENTO
-  const [modalAgendar, setModalAgendar] = useState(false);
-  const [diaSelecionado, setDiaSelecionado] = useState(null);
-  const [horaSelecionada, setHoraSelecionada] = useState(null);
-  const [agendados, setAgendados] = useState({});
-  const [selecionado, setSelecionado] = useState(null);
-
-  const dias = ["Seg", "Ter", "Qua", "Qui", "Sex"];
-  const horarios = ["09:00", "11:00", "14:00", "16:00"];
-
   const user = {
-    nome: "Dra. Maria Silva",
-    username: "mariaPsico",
+    nome: "Dr. João Silva",
+    username: "joaopsi",
     avaliacao: 4.9,
     totalAvaliacoes: 267,
     tempoExperiencia: "5 anos",
     pacientes: "+300 pacientes atendidos",
-    sobre: "Psicóloga dedicada ao cuidado da saúde mental, com foco no acolhimento, escuta ativa e desenvolvimento pessoal.",
+    sobre: "Psicólogo dedicado ao cuidado da saúde mental, com foco no acolhimento, escuta ativa e desenvolvimento pessoal.",
     especialidades: "Ansiedade, Autoestima, Relacionamentos",
     abordagem: "Terapia Cognitivo-Comportamental, Abordagem Humanista",
     atende: "Adultos, Adolescentes",
@@ -40,20 +32,6 @@ export default function VisualizarPsi({ navigation }) {
     crp: "06/12345",
     experiencia: "5 anos atendendo pacientes com foco em terapia cognitivo-comportamental e abordagem humanista.",
     valor: "R$ 80,00 por sessão"
-  };
-
-  const agendarConsulta = () => {
-    if (!diaSelecionado || !horaSelecionada) return;
-
-    setAgendados({
-      ...agendados,
-      [selecionado.nome]: {
-        dia: diaSelecionado,
-        hora: horaSelecionada,
-      },
-    });
-
-    setModalAgendar(false);
   };
 
   return (
@@ -119,21 +97,57 @@ export default function VisualizarPsi({ navigation }) {
             {/* INFORMAÇÕES */}
             <View style={styles.container2}>
               <Text style={styles.tituloCard}>Informações</Text>
-              {["sobre","especialidades","abordagem","atende","formacao","crp","experiencia","valor"].map((field) => (
-                <View style={styles.rowWrap} key={field}>
-                  <Text style={styles.label}>{field.charAt(0).toUpperCase() + field.slice(1)}</Text>
-                  <Text style={styles.texto}>{user[field]}</Text>
-                </View>
-              ))}
+
+              <View style={styles.rowWrap}>
+                <Text style={styles.label}>Sobre</Text>
+                <Text style={styles.texto}>{user.sobre}</Text>
+              </View>
+
+              <View style={styles.rowWrap}>
+                <Text style={styles.label}>Especialidades</Text>
+                <Text style={styles.texto}>{user.especialidades}</Text>
+              </View>
+
+              <View style={styles.rowWrap}>
+                <Text style={styles.label}>Abordagem</Text>
+                <Text style={styles.texto}>{user.abordagem}</Text>
+              </View>
+
+              <View style={styles.rowWrap}>
+                <Text style={styles.label}>Atende</Text>
+                <Text style={styles.texto}>{user.atende}</Text>
+              </View>
+
+              <View style={styles.rowWrap}>
+                <Text style={styles.label}>Formação</Text>
+                <Text style={styles.texto}>{user.formacao}</Text>
+              </View>
+
+              <View style={styles.rowWrap}>
+                <Text style={styles.label}>CRP</Text>
+                <Text style={styles.texto}>{user.crp}</Text>
+              </View>
+
+              <View style={styles.rowWrap}>
+                <Text style={styles.label}>Experiência</Text>
+                <Text style={styles.texto}>{user.experiencia}</Text>
+              </View>
+
+              <View style={styles.rowWrap}>
+                <Text style={styles.label}>Valor</Text>
+                <Text style={styles.texto}>{user.valor}</Text>
+              </View>
+
             </View>
 
           </View>
         </ScrollView>
 
+        <NavBar tela="visualizarPsi" />
+
         {/* MODAL ESTILO INSTAGRAM */}
         <Modal
           visible={menuAberto}
-          animationType="slide"
           transparent={true}
         >
           <Pressable
@@ -141,19 +155,16 @@ export default function VisualizarPsi({ navigation }) {
             onPress={() => setMenuAberto(false)}
           >
             <View style={styles.bottomSheet}>
+
               <View style={styles.handle} />
+
               <Text style={styles.modalTitulo}>Opções</Text>
 
-              <Pressable
-                style={styles.opcao}
-                onPress={() => {
-                  setSelecionado(user);
-                  setDiaSelecionado(null);
-                  setHoraSelecionada(null);
-                  setModalAgendar(true);
-                  setMenuAberto(false);
-                }}
-              >
+              <Pressable style={styles.opcao}>
+                <Text style={styles.textoOpcao}>Ver avaliações</Text>
+              </Pressable>
+
+              <Pressable style={styles.opcao}>
                 <Text style={styles.textoOpcao}>Agendar consulta</Text>
               </Pressable>
 
@@ -161,8 +172,11 @@ export default function VisualizarPsi({ navigation }) {
                 style={[styles.opcao, { marginTop: 10 }]}
                 onPress={() => setMenuAberto(false)}
               >
-                <Text style={[styles.textoOpcao, { color: "red" }]}>Cancelar</Text>
+                <Text style={[styles.textoOpcao, { color: "red" }]}>
+                  Cancelar
+                </Text>
               </Pressable>
+
             </View>
           </Pressable>
         </Modal>

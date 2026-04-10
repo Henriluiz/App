@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StatusBar,
-  Image,
-  Pressable,
-} from 'react-native';
+import { useState } from 'react';
+import {View, Text, TextInput, StatusBar, Image, Pressable,} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons'; // Certifique-se de ter o expo-icons
+import { useNavigation } from "@react-navigation/native";
 import styles from "./styles";
+import {solicitarCodigo} from "../../services/authService"
 
-export default function EmailRec({ navigation }) {
+export default function EmailRec() {
   const [email, setEmail] = useState('');
+
+  const navigation = useNavigation();
+
+  async function enviar() {
+    console.log("Entrei 4!!")
+    const emailvalor = await solicitarCodigo(email)
+    console.log(emailvalor)
+
+    if (emailvalor) {
+      navigation.navigate("verificationCode", {
+        email: email,
+      });
+    }
+  }
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -50,7 +58,7 @@ export default function EmailRec({ navigation }) {
           </Pressable>
 
       
-          <Pressable style={styles.sendButton} onPress={() => navigation.navigate("verificationCode")}>
+          <Pressable style={styles.sendButton} onPress={() => enviar()}>
             <Text style={styles.sendButtonText}>Enviar</Text>
           </Pressable>
         </View>
