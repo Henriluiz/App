@@ -93,12 +93,18 @@ export async function verificarCodigo(email, codigo) {
   }
 }
 
-export async function PerfilPiscologo(id) {
+export async function PerfilPsicologo(id) {
   try { // /verPsicologo/{id}
       const response = await api.get(`/verPsicologo/${id}`)
 
-      return response.data
+      return { 
+        "user" : response.data.user,
+        "psicologo" : response.data.psicologo
+      }
   } catch (error) {
-    console.log('Erro', "Não foi possível verificar o código.")
+    console.log('Erro', "Não foi consulta perfil do psicologo.")
+
+    // 👇 FORÇA quem chama a tratar erro
+    throw error;
   }
 }

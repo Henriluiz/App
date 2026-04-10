@@ -1,38 +1,48 @@
 import React, { useEffect, useState } from "react";
 import {
-  Text,
-  View,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Modal
+  Text, View, ScrollView, KeyboardAvoidingView,
+  Platform, Pressable, Modal, ActivityIndicator
 } from "react-native";
 
 import { useAuth } from "../../context/AuthContext"
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
-import NavBar from "../../components/NavBar";
+import * as Animatable from 'react-native-animatable';
 
 export default function VisualizarPsi({ navigation }) {
-  const [menuAberto, setMenuAberto] = useState(false);
 
-  const user = {
-    nome: "Dr. João Silva",
-    username: "joaopsi",
-    avaliacao: 4.9,
-    totalAvaliacoes: 267,
-    tempoExperiencia: "5 anos",
-    pacientes: "+300 pacientes atendidos",
-    sobre: "Psicólogo dedicado ao cuidado da saúde mental, com foco no acolhimento, escuta ativa e desenvolvimento pessoal.",
-    especialidades: "Ansiedade, Autoestima, Relacionamentos",
-    abordagem: "Terapia Cognitivo-Comportamental, Abordagem Humanista",
-    atende: "Adultos, Adolescentes",
-    formacao: "Psicologia - USP",
-    crp: "06/12345",
-    experiencia: "5 anos atendendo pacientes com foco em terapia cognitivo-comportamental e abordagem humanista.",
-    valor: "R$ 80,00 por sessão"
-  };
+  const { user } = useAuth();
+
+  const [menuAberto, setMenuAberto] = useState(false);
+  const [userPerfil, setUserPerfil] = useState(null)
+  const [psicologo, setPsicologo] = useState(null)
+  const [loading, setLoading] = useState(true);
+  const [id, setId] = useState(23)
+
+  const {verPsicologo} = useAuth();
+  
+
+  useEffect(() => {
+    async function fetchPsicologo() {
+      try {
+        const response = await verPsicologo(id);
+        setUserPerfil(response.data.user);
+        setPsicologo(response.data.psicologo);
+
+      } catch (error) {
+        console.log("Erro ao buscar psicólogo", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPsicologo();
+  }, [id]); // importante
+
+  if (loading) return <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+    <ActivityIndicator size="large" color="#2E7D32" /></View>;
+  if (!userPerfil) return <Text>Erro ao carregar dados</Text>;
+
 
   return (
     <KeyboardAvoidingView
@@ -68,8 +78,9 @@ export default function VisualizarPsi({ navigation }) {
               </View>
             </View>
 
-            <Text style={styles.nomePessoa}>{user.nome}</Text>
-            <Text style={styles.nickname}>@{user.username}</Text>
+            <Text style={styles.nomePessoa}>{userPerfil
+            .nome}</Text>
+            <Text style={styles.nickname}>@{userPerfil.username}</Text>
 
             <View style={styles.infoContainer}>
               <View style={styles.estrelas}>
@@ -78,20 +89,25 @@ export default function VisualizarPsi({ navigation }) {
                 ))}
               </View>
 
-              <Text style={styles.textoAvaliacao}>
-                {user.avaliacao} 
-                <Text style={{ color: "#6C63FF" }}> ({user.totalAvaliacoes} avaliações)</Text>
-              </Text>
+              {/* <Text style={styles.textoAvaliacao}>
+                {userPerfil.avaliacao} 
+                <Text style={{ color: "#6C63FF" }}>
+                  {" "}({userPerfil.totalAvaliacoes} avaliações)
+                </Text>
+              </Text> */}
 
+              {/* 🧠 EXPERIÊNCIA
               <View style={styles.linhaInfo}>
                 <Ionicons name="school-outline" size={18} color="#6C63FF" />
-                <Text style={styles.textoInfo}>{user.tempoExperiencia} de experiência</Text>
-              </View>
+                <Text style={styles.textoInfo}>{userPerfil.tempoExperiencia} de experiência</Text>
+              </View> */}
 
+              {/* 👥 PACIENTES
               <View style={styles.linhaInfo}>
                 <Ionicons name="people-outline" size={18} color="#6C63FF" />
-                <Text style={styles.textoInfo}>{user.pacientes}</Text>
-              </View>
+                <Text style={styles.textoInfo}>{userPerfil.pacientes}</Text>
+              </View> */}
+
             </View>
 
             {/* INFORMAÇÕES */}
@@ -100,85 +116,85 @@ export default function VisualizarPsi({ navigation }) {
 
               <View style={styles.rowWrap}>
                 <Text style={styles.label}>Sobre</Text>
-                <Text style={styles.texto}>{user.sobre}</Text>
+                <Text style={styles.texto}>{psicologo.biografia}</Text>
               </View>
 
-              <View style={styles.rowWrap}>
+              {/* <View style={styles.rowWrap}>
                 <Text style={styles.label}>Especialidades</Text>
-                <Text style={styles.texto}>{user.especialidades}</Text>
+                <Text style={styles.texto}>{userPerfil.especialidades}</Text>
               </View>
 
               <View style={styles.rowWrap}>
                 <Text style={styles.label}>Abordagem</Text>
-                <Text style={styles.texto}>{user.abordagem}</Text>
-              </View>
+                <Text style={styles.texto}>{userPerfil.abordagem}</Text>
+              </View> */}
 
-              <View style={styles.rowWrap}>
+              {/* <View style={styles.rowWrap}>
                 <Text style={styles.label}>Atende</Text>
-                <Text style={styles.texto}>{user.atende}</Text>
-              </View>
+                <Text style={styles.texto}>{userPerfil.atende}</Text>
+              </View> */}
 
               <View style={styles.rowWrap}>
                 <Text style={styles.label}>Formação</Text>
-                <Text style={styles.texto}>{user.formacao}</Text>
+                <Text style={styles.texto}>{psicologo.grau_formacao}</Text>
               </View>
 
               <View style={styles.rowWrap}>
                 <Text style={styles.label}>CRP</Text>
-                <Text style={styles.texto}>{user.crp}</Text>
+                <Text style={styles.texto}>{psicologo.crp}</Text>
               </View>
 
-              <View style={styles.rowWrap}>
+              {/* <View style={styles.rowWrap}>
                 <Text style={styles.label}>Experiência</Text>
-                <Text style={styles.texto}>{user.experiencia}</Text>
-              </View>
+                <Text style={styles.texto}>{userPerfil.experiencia}</Text>
+              </View> */}
 
-              <View style={styles.rowWrap}>
+              {/* <View style={styles.rowWrap}>
                 <Text style={styles.label}>Valor</Text>
-                <Text style={styles.texto}>{user.valor}</Text>
-              </View>
+                <Text style={styles.texto}>{psicologo.preco_sessao}</Text>
+              </View> */}
 
             </View>
 
           </View>
         </ScrollView>
 
-        <NavBar tela="visualizarPsi" />
+        {/* <NavBar tela="visualizarPsi" /> */}
 
         {/* MODAL ESTILO INSTAGRAM */}
         <Modal
           visible={menuAberto}
           transparent={true}
         >
-          <Pressable
-            style={styles.modalOverlay}
-            onPress={() => setMenuAberto(false)}
-          >
-            <View style={styles.bottomSheet}>
+          <View style={styles.modalOverlay}>
+            <Animatable.View animation={"fadeInUp"} duration={800} style={{flex: 1, justifyContent: "flex-end"}}
+            >
+              <View style={styles.bottomSheet}>
 
-              <View style={styles.handle} />
+                <View style={styles.handle} />
 
-              <Text style={styles.modalTitulo}>Opções</Text>
+                <Text style={styles.modalTitulo}>Opções</Text>
 
-              <Pressable style={styles.opcao}>
-                <Text style={styles.textoOpcao}>Ver avaliações</Text>
-              </Pressable>
+                <Pressable style={styles.opcao}>
+                  <Text style={styles.textoOpcao}>Ver avaliações</Text>
+                </Pressable>
 
-              <Pressable style={styles.opcao}>
-                <Text style={styles.textoOpcao}>Agendar consulta</Text>
-              </Pressable>
+                <Pressable style={styles.opcao}>
+                  <Text style={styles.textoOpcao}>Agendar consulta</Text>
+                </Pressable>
 
-              <Pressable
-                style={[styles.opcao, { marginTop: 10 }]}
-                onPress={() => setMenuAberto(false)}
-              >
-                <Text style={[styles.textoOpcao, { color: "red" }]}>
-                  Cancelar
-                </Text>
-              </Pressable>
+                <Pressable
+                  style={[styles.opcao, { marginTop: 10 }]}
+                  onPress={() => setMenuAberto(false)}
+                >
+                  <Text style={[styles.textoOpcao, { color: "red" }]}>
+                    Cancelar
+                  </Text>
+                </Pressable>
 
-            </View>
-          </Pressable>
+              </View>
+            </Animatable.View>
+          </View>
         </Modal>
 
         {/* MODAL AGENDAR CONSULTA CENTRALIZADO */}

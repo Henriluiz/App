@@ -2,6 +2,7 @@ import React, { use, useState } from "react";
 import {Text,View,Image,Pressable,ScrollView,KeyboardAvoidingView,Platform,}from "react-native";
 import styles from "./styles";
 import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 
 import { Ionicons } from "@expo/vector-icons";
 import {useAuth} from "../../context/AuthContext"
@@ -32,7 +33,7 @@ export default function CadastroFoto({ route }) {
     if (!permissoes) return;
 
     const resultado = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Imcompátivel, mas funciona
       allowsEditing: true,
       quality: 1,
     });
@@ -48,7 +49,7 @@ export default function CadastroFoto({ route }) {
     if (!permissoes) return;
 
     const resultado = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Imcompátivel, mas funciona
       allowsEditing: true,
       quality: 1,
     });
@@ -56,6 +57,7 @@ export default function CadastroFoto({ route }) {
     if (!resultado.canceled) {
       setImagem(resultado.assets[0].uri);
     }
+    console.log(resultado.assets[0].uri)
   };
 
   async function enviar() {
@@ -86,7 +88,7 @@ export default function CadastroFoto({ route }) {
       <View style={styles.container2}>
         <Text style={styles.titulo}>Adicione sua foto</Text>
         <View style={styles.fotoContainer}>
-          <Pressable style={styles.fotoPerfil} onPress={tirarFoto}>
+          <Pressable style={styles.fotoPerfil} onPress={() => tirarFoto()}>
             {imagem ?
               <Image source={{ uri: imagem }} style={styles.imagem}/> : <Ionicons name="person-outline" size={75} color="white"  style={styles.fotoPerfil2}/>
             }
@@ -99,7 +101,7 @@ export default function CadastroFoto({ route }) {
         </View>
         <View style={styles.containerBotoes}> 
 
-          <Pressable onPress={escolherDaGaleria} style={styles.btn}>
+          <Pressable onPress={() => escolherDaGaleria()} style={styles.btn}>
             <Text style={{fontSize: 20, color: "white"}}>Escolher da Galeria</Text>
           </Pressable>
 
