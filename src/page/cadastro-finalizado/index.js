@@ -24,14 +24,13 @@ export default function CadastroFin() {
 
             <View style={styles.container2}>
                 <Text style={styles.titulo}>Cadastro Finalizado!</Text>
-
-                <Text style={styles.descricao}>
-                    Iniciaremos a verificação de seus dados.
-                </Text>
-
-                <Text style={styles.subdescricao}>
-                    Esse processo pode levar até 48 horas e após a conclusão enviaremos um email de confirmação.
-                </Text>
+                
+                <View style={styles.containerCheck}>
+                    <Image
+                        style={styles.check}
+                        source={require('./img/check.png')}
+                    />
+                </View>
 
                 <View style={styles.contEntra}>
                     <View style={styles.botaoEntra}>

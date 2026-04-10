@@ -1,14 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout } from "../services/authService";
+import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo} from "../services/authService";
 import {
   saveSession,
   clearSession,
   getToken,
-  getUser,
+  getUser, 
 } from "../services/authStogare";
 import { authEvents } from "../services/authEvents";
+import { errorMonitor } from "events";
 
 const AuthContext = createContext({});
+
+// * SEMPRE QUE FOR ADD UMA FUNCÃO NOVA, ADD ELE NO AuthContext.Provider
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -27,6 +30,7 @@ export function AuthProvider({ children }) {
 
   }
 
+  // Deslogar
   async function signOut() {
 
     try {
@@ -38,6 +42,74 @@ export function AuthProvider({ children }) {
     setUser(null);
 
   }
+
+  // Deletar a conta
+  async function removeAccount() {
+
+    try {
+      await deleteConta();
+    } catch (e) {
+      console.log("Erro ao deletar conta", e);
+    }
+
+    await clearSession();
+    setUser(null);
+
+  }
+
+  // Atualizar nome, email e telefone do usuário
+  async function updateUser(data) {
+    try {
+
+      const updatedUser = await patchPerfil(data);
+      
+      setUser(updatedUser);
+      
+      await saveSession(await getToken(), updatedUser);
+      
+    } catch (error) {
+      console.log("Erro ao atualizar usuário", error);
+      throw error;
+    }
+  }
+
+  async function verificarDisponibilidade(username, cpf) {
+    try {
+      const verificacao = await getUserCPF(username, cpf);
+
+      return {
+        usernameDisponivel: verificacao.username_disponivel,
+        cpfDisponivel: verificacao.cpf_disponivel,
+      };
+
+    } catch (e) {
+      console.error("ERRO COMPLETO (verificarDisponibilidade):", e.response?.data);
+
+      return {
+        usernameDisponivel: false,
+        cpfDisponivel: false,
+        erro: true
+      };
+    }
+  };
+
+  async function verPsicologo(id) {
+    try {
+      const perfil = await PerfilPsicologo(id);
+
+      return {
+        user: perfil.user,
+        psicologo: perfil.psicologo,
+      };
+    } catch (e) {
+      console.error("ERRO COMPLETO (verPsicólogo):", e.response?.data);
+
+      return {
+        user: false,
+        psicologo: false
+      };
+    }
+  };
 
   const bootstrap = async () => {
 
@@ -90,6 +162,10 @@ export function AuthProvider({ children }) {
         loading,
         signIn,
         signOut,
+        removeAccount,
+        updateUser,
+        verificarDisponibilidade,
+        verPsicologo
       }}
     >
       {children}

@@ -1,19 +1,42 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,}from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { MaskedTextInput } from "react-native-mask-text";
+import { cpf } from 'cpf-cnpj-validator';
 import styles from "./styles";
 
+import {useAuth} from "../../context/AuthContext"
+
 export default function CadastroPessoal({ navigation }) {
+  const { verificarDisponibilidade } = useAuth()
+
   const [nomeCompleto, setNomeCompleto] = useState("");
   const [telefone, setTelefone] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
   const [genero, setGenero] = useState("");
-  const [cpf, setCpf] = useState("");
+  const [numcpf, setNumCpf] = useState("");
   const [erro, setErro] = useState("");
   const [nickname, setNickname] = useState("");
 
+  // Um erro diferente para cada, para se exibido em baixo de seus inputs correspondente
+  const [erroNome, setErroNome] = useState("");
+  const [erroNick, setErroNick] = useState("");
+  const [erroFone, setErroFone] = useState("");
+  const [erroData, setErroData] = useState("");
+  const [errogenero, setErroGenero] = useState("");
+  const [erroCpf, setErroCpf] = useState("");
+
   /* ================= FORMATADORES ================= */
+
+  const validarCpf = (numeroCpf) => {
+    // Retorna true se for válido, false se não
+    return cpf.isValid(numeroCpf);
+  };
+
+  const limparCpf = (cpf) => {
+    // Remove tudo que não for número
+    return cpf.replace(/\D/g, '');
+  };
 
   function formatarTelefone(text) {
     const numeros = text.replace(/\D/g, "");
@@ -45,46 +68,115 @@ export default function CadastroPessoal({ navigation }) {
 
   /* ================= VALIDAÇÃO ================= */
 
-  function validarCampos() {
+  async function verUserCpf() { // Verificar se nickname e cpf existem no banco (de um mesmo user ou diferentes)
+    // validação antes
+    if (!nickname.trim() || !numcpf.trim()) {
+      return null; // erro esperado → nem chama API
+    }
+    try {
+
+      const disponivel = await verificarDisponibilidade(nickname, limparCpf(numcpf));
+      
+
+      return {
+        usernameDisponivel: disponivel.usernameDisponivel,
+        cpfDisponivel: disponivel.cpfDisponivel,
+        erro: disponivel.erro
+      }
+
+    } catch (e) {
+      console.log("ERRO COMPLETO: (verUserCpf)", e);
+
+      return null; // importante
+    } 
+  }
+
+  async function validarCampos() {
     if (!nomeCompleto.trim()) {
-      setErro("Digite seu nome completo.");
+      setErroNome("Digite seu nome completo.");
       return false;
     }
+    setErroNome("");
+
+    if (!nickname.trim()){
+      setErroNick("Digite um nickname.")
+      return false
+    }
+    setErroNick("");
+    
 
     if (telefone.length < 14) {
-      setErro("Digite um telefone válido.");
+      setErroFone("Digite um telefone válido.");
       return false;
     }
+    setErroFone("");
 
     if (dataNascimento.length !== 10) {
-      setErro("Digite uma data válida.");
+      setErroData("Digite uma data válida.");
       return false;
     }
+    setErroData("");
 
     if (!genero) {
-      setErro("Selecione um gênero.");
+      setErroGenero("Selecione um gênero.");
       return false;
     }
-
-    if (cpf.length !== 14) {
-      setErro("Digite um CPF válido.");
+    setErroGenero("");
+    
+    if (numcpf.length !== 14) {
+      setErroCpf("CPF deve conter 11 dígitos, Sem as pontuanções.");
+      return false;
+    } else if (!validarCpf(numcpf)) {
+      setErroCpf("Digite um CPF válido.");
       return false;
     }
+    
+    
+    // Um proteção caso houve uma falha e retorne null
+    const result = await verUserCpf();
 
-    setErro("");
+    if (!result) {
+      console.log("Erro ao verificar dados, possivelmente não teve dados para enviar!");
+      return;
+    }
+    
+
+    const { usernameDisponivel, cpfDisponivel, erro } = result;
+    console.log(usernameDisponivel)
+    console.log(cpfDisponivel)
+    console.log(erro)
+    // --
+
+    if (!usernameDisponivel) {
+      setErroNick("O nickname já é existe!")
+      return false;
+    }
+    setErroNick("");
+
+    if (!cpfDisponivel){
+      setErroCpf("O cpf já é existe!")
+      return false;
+    }
+    setErroCpf("");
+    console.log("Passei!!")
     return true;
   }
 
-  function enviar() {
-    if (!validarCampos()) return;
-    navigation.navigate("cadastroConta", {
+  async function enviar() {
+    const valido = await validarCampos();
+
+    if (!valido) return;
+    
+    console.log("Entrei 2!!")
+    navigation.navigate("cadastroFoto", {
       nome: nomeCompleto,
       nickname: nickname,
       telefone: telefone,
       dataNasc: dataNascimento,
       genero: genero,
-      cpf: cpf,
+      cpf: numcpf,
     });
+
   }
 
   /* ================= RENDER ================= */
@@ -123,6 +215,9 @@ export default function CadastroPessoal({ navigation }) {
                 value={nomeCompleto}
                 onChangeText={setNomeCompleto}
               />
+              {erroNome ? (
+                <Text style={styles.mensagemErro}>{erroNome}</Text>
+              ) : null}
               {/* Nickname */}
               <Text style={styles.label}>Nickname</Text>
 
@@ -137,6 +232,9 @@ export default function CadastroPessoal({ navigation }) {
                 autoCapitalize="none"
                 maxLength={30}
               />
+              {erroNick ? (
+                <Text style={styles.mensagemErro}>{erroNick}</Text>
+              ) : null}
               </View>
 
               {/* Telefone */}
@@ -149,6 +247,9 @@ export default function CadastroPessoal({ navigation }) {
                   setTelefone(formatarTelefone(text))
                 }
               />
+              {erroFone ? (
+                <Text style={styles.mensagemErro}>{erroFone}</Text>
+              ) : null}
 
               {/* Data + Gênero */}
               <View style={styles.rowWrap}>
@@ -165,6 +266,9 @@ export default function CadastroPessoal({ navigation }) {
                       setDataNascimento(formatarData(text))
                     }
                   />
+                  {erroData ? (
+                    <Text style={styles.mensagemErro}>{erroData}</Text>
+                  ) : null}
                 </View>
 
                 <View style={styles.colunaFlex}>
@@ -182,6 +286,9 @@ export default function CadastroPessoal({ navigation }) {
                       <Picker.Item label="Outro" value="OUTRO" />
                     </Picker>
                   </View>
+                  {errogenero ? (
+                    <Text style={styles.mensagemErro}>{errogenero}</Text>
+                  ) : null}
                 </View>
               </View>
 
@@ -189,15 +296,15 @@ export default function CadastroPessoal({ navigation }) {
               <Text style={styles.label}>CPF</Text>
               <MaskedTextInput
                 mask="999.999.999-99"
-                value={cpf}
-                onChangeText={(text) => setCpf(text)}
+                value={numcpf}
+                onChangeText={(text) => setNumCpf(text)}
                 keyboardType="numeric"
                 style={styles.input}
               />
 
               {/* ERRO */}
-              {erro ? (
-                <Text style={styles.mensagemErro}>{erro}</Text>
+              {erroCpf ? (
+                <Text style={styles.mensagemErro}>{erroCpf}</Text>
               ) : null}
             </View>
 

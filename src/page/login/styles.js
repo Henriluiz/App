@@ -106,7 +106,7 @@ export default StyleSheet.create ({
     stylesButton: {
         display: "flex",
         flexDirection: "row",
-        gap: wp("25%"),
+        gap: wp("7%"),
     },
 
     contaNova: {

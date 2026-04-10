@@ -72,7 +72,9 @@ export default function CadastroConta({ route }) {
   ========================== */
 
   const enviar = async () => {
-    validarCampos()
+    if(!validarCampos()) {
+      return false;
+    }
     try {
         const data = {
           nome,
@@ -90,9 +92,9 @@ export default function CadastroConta({ route }) {
 
         console.log("Usuário criado:", response);
 
-        alert("Cadastro realizado com sucesso");
+        // alert("Cadastro realizado com sucesso");
 
-        navigation.navigate("login");
+        navigation.navigate("cadastroFin");
 
     } catch (error) {
         console.log(error);
@@ -131,6 +133,7 @@ export default function CadastroConta({ route }) {
     }
 
     setErro("");
+    return true
   }
 
   /* =========================
@@ -236,7 +239,7 @@ export default function CadastroConta({ route }) {
             {/* BOTÕES */}
             <View style={styles.containerBotoes}>
               <Pressable
-                onPress={() => navigation.goBack()}
+                onPress={() => navigation.navigate("cadastroFoto")}
                 style={styles.btnVoltar}
               >
                 <Text style={styles.setaVoltar}>{"<"}</Text>

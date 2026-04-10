@@ -1,8 +1,21 @@
 import axios from "axios";
 import { getToken, clearSession } from "./authStogare";
+import { Platform } from "react-native";
+
+const getBaseURL = () => {
+  if (Platform.OS === "android") {
+    return "http://10.0.2.2:8000/api";
+  }
+
+  if (Platform.OS === "web") {
+    return "http://127.0.0.1:8000/api"
+  }
+
+  return "http://localhost:8000/api";
+};
 
 const api = axios.create({
-  baseURL: "http://10.0.2.2:8000/api", // ! Seguir a tabela abaixo
+  baseURL: getBaseURL(), // ! Seguir a tabela abaixo http://192.168.18.99:8000/api
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -15,7 +28,8 @@ const api = axios.create({
 // | celular físico   | IP do PC    |
 // | emulador Android | 10.0.2.2    |
 // | iOS simulator    | localhost   |
-
+//                          +
+//                      :8000/api
 
 let isRefreshing = false;
 let failedQueue = [];

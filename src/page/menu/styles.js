@@ -14,6 +14,8 @@ const styles = StyleSheet.create({
   headerTop: {
     marginBottom: 20,
   },
+
+  
   greeting: {
     color: "#fff",
     fontSize: 18,
@@ -109,15 +111,6 @@ const styles = StyleSheet.create({
   recommendText: {
     fontWeight: "bold",
     color: "#5A54C4",
-  },
-  bottomNav: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    //padding: 15,
-    padding: 25, // 25 é Mais natural
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderColor: "#eee",
   },
 });
 
