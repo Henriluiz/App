@@ -98,7 +98,7 @@ export default StyleSheet.create({
     lineHeight: 22,
   },
 
-  /* MODAL */
+  /* MODAL MENU */
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
@@ -166,4 +166,98 @@ export default StyleSheet.create({
     color: "#6C63FF",
     fontSize: 14,
   },
+
+  /* ==================================== */
+  /* MODAL AGENDAR CONSULTA */
+  /* ==================================== */
+
+  modalBox: {
+    width: "85%",
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    padding: 20,
+    alignSelf: "center",
+    marginBottom: height * 0.1,
+  },
+
+  linhaChips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 10,
+  },
+
+  chip: {
+    backgroundColor: "#F4F6FB",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 25,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+
+  chipTexto: {
+    color: "#6C63FF",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+
+  chipSelecionado: {
+    backgroundColor: "#6C63FF",
+  },
+
+  chipTextoSelecionado: {
+    color: "#ffffff",
+  },
+
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 25,
+  },
+
+  btnCancelar: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "red",
+  },
+
+  btnTextoCancelar: {
+    color: "red",
+    fontWeight: "bold",
+  },
+
+  btnConfirmar: {
+    backgroundColor: "#6C63FF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+  },
+
+  btnTextoConfirmar: {
+    color: "#ffffff",
+    fontWeight: "bold",
+  },
+
+  /* Modal agendamento centralizado */
+modalOverlayCenter: {
+  flex: 1,
+  backgroundColor: "rgba(0,0,0,0.5)",
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+modalBoxCenter: {
+  width: "85%",
+  backgroundColor: "#ffffff",
+  borderRadius: 20,
+  padding: 20,
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 4,
+  elevation: 5,
+}
+
 });

@@ -50,12 +50,11 @@ export default function VisualizarPsi({ navigation }) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.container}>
-
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
           {/* TOPO */}
           <View style={styles.topo}>
-            <Pressable onPress={() => navigation.navigate("menu")}>
+            <Pressable onPress={() => navigation.goBack()}>
               <Ionicons name="arrow-back" size={26} color="#000" />
             </Pressable>
 
@@ -66,9 +65,8 @@ export default function VisualizarPsi({ navigation }) {
 
           <View style={styles.header} />
 
+          {/* CARD DO PSICÓLOGO */}
           <View style={styles.card}>
-
-            {/* FOTO */}
             <View style={styles.fotoContainer}>
               <View style={styles.fotoPerfil}>
                 <Ionicons
@@ -85,8 +83,6 @@ export default function VisualizarPsi({ navigation }) {
             <Text style={styles.nickname}>@{userPerfil.username}</Text>
 
             <View style={styles.infoContainer}>
-
-              {/* ⭐ ESTRELAS */}
               <View style={styles.estrelas}>
                 {[1,2,3,4,5].map((item) => (
                   <Ionicons key={item} name="star" size={16} color="#FFD700" />
@@ -114,6 +110,7 @@ export default function VisualizarPsi({ navigation }) {
 
             </View>
 
+            {/* INFORMAÇÕES */}
             <View style={styles.container2}>
               <Text style={styles.tituloCard}>Informações</Text>
 
@@ -158,8 +155,8 @@ export default function VisualizarPsi({ navigation }) {
               </View> */}
 
             </View>
-          </View>
 
+          </View>
         </ScrollView>
 
         {/* <NavBar tela="visualizarPsi" /> */}
@@ -200,6 +197,76 @@ export default function VisualizarPsi({ navigation }) {
           </View>
         </Modal>
 
+        {/* MODAL AGENDAR CONSULTA CENTRALIZADO */}
+        <Modal visible={modalAgendar} transparent animationType="fade">
+          <View style={styles.modalOverlayCenter}>
+            <View style={styles.modalBoxCenter}>
+              <Text style={styles.modalTitulo}>Escolha dia e horário</Text>
+
+              <Text>Dias:</Text>
+              <View style={styles.linhaChips}>
+                {dias.map((dia) => (
+                  <Pressable
+                    key={dia}
+                    style={[
+                      styles.chip,
+                      diaSelecionado === dia && { backgroundColor: "#8E7CFF" },
+                    ]}
+                    onPress={() => setDiaSelecionado(dia)}
+                  >
+                    <Text
+                      style={[
+                        styles.chipTexto,
+                        diaSelecionado === dia && { color: "#fff" },
+                      ]}
+                    >
+                      {dia}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+
+              <Text style={{ marginTop: 10 }}>Horários:</Text>
+              <View style={styles.linhaChips}>
+                {horarios.map((hora) => (
+                  <Pressable
+                    key={hora}
+                    style={[
+                      styles.chip,
+                      horaSelecionada === hora && { backgroundColor: "#8E7CFF" },
+                    ]}
+                    onPress={() => setHoraSelecionada(hora)}
+                  >
+                    <Text
+                      style={[
+                        styles.chipTexto,
+                        horaSelecionada === hora && { color: "#fff" },
+                      ]}
+                    >
+                      {hora}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+
+              <View style={styles.modalButtons}>
+                <Pressable
+                  style={styles.btnCancelar}
+                  onPress={() => setModalAgendar(false)}
+                >
+                  <Text style={styles.btnTextoCancelar}>Cancelar</Text>
+                </Pressable>
+
+                <Pressable
+                  style={styles.btnConfirmar}
+                  onPress={agendarConsulta}
+                >
+                  <Text style={styles.btnTextoConfirmar}>Confirmar</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </KeyboardAvoidingView>
   );
