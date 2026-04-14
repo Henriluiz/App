@@ -1,12 +1,8 @@
 // 🔹 IMPORTAÇÕES
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  Pressable,
-  Modal,
+  View, Text, TextInput, FlatList,
+  Pressable, Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -14,9 +10,13 @@ import Slider from "@react-native-community/slider";
 
 import styles from "./styles";
 import NavBar from "../../components/NavBar";
+import { useAuth } from "../../context/AuthContext";
 
-// 🔹 COMPONENTE
-export default function Pesquisa() {
+export default function Pesquisa( {route} ) {
+  const { listarPsicologos } = useAuth();
+
+  const {buscaInicial} = route.params ?? {};
+
   const [busca, setBusca] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalFiltro, setModalFiltro] = useState(false);
@@ -34,43 +34,13 @@ export default function Pesquisa() {
   // 🔥 FILTROS
   const [especialidadeFiltro, setEspecialidadeFiltro] = useState([]);
   const [abordagemFiltro, setAbordagemFiltro] = useState([]);
-  const [precoMax, setPrecoMax] = useState(2000);
+  const [precoMax, setPrecoMax] = useState(200);
+
+  const [psicologos, setPsicologos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [avaliacaoMin, setAvaliacaoMin] = useState(0.1);
 
   const navigation = useNavigation();
-
-  // 🔹 DADOS (AGORA COM ABORDAGEM)
-  const recomendados = [
-    {
-      nome: "Dra. Maria Silva",
-      especialidade: "Psicóloga Clínica",
-      abordagem: "Cognitivo",
-      area: "Ansiedade, Autoestima, Relacionamentos",
-      preco: 80,
-      avaliacao: 4.9,
-      horario: "Hoje, 9:00",
-    },
-  ];
-
-  const disponiveis = [
-    {
-      nome: "Dr. Carlos Oliveira",
-      especialidade: "Psicanalista",
-      abordagem: "Psicanálise",
-      area: "Trauma",
-      preco: 200,
-      avaliacao: 4.8,
-      horario: "Hoje, 9:00",
-    },
-    {
-      nome: "Dra. Beatriz Souza",
-      especialidade: "Psicóloga Comportamental",
-      abordagem: "Cognitivo",
-      area: "Fobias",
-      preco: 180,
-      avaliacao: 4.7,
-      horario: "Hoje, 9:00",
-    },
-  ];
 
   const dias = ["Seg", "Ter", "Qua", "Qui", "Sex"];
   const horarios = ["09:00", "11:00", "14:00", "16:00"];
@@ -89,8 +59,8 @@ export default function Pesquisa() {
 
   // 🔥 FILTRO MELHORADO
   const filtrarLista = (lista) => {
+    if (!lista) return [];
     return lista.filter((item) => {
-      // 🔍 BUSCA INTELIGENTE
       if (busca) {
         const texto = busca.toLowerCase();
         const match =
@@ -101,7 +71,6 @@ export default function Pesquisa() {
         if (!match) return false;
       }
 
-      // 🎯 ESPECIALIDADE
       if (
         especialidadeFiltro.length > 0 &&
         !especialidadeFiltro.some((esp) =>
@@ -110,7 +79,6 @@ export default function Pesquisa() {
       )
         return false;
 
-      // 🎯 ABORDAGEM CORRIGIDA
       if (
         abordagemFiltro.length > 0 &&
         !abordagemFiltro.some((ab) =>
@@ -119,15 +87,21 @@ export default function Pesquisa() {
       )
         return false;
 
-      // 💰 PREÇO
-      if (item.preco > precoMax) return false;
+      if (item.preco > 0 && item.preco > precoMax) return false;
+
+      if (item.avaliacao < avaliacaoMin) return false;
 
       return true;
     });
   };
 
-  const recomendadosFiltrados = filtrarLista(recomendados);
-  const disponiveisFiltrados = filtrarLista(disponiveis);
+  const recomendadosFiltrados = filtrarLista(
+    psicologos.filter((p) => p.avaliacao >= 4.5)
+  );
+
+  const disponiveisFiltrados = filtrarLista(
+    psicologos.filter((p) => p.avaliacao < 4.5)
+  );
 
   // 🔹 CARD
   const renderCard = (item) => {
@@ -193,13 +167,50 @@ export default function Pesquisa() {
     );
   };
 
+  // 🔹 BUSCA DA API AO MONTAR
+  useEffect(() => {
+    const carregarPsicologos = async () => {
+      try {
+        const resposta = await listarPsicologos();
+        console.log("RESPOSTA: " + resposta)
+        
+        const mapeados = resposta.psicologos  // era resposta.users
+          .filter((u) => u.psicologo !== null)
+          .map((u) => ({
+            id: u.id_usuario,
+            nome: u.nome,
+            especialidade: u.psicologo.especialidades?.map(e => e.nome).join(', ') || "Psicólogo",
+            abordagem: u.psicologo.abordagens?.map(a => a.nome).join(', ') || "",
+            area: u.psicologo.especialidades?.map(e => e.nome).join(', ') || "",
+            preco: parseFloat(u.psicologo.preco_sessao) || 0,
+            avaliacao: parseFloat(u.psicologo.avaliacao) || 0,
+            horario: "A combinar",
+            foto_perfil: u.foto_perfil,
+            atendimento: u.psicologo.atendimentos?.map(a => a.modalidade).join(', ') || "",
+          }));
+
+        setPsicologos(mapeados);
+        console.log("MAPEADOS:", mapeados)
+      } catch (error) {
+        console.error("Erro ao carregar psicólogos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    carregarPsicologos();
+  }, []);
+
+
   // 🔹 RENDER
   return (
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.searchBox}>
-          <Ionicons name="search" size={20} color="#aaa" />
+          <Pressable>
+            <Ionicons name="search" size={20} color="#aaa" />
+          </Pressable>
           <TextInput
             placeholder="Buscar psicólogo, especialidade..."
             placeholderTextColor="#999"
@@ -248,7 +259,7 @@ export default function Pesquisa() {
 
       {/* MODAL AGENDAR */}
       <Modal visible={modalVisible} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
+        <View style={styles.modalOverlay} importantForAccessibility="yes">
           <View style={styles.modalBox}>
             <Text style={styles.modalTitulo}>Escolha dia e horário</Text>
 
@@ -328,7 +339,7 @@ export default function Pesquisa() {
 
       {/* MODAL FILTROS */}
       <Modal visible={modalFiltro} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
+        <View style={styles.modalOverlay} importantForAccessibility="yes">
           <View style={styles.modalBox}>
             <Text style={styles.modalTitulo}>Filtros</Text>
 
@@ -390,9 +401,10 @@ export default function Pesquisa() {
 
             <Slider
               minimumValue={0}
-              maximumValue={2000}
+              maximumValue={200}
               value={precoMax}
               onValueChange={(value) => setPrecoMax(value)}
+              style={{ width: '100%' }}
             />
 
             <Pressable
@@ -423,7 +435,7 @@ export default function Pesquisa() {
 
       {/* MODAL CONFIRMAÇÃO CANCELAMENTO */}
       <Modal visible={modalCancelarVisible} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
+        <View style={styles.modalOverlay} importantForAccessibility="yes">
           <View style={styles.modalBox}>
             <Text style={styles.modalTitulo}>
               Deseja realmente cancelar este agendamento?

@@ -108,3 +108,18 @@ export async function PerfilPsicologo(id) {
     throw error;
   }
 }
+
+export async function PesquisaPsicologo(id) {
+  try {
+      const response = await api.get('/listarPsicologos')
+
+      return { 
+        "psicologos" : response.data.psicologos,
+      }
+  } catch (error) {
+    console.log('Erro', "Não foi consulta perfil do psicologo.")
+
+    // 👇 FORÇA quem chama a tratar erro
+    throw error;
+  }
+}

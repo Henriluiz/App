@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo} from "../services/authService";
+import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo, PesquisaPsicologo} from "../services/authService";
 import {
   saveSession,
   clearSession,
@@ -111,6 +111,23 @@ export function AuthProvider({ children }) {
     }
   };
 
+  async function listarPsicologos(id) {
+    try {
+      const perfil = await PesquisaPsicologo();
+
+      return {
+        psicologos: perfil.psicologos
+      };
+    } catch (e) {
+      console.error("ERRO COMPLETO (listarPsicologos):", e.response?.data);
+
+      return {
+        user: false,
+        psicologo: false
+      };
+    }
+  };
+
   const bootstrap = async () => {
 
     try {
@@ -160,12 +177,19 @@ export function AuthProvider({ children }) {
       value={{
         user,
         loading,
+
+        // CRUD
         signIn,
         signOut,
         removeAccount,
         updateUser,
+
+        // Verificar dados antes de salvar no banco (CPF, Nickname - Unique)
         verificarDisponibilidade,
-        verPsicologo
+
+        // Psicologo
+        verPsicologo,
+        listarPsicologos
       }}
     >
       {children}

@@ -15,6 +15,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
+  input: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 15,
+  },
   
   greeting: {
     color: "#fff",
@@ -32,6 +37,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   sessionCard: {
+    flexDirection: "row",
     backgroundColor: "#A99EFF",
     borderRadius: 15,
     padding: 15,
