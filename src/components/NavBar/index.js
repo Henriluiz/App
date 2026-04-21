@@ -17,9 +17,9 @@ export default function NavBar({ tela }) {
       route: "menu",
     },
     {
-      key: "pesquisa",
-      icon: tela === "pesquisa" ? "search" : "search-outline",
-      route: "pesquisa",
+      key: "central",
+      icon: tela === "central" ? "heart" : "heart-outline",
+      route: "cemtral",
     },
     {
       key: "chat",

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo} from "../services/authService";
+import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo, PesquisaPsicologo, horariosDisponiveis, agendarSessao} from "../services/authService";
 import {
   saveSession,
   clearSession,
@@ -111,6 +111,44 @@ export function AuthProvider({ children }) {
     }
   };
 
+  async function listarPsicologos(id) {
+    try {
+      const perfil = await PesquisaPsicologo();
+
+      return {
+        psicologos: perfil.psicologos
+      };
+    } catch (e) {
+      console.error("ERRO COMPLETO (listarPsicologos):", e.response?.data);
+
+      return {
+        user: false,
+        psicologos: false
+      };
+    }
+  };
+
+  async function verHorariosDisponiveis(id, data) {
+    try {
+      const dados = await horariosDisponiveis(id, data);
+      console.log(dados)
+      return dados;
+    } catch (e) {
+      console.error("ERRO COMPLETO:", e.response?.data);
+      return [];
+    }
+  };
+
+  async function agendarSessaoCont(dados) {
+    try {
+      const resposta = await agendarSessao(dados);
+      return resposta;
+    } catch (e) {
+      console.error("Erro completo (agendarSessao):", e.response?.data);
+      return null;
+    }
+  };
+
   const bootstrap = async () => {
 
     try {
@@ -160,12 +198,21 @@ export function AuthProvider({ children }) {
       value={{
         user,
         loading,
+
+        // CRUD
         signIn,
         signOut,
         removeAccount,
         updateUser,
+
+        // Verificar dados antes de salvar no banco (CPF, Nickname - Unique)
         verificarDisponibilidade,
-        verPsicologo
+
+        // Psicologo
+        verPsicologo,
+        listarPsicologos,
+        verHorariosDisponiveis,
+        agendarSessaoCont
       }}
     >
       {children}

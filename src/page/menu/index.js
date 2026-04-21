@@ -3,7 +3,8 @@ import {
   View,
   Text,
   ScrollView,
-  Pressable
+  Pressable,
+  TextInput
 } from "react-native";
 
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,6 +22,8 @@ export default function Menu({ navigation }) {
 
   const route = useRoute();
 
+  const [buscaInicial, setBuscaInicial] = useState("")
+
   const capitalize = (str) => {
     // Verifica se str existe e é uma string
     if (!str || typeof str !== 'string') return '';
@@ -37,19 +40,19 @@ export default function Menu({ navigation }) {
   };
 
   const { user } = useAuth();
-  useEffect(() => {
+  // useEffect(() => {
 
-    async function load() {
+  //   async function load() {
 
-      const data = await getPerfil();
+  //     const data = await getPerfil();
 
-      setUser(data);
+  //     setUser(data);
 
-    }
+  //   }
 
-    load();
+  //   load();
 
-  }, []);
+  // }, []);
   // -----------------
 
   return (
@@ -68,14 +71,14 @@ export default function Menu({ navigation }) {
             </View>
           </View>
 
-          <View style={styles.sessionCard}>
-            <Text style={styles.sessionTitle}>Próxima sessão</Text>
-            <Text style={styles.sessionDate}>Hoje, às 15hrs</Text>
-
-            <Pressable style={styles.sessionButton}>
-              <Text style={styles.sessionButtonText}>Entrar na sala</Text>
-            </Pressable>
-          </View>
+          <Pressable style={styles.sessionCard} onPress={() => navigation.navigate('pesquisa')}>
+            <View>
+              <Ionicons name="search" size={20} color="white" />
+            </View>
+            <View style={styles.input}>
+            <Text style={{color: "white", justifyContent: "center"}}>Buscar psicólogo, especialidade...</Text>
+            </View>
+          </Pressable>
           
         </View>
 

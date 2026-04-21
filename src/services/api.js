@@ -15,7 +15,9 @@ const getBaseURL = () => {
 };
 
 const api = axios.create({
-  baseURL: getBaseURL(), // ! Seguir a tabela abaixo http://192.168.18.99:8000/api
+  baseURL: "http://192.168.18.99:8000/api", // ! Seguir a tabela abaixo
+  // php artisan serve --host=0.0.0.0 --port=8000
+  // http://192.168.18.99:8000/api
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

@@ -163,6 +163,30 @@ export default StyleSheet.create({
     position: "absolute",
     top: 50,
     right: 20,
+    width: 30,
+    height: 35,
+  },
+
+  iconeEditar: {
+    position: "absolute",
+    bottom: 5,
+    right: width * 0.35,
+    backgroundColor: "#A383FB",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  botaoEditar: {
+    backgroundColor: "#ffffff",
+    width: "25%",
+    height: 25,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
 
   modalTitulo: {
@@ -178,12 +202,10 @@ export default StyleSheet.create({
   },
 
   botaoExcluir: {
-    flex: 1,
-    backgroundColor: "#FFF",
-    padding: 30,
-    borderRadius: 12,
+    marginTop: 25,
+    backgroundColor: "#fff",
     alignItems: "center",
-    marginRight: 10,
+    justifyContent: "center"
   },
 
   textoExcluir: {

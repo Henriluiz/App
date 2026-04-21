@@ -81,7 +81,7 @@ export default StyleSheet.create({
   },
 
   rowWrap: {
-    marginTop: 20,
+    marginTop: 5,
   },
 
   label: {
@@ -95,7 +95,7 @@ export default StyleSheet.create({
   texto: {
     fontSize: width * 0.035,
     color: '#666',
-    lineHeight: 22,
+    lineHeight: 20,
   },
 
   /* MODAL MENU */
@@ -140,7 +140,10 @@ export default StyleSheet.create({
   },
 
   infoContainer: {
+    flexDirection: "row",
+    gap: 15,
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 5,
   },
 
@@ -165,6 +168,23 @@ export default StyleSheet.create({
   textoInfo: {
     color: "#6C63FF",
     fontSize: 14,
+  },
+
+  botao: {
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#8E7CFF",
+    borderRadius: 12,
+    marginTop: 12,
+    width: "100%",
+    height: 48,
+    elevation: 3,
+  },
+  
+  botaoTexto: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 15,
   },
 
   /* ==================================== */

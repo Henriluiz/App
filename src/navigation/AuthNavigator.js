@@ -1,4 +1,3 @@
-import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Nomear from "../page/nomear";
@@ -10,7 +9,6 @@ import CadastroFin from "../page/cadastro-finalizado"
 import EmailRec from "../page/emailRec"
 import VerificationCode from "../page/verificationCode"
 import EsquecerSenha from "../page/esquecerSenha";
-import { StackScreen } from "react-native-screens";
 
 const Stack = createNativeStackNavigator();
 

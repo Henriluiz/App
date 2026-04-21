@@ -108,3 +108,43 @@ export async function PerfilPsicologo(id) {
     throw error;
   }
 }
+
+export async function PesquisaPsicologo(id) {
+  try {
+      const response = await api.get('/listarPsicologos')
+
+      return { 
+        "psicologos" : response.data.psicologos,
+      }
+  } catch (error) {
+    console.log('Erro', "Não foi consulta perfil do psicologo.")
+
+    // 👇 FORÇA quem chama a tratar erro
+    throw error;
+  }
+}
+
+export async function horariosDisponiveis(id, data) {
+  try {
+      const response = await api.get(`/horariosDisponiveis/${id}`, {
+        params: { data }
+      });
+
+      return response.data
+  } catch (error) {
+    console.log('Erro', "Não foi consulta perfil do psicologo.")
+
+    // 👇 FORÇA quem chama a tratar erro
+    throw error;
+  }
+}
+
+export async function agendarSessao(dados) {
+  try {
+    const response = await api.post("/agendarSessao", dados);
+    return response.data;
+  } catch (error) {
+    console.log("Erro ao agendar sessão:", error.response?.data || error);
+    throw error;
+  }
+}

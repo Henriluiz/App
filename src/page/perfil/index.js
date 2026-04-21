@@ -13,6 +13,8 @@ import styles from "./styles";
 import { useAuth } from "../../context/AuthContext";
 import { clearSession, saveSession, getToken } from "../../services/authStogare";
 
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import NavBar from "../../components/NavBar";
 
 export default function Perfil({ navigation }) {
@@ -164,7 +166,7 @@ export default function Perfil({ navigation }) {
   }, [user]);
 
   return (
-    <KeyboardAvoidingView
+    <SafeAreaView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
@@ -402,7 +404,7 @@ export default function Perfil({ navigation }) {
           </View>
         </Modal>
 
-        {/* Teste! */}
+        
         <Modal transparent={true} visible={modalDel} animationType='fade' style={{backgroundColor:"rgba (0,0,0,0.5)"}}>
           <View style={styles.overlay}>
             <View style={styles.modalContainer2}>
@@ -437,9 +439,7 @@ export default function Perfil({ navigation }) {
                     onChangeText={setConfirmText}
                   />
 
-                  { erro ? <Text>Digite corretamente!</Text> : <Text></Text>
-
-                  }
+                  { erro ? <Text>Digite corretamente!</Text> : <Text></Text>}
               </View>
 
               <View style={styles.buttonContainer}>
@@ -469,6 +469,6 @@ export default function Perfil({ navigation }) {
 
       </View>
 
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
