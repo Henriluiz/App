@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Menu from "../page/menu";
+import CentralCuidado from "../page/central-de-cuidado";
 import Perfil from "../page/perfil";
 import EditarPerfil from "../page/editarPerfil";
 import VisualizarPsi from "../page/visualizarPsi";
