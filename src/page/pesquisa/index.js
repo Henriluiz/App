@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import {
   View, Text, TextInput, FlatList,
-  Pressable, Modal,
+  Pressable, Modal, ActivityIndicator
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -13,7 +13,7 @@ import NavBar from "../../components/NavBar";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Pesquisa( {route} ) {
-  const { listarPsicologos } = useAuth();
+  const { listarPsicologos, verHorariosDisponiveis, agendarSessaoCont } = useAuth();
 
   const {buscaInicial} = route.params ?? {};
 
@@ -43,7 +43,7 @@ export default function Pesquisa( {route} ) {
   const navigation = useNavigation();
 
   const dias = ["Seg", "Ter", "Qua", "Qui", "Sex"];
-  const horarios = ["09:00", "11:00", "14:00", "16:00"];
+  const [horarios, setHorarios] = useState([]);
 
   const especialidades = ["Ansiedade", "Depressão", "Fobias"];
   const abordagens = ["Humanista", "Cognitivo", "Psicanálise"];
@@ -103,6 +103,12 @@ export default function Pesquisa( {route} ) {
     psicologos.filter((p) => p.avaliacao < 4.5)
   );
 
+  const carregarHorarios = async (id) => {
+    const dados = await verHorariosDisponiveis(id);
+    console.log(dados)
+    setHorarios(dados);
+  };
+
   // 🔹 CARD
   const renderCard = (item) => {
     const agendado = agendados[item.nome];
@@ -111,7 +117,7 @@ export default function Pesquisa( {route} ) {
       <Pressable
         style={({ pressed }) => [styles.card, pressed && { opacity: 0.7 }]}
         onPress={() =>
-          navigation.navigate("visualizarPsi", { psicologo: item })
+          navigation.navigate("visualizarPsi", { id: item.id })
         }
       >
         <View style={styles.topoCard}>
@@ -124,7 +130,7 @@ export default function Pesquisa( {route} ) {
           </View>
 
           <View style={styles.rating}>
-            <Text>⭐ {item.avaliacao}</Text>
+            <Text>⭐ {item.avaliacao === 0.1 ? "N/A": item.avaliacao}</Text>
           </View>
         </View>
 
@@ -151,14 +157,14 @@ export default function Pesquisa( {route} ) {
                 setModalCancelarVisible(true);
                 return;
               }
-
+              console.log("Item selecionado:", item)
               setSelecionado(item);
               setDiaSelecionado(null);
               setHoraSelecionada(null);
               setModalVisible(true);
             }}
           >
-            <Text style={[styles.botaoTexto, agendado && { color: "#000" }]}>
+            <Text style={[styles.botaoTexto, agendado && { color: "green" }]}>
               {agendado ? "✔ Agendado" : "Agendar"}
             </Text>
           </Pressable>
@@ -172,36 +178,115 @@ export default function Pesquisa( {route} ) {
     const carregarPsicologos = async () => {
       try {
         const resposta = await listarPsicologos();
-        console.log("RESPOSTA: " + resposta)
+        console.log("=== RESPOSTA COMPLETA ===", JSON.stringify(resposta, null, 2))
         
-        const mapeados = resposta.psicologos  // era resposta.users
-          .filter((u) => u.psicologo !== null)
-          .map((u) => ({
-            id: u.id_usuario,
-            nome: u.nome,
-            especialidade: u.psicologo.especialidades?.map(e => e.nome).join(', ') || "Psicólogo",
-            abordagem: u.psicologo.abordagens?.map(a => a.nome).join(', ') || "",
-            area: u.psicologo.especialidades?.map(e => e.nome).join(', ') || "",
-            preco: parseFloat(u.psicologo.preco_sessao) || 0,
-            avaliacao: parseFloat(u.psicologo.avaliacao) || 0,
-            horario: "A combinar",
-            foto_perfil: u.foto_perfil,
-            atendimento: u.psicologo.atendimentos?.map(a => a.modalidade).join(', ') || "",
-          }));
+        if (!resposta || !resposta.psicologos) {
+          console.error("❌ Resposta inválida - psicologos não encontrado");
+          setLoading(false);
+          return;
+        }
+
+        console.log("Total de usuários:", resposta.psicologos.length);
+        
+        if (resposta.psicologos.length > 0) {
+          const primeiro = resposta.psicologos[0];
+          console.log("=== PRIMEIRO USUÁRIO BRUTO ===", JSON.stringify(primeiro, null, 2));
+          console.log("Chaves do usuário:", Object.keys(primeiro));
+          if (primeiro.psicologo) {
+            console.log("Chaves do psicologo:", Object.keys(primeiro.psicologo));
+          }
+        }
+
+        const mapeados = (resposta.psicologos || [])
+          .filter((u) => u && u.psicologo)
+          .map((u, idx) => {
+            // 🔍 Tentar encontrar os IDs corretamente
+            const id = u.id_usuario || u.id || u.userId || null;
+            const id_psi = u.psicologo?.id_psicologo || u.psicologo?.id || u.psicologo?.idPsicologo || null;
+            
+            if (!id) {
+              console.warn(`⚠️ Usuário ${u.nome} sem ID de usuário`, u);
+            }
+            if (!id_psi) {
+              console.warn(`⚠️ Psicólogo ${u.nome} sem ID de psicólogo`, u.psicologo);
+            }
+
+            const objeto = {
+              id: id || u.nome, // Fallback para nome se não houver ID
+              id_psi: id_psi || u.nome,
+              nome: u.nome || "Sem nome",
+              especialidade: u.psicologo?.especialidades?.map(e => e.nome).join(', ') || "Psicólogo",
+              abordagem: u.psicologo?.abordagens?.map(a => a.nome).join(', ') || "",
+              area: u.psicologo?.especialidades?.map(e => e.nome).join(', ') || "",
+              preco: parseFloat(u.psicologo?.preco_sessao) || 0,
+              avaliacao: parseFloat(u.psicologo?.avaliacao) || 0.1,
+              horario: "A combinar",
+              foto_perfil: u.foto_perfil,
+              atendimento: u.psicologo?.atendimentos?.map(a => a.modalidade).join(', ') || "",
+            };
+            
+            if (idx === 0) {
+              console.log("=== OBJETO MAPEADO (Primeiro) ===", JSON.stringify(objeto, null, 2));
+            }
+            
+            return objeto;
+          });
 
         setPsicologos(mapeados);
-        console.log("MAPEADOS:", mapeados)
+        console.log("=== TOTAL MAPEADOS ===", mapeados.length, mapeados);
+        
       } catch (error) {
-        console.error("Erro ao carregar psicólogos:", error);
+        console.error("❌ Erro ao carregar psicólogos:", error);
+        alert("Erro ao carregar psicólogos: " + error.message);
       } finally {
         setLoading(false);
       }
     };
-    
+
+    setLoading(true);
     carregarPsicologos();
   }, []);
 
+  
+  const gerarDataPorDia = (dia) => {
+    const agora = new Date();
+    
+    const offset = agora.getTimezoneOffset() * 60000;
+    const dataLocal = new Date(agora.getTime() - offset);
+    
+    const mapa = {
+      Dom: 0,
+      Seg: 1,
+      Ter: 2,
+      Qua: 3,
+      Qui: 4,
+      Sex: 5,
+      Sab: 6,
+    };
 
+    const alvo = mapa[dia];
+    const atual = dataLocal.getDay();
+
+    let diff = alvo - atual;
+    if (diff <= 0) diff += 7;
+
+    const proximaData = new Date(dataLocal);
+    proximaData.setDate(proximaData.getDate() + diff);
+
+    // Formatar como ISO (YYYY-MM-DD)
+    const ano = proximaData.getFullYear();
+    const mes = String(proximaData.getMonth() + 1).padStart(2, '0');
+    const data = String(proximaData.getDate()).padStart(2, '0');
+    
+    const dataISO = `${ano}-${mes}-${data}`;
+    console.log(`📅 Data gerada para ${dia}: ${dataISO} (Dia semana: ${proximaData.getDay()})`);
+    
+    return dataISO;
+  };
+
+  if (loading) return <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+      <ActivityIndicator size="large" color="#2E7D32" /></View>;
+      
   // 🔹 RENDER
   return (
     <View style={styles.container}>
@@ -244,18 +329,10 @@ export default function Pesquisa( {route} ) {
           </>
         }
         data={disponiveisFiltrados}
-        keyExtractor={(item) => item.nome}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => renderCard(item)}
         contentContainerStyle={{ padding: 15, paddingBottom: 100 }}
       />
-
-      {/* 🔥 SEM RESULTADO */}
-      {disponiveisFiltrados.length === 0 &&
-        recomendadosFiltrados.length === 0 && (
-          <Text style={{ textAlign: "center", marginTop: 20 }}>
-            Nenhum resultado encontrado 😢
-          </Text>
-        )}
 
       {/* MODAL AGENDAR */}
       <Modal visible={modalVisible} transparent animationType="slide">
@@ -272,7 +349,14 @@ export default function Pesquisa( {route} ) {
                     styles.chip,
                     diaSelecionado === dia && { backgroundColor: "#8E7CFF" },
                   ]}
-                  onPress={() => setDiaSelecionado(dia)}
+                  onPress={async () => {
+                  setDiaSelecionado(dia);
+
+                  if (selecionado) {
+                    const data = gerarDataPorDia(dia);
+                    await carregarHorarios(selecionado.id_psi);
+                  }
+                }}
                 >
                   <Text
                     style={[
@@ -310,15 +394,40 @@ export default function Pesquisa( {route} ) {
             </View>
 
             <View style={styles.modalButtons}>
-              <Pressable onPress={() => setModalVisible(false)}>
+              <Pressable onPress={() => {
+                setModalVisible(false);
+                setHorarios([]);
+              }}>
                 <Text style={{ color: "red" }}>Cancelar</Text>
               </Pressable>
 
               <Pressable
                 style={styles.btnConfirmar}
-                onPress={() => {
-                  if (!diaSelecionado || !horaSelecionada) return;
+                onPress={async () => {
+                if (!diaSelecionado || !horaSelecionada || !selecionado) {
+                  alert("Selecione dia e horário");
+                  return;
+                }
 
+                console.log("DEBUG AGENDAMENTO:", {
+                  id: selecionado.id,
+                  id_psi: selecionado.id_psi,
+                  nome: selecionado.nome,
+                });
+
+                const payload = {
+                  id_psicologo: selecionado.id_psi,  // ✅ USAR ID_PSI
+                  id_paciente: selecionado.id,       // ✅ USAR ID DO USUÁRIO
+                  data_sessao: gerarDataPorDia(diaSelecionado),
+                  hora_inicio: horaSelecionada,
+                };
+
+                console.log("Payload enviado:", payload);
+
+                try {
+                  await agendarSessaoCont(payload);
+
+                  // ✅ CORRIGIDO: Usar selecionado.nome como chave
                   setAgendados({
                     ...agendados,
                     [selecionado.nome]: {
@@ -327,8 +436,20 @@ export default function Pesquisa( {route} ) {
                     },
                   });
 
+                  alert("Sessão agendada com sucesso! ✅");
                   setModalVisible(false);
-                }}
+                  setHorarios([]);
+                  setSelecionado(null);
+
+                } catch (e) {
+                  console.error("Erro ao agendar:", e);
+                  if (e.response?.status === 400) {
+                    alert("Esse horário já foi ocupado.");
+                  } else {
+                    alert("Erro ao agendar sessão: " + (e.message || e));
+                  }
+                }
+              }}
               >
                 <Text style={{ color: "#fff" }}>Confirmar</Text>
               </Pressable>
@@ -411,7 +532,7 @@ export default function Pesquisa( {route} ) {
               onPress={() => {
                 setEspecialidadeFiltro([]);
                 setAbordagemFiltro([]);
-                setPrecoMax(2000);
+                setPrecoMax(200);
               }}
             >
               <Text style={{ color: "#6B5EFF", marginTop: 10 }}>Limpar filtros</Text>

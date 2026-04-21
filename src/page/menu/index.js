@@ -71,17 +71,13 @@ export default function Menu({ navigation }) {
             </View>
           </View>
 
-          <Pressable style={styles.sessionCard} onPress={() => navigation.navigate('pesquisa', buscaInicial)}>
+          <Pressable style={styles.sessionCard} onPress={() => navigation.navigate('pesquisa')}>
             <View>
               <Ionicons name="search" size={20} color="white" />
             </View>
-            <TextInput
-              placeholder="Buscar psicólogo, especialidade..."
-              placeholderTextColor="white"
-              style={styles.input}
-              value={buscaInicial}
-              onChangeText={setBuscaInicial}
-            />
+            <View style={styles.input}>
+            <Text style={{color: "white", justifyContent: "center"}}>Buscar psicólogo, especialidade...</Text>
+            </View>
           </Pressable>
           
         </View>

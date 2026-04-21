@@ -107,7 +107,8 @@ export default StyleSheet.create({
 
   check: {
     color: "#fff",
-    fontSize: width * 0.04,
+    alignItems: "center",
+    justifyContent: "center",
     fontWeight: "bold",
   },
 

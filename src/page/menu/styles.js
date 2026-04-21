@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10,
     fontSize: 15,
+    padding: 8,
   },
   
   greeting: {
@@ -38,9 +39,11 @@ const styles = StyleSheet.create({
   },
   sessionCard: {
     flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#A99EFF",
     borderRadius: 15,
-    padding: 15,
+    padding: 5,
+    paddingLeft: 15,
   },
   sessionTitle: {
     color: "#fff",

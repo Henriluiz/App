@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo, PesquisaPsicologo} from "../services/authService";
+import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo, PesquisaPsicologo, horariosDisponiveis, agendarSessao} from "../services/authService";
 import {
   saveSession,
   clearSession,
@@ -123,8 +123,29 @@ export function AuthProvider({ children }) {
 
       return {
         user: false,
-        psicologo: false
+        psicologos: false
       };
+    }
+  };
+
+  async function verHorariosDisponiveis(id, data) {
+    try {
+      const dados = await horariosDisponiveis(id, data);
+      console.log(dados)
+      return dados;
+    } catch (e) {
+      console.error("ERRO COMPLETO:", e.response?.data);
+      return [];
+    }
+  };
+
+  async function agendarSessaoCont(dados) {
+    try {
+      const resposta = await agendarSessao(dados);
+      return resposta;
+    } catch (e) {
+      console.error("Erro completo (agendarSessao):", e.response?.data);
+      return null;
     }
   };
 
@@ -189,7 +210,9 @@ export function AuthProvider({ children }) {
 
         // Psicologo
         verPsicologo,
-        listarPsicologos
+        listarPsicologos,
+        verHorariosDisponiveis,
+        agendarSessaoCont
       }}
     >
       {children}
