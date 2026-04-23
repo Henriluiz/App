@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import NavBar from "../../components/NavBar";
 import * as Animatable from 'react-native-animatable';
+import Feather from '@expo/vector-icons/Feather';
 
 export default function VisualizarPsi({ navigation, route }) {
 
@@ -166,42 +167,22 @@ export default function VisualizarPsi({ navigation, route }) {
             <View style={styles.fotoPerfil}>
               <Ionicons
                 name="person-outline"
-                size={50}
+                size={120}
                 color="white"
                 style={styles.fotoPerfil2}
               />
             </View>
           </View>
 
-          <Text style={styles.nomePessoa}>{userPerfil.nome}</Text>
-          <Text style={styles.nickname}>@{userPerfil.username}</Text>
+          <Text style={styles.nomePessoa}>{userPerfil.genero === "MASCULINO" ? <Text>Dr. {userPerfil.nome}</Text> : <Text>Dra. {userPerfil.nome}</Text>}</Text>
+          <Text style={styles.profissao}>Psicóloga Clínica</Text>
 
           <View style={styles.infoContainer}>
             <View style={styles.estrelas}>
-              {[1,2,3,4,5].map((item) => (
-                <Ionicons key={item} name="star" size={16} color="#FFD700" />
-              ))}
-            </View>
-
-            <Text style={styles.textoAvaliacao}>
-              {psicologo.avaliacao} 
-              <Text style={{ color: "#6C63FF" }}>
-                {" "}({psicologo.totalAvaliacoes} avaliações)
+              <Ionicons name="star" size={18} color="#FFD700" />
+              <Text style={styles.textoAvaliacao}>
+                {psicologo.avaliacao} 
               </Text>
-            </Text>
-          </View>
-          <View style={styles.infoContainer}>
-
-            {/* 🧠 EXPERIÊNCIA */}
-            <View style={styles.linhaInfo}>
-              <Ionicons name="school-outline" size={18} color="#6C63FF" />
-              <Text style={styles.textoInfo}>{psicologo.tempoExperiencia} 12+ experiência</Text>
-            </View>
-
-            {/* 👥 PACIENTES */}
-            <View style={styles.linhaInfo}>
-              <Ionicons name="people-outline" size={18} color="#6C63FF" />
-              <Text style={styles.textoInfo}>{!psicologo.pacientes && (<Text>0 Pacientes</Text>)}</Text>
             </View>
 
           </View>
@@ -211,27 +192,46 @@ export default function VisualizarPsi({ navigation, route }) {
 
             <View style={styles.rowWrap}>
               <Text style={styles.tituloCard}>Sobre</Text>
-              <Text style={styles.texto}>{psicologo.biografia}</Text>
+              <Text style={styles.texto} numberOfLines={3} ellipsizeMode="tail">{psicologo.biografia}</Text>
             </View>
 
             <View style={styles.rowWrap}>
-              <Text style={styles.label}>Valor</Text>
-              <Text style={styles.texto}>R$ {psicologo.preco_sessao}</Text>
+              <Text style={styles.tituloCard}>Especialidades</Text>
+              <Text style={styles.texto}>{psicologo.especialidades.map(item => item.nome).join(", ")}</Text>
             </View>
 
-            {/* 🔹 BOTÃO AGENDAR */}
-            <Pressable
-              style={styles.botao}
-              onPress={() => {
-                setDiaSelecionado(null);
-                setHoraSelecionada(null);
-                setModalAgendar(true);
-              }}
-            >
-              <Text style={styles.botaoTexto}>
-                📅 Agendar Sessão
-              </Text>
-            </Pressable>
+            <View>
+              <Text style={styles.tituloCard}>Informações</Text>
+
+              <View style={{gap: 10, marginTop: 5, marginBottom: 7}}>
+                <View style={styles.rowCont}>
+                  <Text style={styles.textoCont}>Duração da Consulta</Text>
+                  <Text style={styles.texto}>50 Minutos</Text>
+                </View>
+
+                <View style={styles.rowCont}>
+                  <Text style={styles.textoCont}>Valor</Text>
+                  <Text style={styles.texto}>R$ {psicologo.preco_sessao}</Text>
+                </View>
+              </View>
+            </View>
+
+
+            <View style={{justifyContent: "flex-end"}}>
+              <Pressable
+                style={styles.botao}
+                onPress={() => {
+                  setDiaSelecionado(null);
+                  setHoraSelecionada(null);
+                  setModalAgendar(true);
+                }}
+              >
+                <Feather name="calendar" size={24} color="#FFF" />
+                <Text style={styles.botaoTexto}>
+                 Ver Horários Disponíveis
+                </Text>
+              </Pressable>
+            </View>
 
           </View>
 

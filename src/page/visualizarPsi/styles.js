@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp} from "react-native-responsive-screen";
 
 const { width, height } = Dimensions.get("window");
 
@@ -11,9 +12,10 @@ export default StyleSheet.create({
   },
 
   card: {
-    flex: 0.7,
+    // flex: 0.7,
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
+    height: hp("75%"),
     margin: 30,
   },
 
@@ -28,18 +30,22 @@ export default StyleSheet.create({
     borderRadius: 70,
     borderWidth: 3,
     borderColor: "#ffffff",
-    backgroundColor: "#6C63FF"
+    backgroundColor: "#8E7CFF",
+    alignItems: "center",
+    justifyContent: "center"
   },
 
   fotoPerfil2: {
-    margin: 40,
+    marginTop: 40,
   },
 
   nomePessoa: {
-    color: "black",
-    fontSize: 25,
+    color: "#290041",
+    fontSize: 23,
+    fontWeight: "bold",
     marginBottom: 5,
     textAlign: "center",
+    marginInline: 25,
   },
 
   nickname: {
@@ -62,26 +68,43 @@ export default StyleSheet.create({
   tituloCard: {
     color: "#290041",
     marginBottom: 10,
-    fontSize: 23,
+    fontSize: 20,
     fontWeight: '600'
   },
 
   rowWrap: {
     marginTop: 5,
+    marginBottom: 15,
+  },
+
+  rowCont: {
+    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  profissao: {
+    textAlign: "center",
+    color: "#A383FB",
+    fontSize: 15,
   },
 
   label: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#000000",
     marginTop: 10,
     marginBottom: 8,
-    fontWeight: "bold",
   },
 
   texto: {
     fontSize: width * 0.035,
     color: '#666',
     lineHeight: 20,
+  },
+
+  textoCont: {
+    fontSize: width * 0.035,
+    color: '#666',
   },
 
   /* MODAL MENU */
@@ -136,12 +159,13 @@ export default StyleSheet.create({
   estrelas: {
     flexDirection: "row",
     gap: 3,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   textoAvaliacao: {
-    fontSize: 14,
-    marginTop: 4,
-    color: "#6C63FF",
+    fontSize: 18,
+    color: "#F89034",
   },
 
   linhaInfo: {
@@ -157,20 +181,22 @@ export default StyleSheet.create({
   },
 
   botao: {
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    gap: 10,
     backgroundColor: "#8E7CFF",
     borderRadius: 12,
     marginTop: 12,
     width: "100%",
-    height: 48,
+    height: 50,
     elevation: 3,
   },
   
   botaoTexto: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 15,
+    fontSize: 15, 
   },
 
   /* ==================================== */
