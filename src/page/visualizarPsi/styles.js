@@ -5,34 +5,21 @@ const { width, height } = Dimensions.get("window");
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
-  },
-
-  header: {
-    paddingTop: height * 0.15,
-  },
-
-  topo: {
-    position: "absolute",
-    top: 50,
-    left: 20,
-    right: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    zIndex: 10,
+    backgroundColor: "#EAE0FF",
+    alignItems: "center",
+    justifyContent: 'center'
   },
 
   card: {
-    flex: 1,
-    backgroundColor: "#5DE2D4",
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
+    flex: 0.7,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    margin: 30,
   },
 
   fotoContainer: {
     alignItems: "center",
-    marginTop: -60,
-    marginBottom: 10,
+    marginVertical: 15,
   },
 
   fotoPerfil: {
@@ -49,7 +36,7 @@ export default StyleSheet.create({
   },
 
   nomePessoa: {
-    color: "#ffffff",
+    color: "black",
     fontSize: 25,
     marginBottom: 5,
     textAlign: "center",
@@ -59,25 +46,24 @@ export default StyleSheet.create({
     fontSize: 20,
     marginBottom: 15,
     textAlign: "center",
-    color: "white",
+    color: "black",
     fontWeight: "bold"
   },
 
   container2: {
     flex: 1,
-    marginTop: height * 0.05,
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: "#ffffff",
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     marginHorizontal: height * 0.02,
   },
 
   tituloCard: {
-    fontSize: width * 0.07,
-    color: "#A383FB",
+    color: "#290041",
     marginBottom: 10,
+    fontSize: 23,
+    fontWeight: '600'
   },
 
   rowWrap: {

@@ -19,7 +19,17 @@ export default function AppNavigator() {
       <Stack.Screen name="menu" component={Menu} />
       <Stack.Screen name="perfil" component={Perfil} />
       <Stack.Screen name="editarPerfil" component={EditarPerfil} />
-      <Stack.Screen name="visualizarPsi" component={VisualizarPsi} />
+      <Stack.Screen name="visualizarPsi" component={VisualizarPsi} options={{ 
+        headerShown: true,
+        title: 'Perfil Psicólogo',
+        headerStyle: { backgroundColor: '#FFFFFF' },
+        headerTitleStyle: {
+          fontSize: 23,
+          fontWeight: '600', // SemiBold
+        },
+        headerTintColor: '#A383FB',
+        
+      }}  />
       <Stack.Screen name="pesquisa" component={Pesquisa} />
       <Stack.Screen name="central" component={Central} />
     </Stack.Navigator>
