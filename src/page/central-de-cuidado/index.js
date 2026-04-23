@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, Pressable, ScrollView, SafeAreaView, StatusBar, Platform } from 'react-native';
 import { Feather, Ionicons } from '@expo/vector-icons'; 
 import NavBar from "../../components/NavBar";
 import styles from './styles';
@@ -12,12 +12,12 @@ export default function CentralCuidado() {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <StatusBar barStyle="light-content" backgroundColor="#9B59B6" />
       
       <ScrollView 
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 110 }} // Espaço extra para a NavBar fixa
+        // contentContainerStyle={{ paddingBottom: 110 }} // Espaço extra para a NavBar fixa
       >
         {/* Header */}
         <View style={styles.header}>
@@ -97,8 +97,8 @@ export default function CentralCuidado() {
         </View>
       </ScrollView>
       <NavBar 
-              tela = "central"
-            />  
+        tela = "central"
+      />
     </SafeAreaView>
   );
 }

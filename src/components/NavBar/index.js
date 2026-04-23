@@ -19,12 +19,12 @@ export default function NavBar({ tela }) {
     {
       key: "central",
       icon: tela === "central" ? "heart" : "heart-outline",
-      route: "cemtral",
+      route: "central",
     },
     {
       key: "chat",
       icon: tela === "chat" ? "chatbubble" : "chatbubble-outline",
-      route: "chat", // 🔥 IMPORTANTE: cria essa rota depois
+      route: "chat",
     },
     {
       key: "perfil",

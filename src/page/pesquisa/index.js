@@ -103,8 +103,8 @@ export default function Pesquisa( {route} ) {
     psicologos.filter((p) => p.avaliacao < 4.5)
   );
 
-  const carregarHorarios = async (id) => {
-    const dados = await verHorariosDisponiveis(id);
+  const carregarHorarios = async (id, data) => {
+    const dados = await verHorariosDisponiveis(id, data);
     console.log(dados)
     setHorarios(dados);
   };
@@ -354,7 +354,7 @@ export default function Pesquisa( {route} ) {
 
                   if (selecionado) {
                     const data = gerarDataPorDia(dia);
-                    await carregarHorarios(selecionado.id_psi);
+                    await carregarHorarios(selecionado.id_psi, data);
                   }
                 }}
                 >

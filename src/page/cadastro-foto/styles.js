@@ -53,6 +53,13 @@ export default StyleSheet.create({
         backgroundColor: "#A383FB"
     },
 
+    imagem: {
+      width: '100%',
+      height: '100%',
+      resizeMode: 'cover',
+      borderRadius: 100,
+    },
+
     fotoPerfil2: {
         width: "100%",
         height: "100%",

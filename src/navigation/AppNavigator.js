@@ -6,6 +6,7 @@ import Perfil from "../page/perfil";
 import EditarPerfil from "../page/editarPerfil";
 import VisualizarPsi from "../page/visualizarPsi";
 import Pesquisa from "../page/pesquisa";
+import Central from "../page/central-de-cuidado";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ export default function AppNavigator() {
       <Stack.Screen name="editarPerfil" component={EditarPerfil} />
       <Stack.Screen name="visualizarPsi" component={VisualizarPsi} />
       <Stack.Screen name="pesquisa" component={Pesquisa} />
+      <Stack.Screen name="central" component={Central} />
     </Stack.Navigator>
   );
 }
