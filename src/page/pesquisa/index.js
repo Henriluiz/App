@@ -43,7 +43,7 @@ export default function Pesquisa( {route} ) {
   const navigation = useNavigation();
 
   const dias = ["Seg", "Ter", "Qua", "Qui", "Sex"];
-  const [horarios, setHorarios] = useState([]);
+  const [horarios, setHorarios] = useState(null);
 
   const especialidades = ["Ansiedade", "Depressão", "Fobias"];
   const abordagens = ["Humanista", "Cognitivo", "Psicanálise"];
@@ -372,7 +372,7 @@ export default function Pesquisa( {route} ) {
 
             <Text style={{ marginTop: 10 }}>Horários:</Text>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              {horarios.map((hora) => (
+              {horarios === null ? null : Array.isArray(horarios) && horarios.length > 0 ? horarios.map((hora) => (
                 <Pressable
                   key={hora}
                   style={[
@@ -390,13 +390,13 @@ export default function Pesquisa( {route} ) {
                     {hora}
                   </Text>
                 </Pressable>
-              ))}
+              )) : <Text style={styles.aviso}>Nenhum horário disponível para este dia</Text>}
             </View>
 
             <View style={styles.modalButtons}>
               <Pressable onPress={() => {
                 setModalVisible(false);
-                setHorarios([]);
+                setHorarios(null);
               }}>
                 <Text style={{ color: "red" }}>Cancelar</Text>
               </Pressable>
@@ -438,7 +438,7 @@ export default function Pesquisa( {route} ) {
 
                   alert("Sessão agendada com sucesso! ✅");
                   setModalVisible(false);
-                  setHorarios([]);
+                  setHorarios(null);
                   setSelecionado(null);
 
                 } catch (e) {
