@@ -11,7 +11,11 @@ import NavBar from "../../components/NavBar";
 import * as Animatable from 'react-native-animatable';
 import Feather from '@expo/vector-icons/Feather';
 
-export default function VisualizarPsi({ navigation, route }) {
+import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+export default function VisualizarPsi({ route }) {
+  const navigation = useNavigation();
 
   const { user } = useAuth();
 
@@ -157,86 +161,86 @@ export default function VisualizarPsi({ navigation, route }) {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <View style={styles.container}>
-        {/* CARD DO PSICÓLOGO */}
-        <View style={styles.card}>
-          <View style={styles.fotoContainer}>
-            <View style={styles.fotoPerfil}>
-              <Ionicons
-                name="person-outline"
-                size={120}
-                color="white"
-                style={styles.fotoPerfil2}
-              />
-            </View>
-          </View>
-
-          <Text style={styles.nomePessoa}>{userPerfil.genero === "MASCULINO" ? <Text>Dr. {userPerfil.nome}</Text> : <Text>Dra. {userPerfil.nome}</Text>}</Text>
-          <Text style={styles.profissao}>Psicóloga Clínica</Text>
-
-          <View style={styles.infoContainer}>
-            <View style={styles.estrelas}>
-              <Ionicons name="star" size={18} color="#FFD700" />
-              <Text style={styles.textoAvaliacao}>
-                {psicologo.avaliacao} 
-              </Text>
-            </View>
-
-          </View>
-
-          {/* INFORMAÇÕES */}
-          <View style={styles.container2}>
-
-            <View style={styles.rowWrap}>
-              <Text style={styles.tituloCard}>Sobre</Text>
-              <Text style={styles.texto} numberOfLines={3} ellipsizeMode="tail">{psicologo.biografia}</Text>
-            </View>
-
-            <View style={styles.rowWrap}>
-              <Text style={styles.tituloCard}>Especialidades</Text>
-              <Text style={styles.texto}>{psicologo.especialidades.map(item => item.nome).join(", ")}</Text>
-            </View>
-
-            <View>
-              <Text style={styles.tituloCard}>Informações</Text>
-
-              <View style={{gap: 10, marginTop: 5, marginBottom: 7}}>
-                <View style={styles.rowCont}>
-                  <Text style={styles.textoCont}>Duração da Consulta</Text>
-                  <Text style={styles.texto}>50 Minutos</Text>
-                </View>
-
-                <View style={styles.rowCont}>
-                  <Text style={styles.textoCont}>Valor</Text>
-                  <Text style={styles.texto}>R$ {psicologo.preco_sessao}</Text>
-                </View>
+      style={{ flex: 1, marginBottom: 20}}
+      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingTop: 0, flexGrow: 1}} > 
+        <View style={styles.container}>
+          {/* CARD DO PSICÓLOGO */}
+          <View style={styles.card}>
+            <View style={styles.fotoContainer}>
+              <View style={styles.fotoPerfil}>
+                <Ionicons
+                  name="person-outline"
+                  size={120}
+                  color="white"
+                  style={styles.fotoPerfil2}
+                />
               </View>
             </View>
 
+            <Text style={styles.nomePessoa}>{userPerfil.genero === "MASCULINO" ? <Text>Dr. {userPerfil.nome}</Text> : <Text>Dra. {userPerfil.nome}</Text>}</Text>
+            <Text style={styles.profissao}>Psicóloga Clínica</Text>
 
-            <View style={{justifyContent: "flex-end"}}>
-              <Pressable
-                style={styles.botao}
-                onPress={() => {
-                  setDiaSelecionado(null);
-                  setHoraSelecionada(null);
-                  setModalAgendar(true);
-                }}
-              >
-                <Feather name="calendar" size={24} color="#FFF" />
-                <Text style={styles.botaoTexto}>
-                 Ver Horários Disponíveis
+            <View style={styles.infoContainer}>
+              <View style={styles.estrelas}>
+                <Ionicons name="star" size={18} color="#FFD700" />
+                <Text style={styles.textoAvaliacao}>
+                  {psicologo.avaliacao} 
                 </Text>
-              </Pressable>
+              </View>
+
+            </View>
+
+            {/* INFORMAÇÕES */}
+            <View style={styles.container2}>
+
+              <View style={styles.rowWrap}>
+                <Text style={styles.tituloCard}>Sobre</Text>
+                <Text style={styles.texto} numberOfLines={3} ellipsizeMode="tail">{psicologo.biografia}</Text>
+              </View>
+
+              <View style={styles.rowWrap}>
+                <Text style={styles.tituloCard}>Especialidades</Text>
+                <Text style={styles.texto}>{psicologo.especialidades.map(item => item.nome).join(", ")}</Text>
+              </View>
+
+              <View>
+                <Text style={styles.tituloCard}>Informações</Text>
+
+                <View style={{gap: 10, marginTop: 5, marginBottom: 7}}>
+                  <View style={styles.rowCont}>
+                    <Text style={styles.textoCont}>Duração da Consulta</Text>
+                    <Text style={styles.texto}>50 Minutos</Text>
+                  </View>
+
+                  <View style={styles.rowCont}>
+                    <Text style={styles.textoCont}>Valor</Text>
+                    <Text style={styles.texto}>R$ {psicologo.preco_sessao}</Text>
+                  </View>
+                </View>
+              </View>
+
+
+              <View style={{justifyContent: "flex-end"}}>
+                <Pressable
+                  style={styles.botao}
+                  onPress={() => {navigation.navigate("dataHoraConsulta", {
+                    psicologo, userPerfil
+                  })
+                  }}
+                >
+                  <Feather name="calendar" size={24} color="#FFF" />
+                  <Text style={styles.botaoTexto}>
+                  Ver Horários Disponíveis
+                  </Text>
+                </Pressable>
+              </View>
+
             </View>
 
           </View>
-
         </View>
-      </View>
+      </ScrollView>
       <NavBar 
         tela = "home"
       />

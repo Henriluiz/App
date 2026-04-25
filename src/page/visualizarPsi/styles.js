@@ -5,23 +5,23 @@ const { width, height } = Dimensions.get("window");
 
 export default StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#EAE0FF",
     alignItems: "center",
-    justifyContent: 'center'
+    paddingTop: 0
   },
 
   card: {
     // flex: 0.7,
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
-    height: hp("75%"),
-    margin: 30,
+    height: hp("80%"),
+    marginHorizontal: 30,
+    marginVertical: 25,
   },
 
   fotoContainer: {
     alignItems: "center",
-    marginVertical: 15,
+    marginVertical: 10,
   },
 
   fotoPerfil: {
@@ -36,7 +36,7 @@ export default StyleSheet.create({
   },
 
   fotoPerfil2: {
-    marginTop: 40,
+    marginTop: 30,
   },
 
   nomePessoa: {
@@ -59,7 +59,7 @@ export default StyleSheet.create({
   container2: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    // paddingVertical: 20,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     marginHorizontal: height * 0.02,
@@ -199,97 +199,5 @@ export default StyleSheet.create({
     fontSize: 15, 
   },
 
-  /* ==================================== */
-  /* MODAL AGENDAR CONSULTA */
-  /* ==================================== */
-
-  modalBox: {
-    width: "85%",
-    backgroundColor: "#ffffff",
-    borderRadius: 20,
-    padding: 20,
-    alignSelf: "center",
-    marginBottom: height * 0.1,
-  },
-
-  linhaChips: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 10,
-  },
-
-  chip: {
-    backgroundColor: "#F4F6FB",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 25,
-    marginRight: 8,
-    marginBottom: 8,
-  },
-
-  chipTexto: {
-    color: "#6C63FF",
-    fontWeight: "600",
-    fontSize: 14,
-  },
-
-  chipSelecionado: {
-    backgroundColor: "#6C63FF",
-  },
-
-  chipTextoSelecionado: {
-    color: "#ffffff",
-  },
-
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 25,
-  },
-
-  btnCancelar: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "red",
-  },
-
-  btnTextoCancelar: {
-    color: "red",
-    fontWeight: "bold",
-  },
-
-  btnConfirmar: {
-    backgroundColor: "#6C63FF",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-  },
-
-  btnTextoConfirmar: {
-    color: "#ffffff",
-    fontWeight: "bold",
-  },
-
-  /* Modal agendamento centralizado */
-modalOverlayCenter: {
-  flex: 1,
-  backgroundColor: "rgba(0,0,0,0.5)",
-  justifyContent: "center",
-  alignItems: "center",
-},
-
-modalBoxCenter: {
-  width: "85%",
-  backgroundColor: "#ffffff",
-  borderRadius: 20,
-  padding: 20,
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.25,
-  shadowRadius: 4,
-  elevation: 5,
-}
 
 });
