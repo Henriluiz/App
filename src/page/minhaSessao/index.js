@@ -21,14 +21,14 @@ const SESSOES_ESTATICAS = [
   {
     id: "1",
     psicologo_nome: "Dr. Carlos Mendes",
-    data_sessao: "2025-04-10",
+    data_sessao: "2025-04-29",
     hora_inicio: "09:00",
     status: "agendada",
   },
   {
     id: "2",
     psicologo_nome: "Dra. Ana Lima",
-    data_sessao: "2025-04-15",
+    data_sessao: "2025-05-01",
     hora_inicio: "14:30",
     status: "agendada",
   },

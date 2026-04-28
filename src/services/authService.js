@@ -148,3 +148,44 @@ export async function agendarSessao(dados) {
     throw error;
   }
 }
+
+
+// ! Não testado - Apenas criado para poupar tempo
+export async function solicitarCancelamento(id_sessao) {
+  try {
+      const response = await api.get(`/solicitarCancelamento/${id_sessao}`)
+
+      return response.data
+  } catch (error) {
+    console.log('Erro', "Não foi possível solicitar o cancelamento da consulta.{'\n}", error)
+
+    // 👇 FORÇA quem chama a tratar erro
+    throw error;
+  }
+}
+
+export async function solicitarReagendamento(id_sessao) {
+  try {
+      const response = await api.get(`/solicitarReagendamento/${id_sessao}`)
+
+      return response.data
+  } catch (error) {
+    console.log('Erro', "Não foi possível solicitar o reagendamento da consulta.{'\n}", error)
+
+    // 👇 FORÇA quem chama a tratar erro
+    throw error;
+  }
+}
+
+export async function detalhesConsulta(id_sessao) {
+  try {
+      const response = await api.get(`/detalhesConsulta/${id_sessao}`)
+
+      return response.data
+  } catch (error) {
+    console.log('Erro', "Não foi possível visualizar os detalhes da consulta.{'\n}", error)
+
+    // 👇 FORÇA quem chama a tratar erro
+    throw error;
+  }
+}

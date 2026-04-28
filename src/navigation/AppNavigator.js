@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   return (
     <Stack.Navigator 
-      // initialRouteName="pesquisa"
+      initialRouteName="minhasSessoes"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="menu" component={Menu} />

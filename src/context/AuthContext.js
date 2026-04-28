@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo, PesquisaPsicologo, horariosDisponiveis, agendarSessao} from "../services/authService";
+import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo, PesquisaPsicologo, horariosDisponiveis, agendarSessao, solicitarCancelamento, solicitarReagendamento,
+  detalhesConsulta
+} from "../services/authService";
 import {
   saveSession,
   clearSession,
@@ -134,7 +136,7 @@ export function AuthProvider({ children }) {
       console.log(dados)
       return dados;
     } catch (e) {
-      console.error("ERRO COMPLETO:", e.response?.data);
+      console.error("ERRO COMPLETO: (verHorariosDisponiveis)", e.response?.data);
       return [];
     }
   };
@@ -145,6 +147,38 @@ export function AuthProvider({ children }) {
       return resposta;
     } catch (e) {
       console.error("Erro completo (agendarSessao):", e.response?.data);
+      return null;
+    }
+  };
+
+  // ! Não testado - Apenas criado para poupar tempo
+
+  async function SolCancelamentoCons(id_sessao) {
+    try {
+      const resposta = await solicitarCancelamento(id_sessao);
+      return resposta;
+    } catch (e) {
+      console.error("Erro completo (SolCancelamentoCons):", e.response?.data);
+      return null;
+    }
+  };
+
+  async function SolReagendarCons(id_sessao) {
+    try {
+      const resposta = await solicitarReagendamento(id_sessao);
+      return resposta;
+    } catch (e) {
+      console.error("Erro completo (SolReagendarCons):", e.response?.data);
+      return null;
+    }
+  };
+
+  async function detalhesCons(id_sessao) {
+    try {
+      const resposta = await detalhesConsulta(id_sessao);
+      return resposta;
+    } catch (e) {
+      console.error("Erro completo (SolReagendarCons):", e.response?.data);
       return null;
     }
   };
@@ -212,7 +246,10 @@ export function AuthProvider({ children }) {
         verPsicologo,
         listarPsicologos,
         verHorariosDisponiveis,
-        agendarSessaoCont
+        agendarSessaoCont,
+
+        // Agenda
+        SolCancelamentoCons,
       }}
     >
       {children}
