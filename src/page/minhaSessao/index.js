@@ -195,25 +195,21 @@ export default function MinhasSessoes({ route }) {
   };
 
   useEffect(() => {
-    carregarSessoesDoDia(HOJE_INDEX);
-  }, []);
+  carregarSessoesDoDia(HOJE_INDEX);
+
+  setTimeout(() => {
+    abrirModal(SESSOES_ESTATICAS[0]);
+  }, 500);
+}, []);
 
   const isHoje = indexAtual === HOJE_INDEX;
-
+  
   return (
     <View style={styles.containerAgenda}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollAgenda}
       >
-        {/* CABEÇALHO */}
-        <View style={styles.headerSessoes}>
-          <Pressable onPress={() => navigation.goBack()} style={styles.headerVoltar}>
-            <Ionicons name="arrow-back" size={24} color="#8E7CFF" />
-          </Pressable>
-          <Text style={styles.headerTitulo}>Minhas Sessões</Text>
-        </View>
-
         {/* CARD SELETOR DE DATA */}
         <View style={styles.cardAgenda}>
           <Text style={styles.tituloCard}>Selecione a Data</Text>
@@ -340,12 +336,42 @@ export default function MinhasSessoes({ route }) {
 
           {/* Botões de ação */}
           <View style={styles.bottomSheetBotoes}>
-            <Pressable style={styles.botaoReagendar} onPress={handleReagendar}>
-              <Text style={styles.botaoReagendarTexto}>Reagendar</Text>
-            </Pressable>
+          <Pressable
+            style={styles.botaoReagendar}
+            onPress={() => {
+              if (!sessaoSelecionada) {
+                alert("Selecione uma sessão");
+                return;
+              }
 
-            <Pressable style={styles.botaoCancelarConsulta} onPress={handleCancelarConsulta}>
-              <Text style={styles.botaoCancelarConsultaTexto}>Cancelar Consulta</Text>
+              fecharModal();
+
+              navigation.navigate("reagendarConsulta", {
+                psicologo: {
+                  id_psicologo: sessaoSelecionada.id_psicologo,
+                  nome: sessaoSelecionada.psicologo_nome,
+                },
+                userPerfil: route?.params?.userPerfil,
+                sessao: sessaoSelecionada,
+              });
+            }}
+          >
+            <Text style={styles.botaoReagendarTexto}>
+              Reagendar
+            </Text>
+          </Pressable>
+
+            <Pressable
+              style={styles.botaoCancelarConsulta}
+              onPress={() =>
+                navigation.navigate("cancelamento", {
+                  sessao: sessaoSelecionada
+                })
+              }
+            >
+              <Text style={styles.botaoCancelarConsultaTexto}>
+                Cancelar Consulta
+              </Text>
             </Pressable>
 
             <Pressable style={styles.botaoVoltarSheet} onPress={fecharModal}>

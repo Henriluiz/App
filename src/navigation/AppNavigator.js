@@ -10,6 +10,8 @@ import Central from "../page/central-de-cuidado";
 import DataHoraConsulta from "../page/dataHoraConsulta";
 import confirConsulta from "../page/confirConsulta"
 import MinhasSessoes from "../page/minhaSessao"
+import ReagendarConsulta from "../page/reagendarCons"
+import Cancelamento from "../page/cancelamento";
 
 const Stack = createNativeStackNavigator();
 
@@ -68,6 +70,31 @@ export default function AppNavigator() {
       }}  />
       <Stack.Screen name="pesquisa" component={Pesquisa} />
       <Stack.Screen name="central" component={Central} />
+
+      <Stack.Screen name="reagendarConsulta" component={ReagendarConsulta} options={{ 
+        headerShown: true,
+        title: 'Reagendar Consulta',
+        headerStyle: { backgroundColor: '#FFFFFF' },
+        headerTitleStyle: {
+          fontSize: 23,
+          fontWeight: '600', // SemiBold
+        },
+        headerTintColor: '#A383FB',
+        
+      }}  />
+
+      <Stack.Screen name="cancelamento" component={Cancelamento} options={{ 
+        headerShown: true,
+        title: 'Cancelar Consulta',
+        headerStyle: { backgroundColor: '#FFFFFF' },
+        headerTitleStyle: {
+          fontSize: 23,
+          fontWeight: '600', // SemiBold
+        },
+        headerTintColor: '#A383FB',
+        
+      }}  />
+
     </Stack.Navigator>
   );
 }

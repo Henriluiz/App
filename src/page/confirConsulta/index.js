@@ -61,7 +61,7 @@ export default function confirConsulta({ route }) {
       // 🔧 Simulação de delay — remover quando API estiver pronta
       await new Promise((resolve) => setTimeout(resolve, 1200));
  
-      navigation.navigate("minhaSessao"); // TODO: ajustar rota de sucesso
+      navigation.navigate("minhasSessoes"); // TODO: ajustar rota de sucesso
     } catch (error) {
       console.error("Erro ao agendar:", error);
       if (error.response?.status === 400) {
