@@ -9,12 +9,16 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import NavBar from "../../components/NavBar";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Cancelamento({ route }) {
   const navigation = useNavigation();
-  const { sessao } = route.params ?? {};
+  const { sessao, psicologo, diaSelecionado, horaSelecionada, userPerfil} = route.params ?? {};
 
   const [motivoSelecionado, setMotivoSelecionado] = useState(null);
+  const [modalSucesso, setModalSucesso] = useState(false);
+
+  const { SolCancelamentoCons } = useAuth();
 
   const motivos = [
     "Conflito de horário",
@@ -24,15 +28,23 @@ export default function Cancelamento({ route }) {
     "Motivo financeiro",
   ];
 
-  const handleCancelar = () => {
+  const handleCancelar = async() => {
     if (!motivoSelecionado) {
       alert("Selecione um motivo");
       return;
     }
 
+    await SolCancelamentoCons(sessao.id_sessao);
+
     console.log("Cancelando:", sessao, motivoSelecionado);
 
-    alert("Consulta cancelada com sucesso!");
+    <ModalApp
+      visible={modalSucesso}
+      titulo="Solicitação Enviada"
+      mensagem="Solicitação de cancelamento da Consulta enviada com sucesso!"
+      tipo="sucesso"
+      onCancelar={() => setModal(false)}
+      />
     navigation.goBack();
   };
 
@@ -51,7 +63,7 @@ export default function Cancelamento({ route }) {
           </Text>
 
           <Text style={styles.alertaNome}>
-            {sessao?.psicologo_nome}
+            {psicologo.nome}
           </Text>
 
           <Text style={styles.alertaInfo}>

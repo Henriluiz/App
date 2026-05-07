@@ -1,12 +1,60 @@
-import { refFromURL } from "@react-native-firebase/app/dist/module/internal/web/firebaseDatabase";
 import api from "./api";
 
 export async function cadastroPaciente(data) {
+  const formData = new FormData();
 
-  const response = await api.post("/registerPaciente", data);
+  formData.append("nome", data.nome);
+  formData.append("username", data.username);
+  formData.append("email", data.email);
+  formData.append("telefone", data.telefone);
+  formData.append("genero", data.genero);
+  formData.append("senha", data.senha);
+  formData.append("data", data.data);
+  formData.append("cpf", data.cpf);
+  formData.append("termos", data.termos ? "1" : "0");
 
-  return response.data;
+  if (data.foto_perfil) {
+    const filename = data.foto_perfil.split("/").pop();
+    const match = /\.(\w+)$/.exec(filename);
+    const type = match ? `image/${match[1]}` : "image/jpeg";
 
+    formData.append("foto", {
+      uri: data.foto_perfil,
+      name: filename,
+      type,
+    });
+  }
+
+  // console.log("📦 FormData entries:");
+  // for (let pair of formData._parts) {
+  //   console.log(pair[0], "=>", pair[1]);
+  // }
+
+  // try {
+  //   const response = await api.post("/registerPaciente", formData, {
+  //     headers: {
+  //       "Content-Type": undefined,
+  //     },
+  //   });
+  //   return response.data;
+  // } catch (error) {
+  //   console.log("❌ Status:", error.response?.status);
+  //   console.log("❌ Erro completo:", JSON.stringify(error.response?.data, null, 2));
+  //   throw error;
+  // }
+  try {
+    const response = await fetch("http://10.148.229.116:8000/api/registerPaciente", {
+      method: "POST",
+      body: formData,
+    });
+
+    const json = await response.json();
+    console.log("✅ Resposta:", JSON.stringify(json, null, 2));
+    return json;
+  } catch (error) {
+    console.log("❌ Erro fetch:", error.message);
+    throw error;
+  }
 }
 
 export async function login(login, senha) {
@@ -135,7 +183,7 @@ export async function horariosDisponiveis(id, data) {
     console.log('Erro', "Não foi consulta perfil do psicologo.")
 
     // 👇 FORÇA quem chama a tratar erro
-    throw error;
+    throw error;  
   }
 }
 
@@ -149,11 +197,9 @@ export async function agendarSessao(dados) {
   }
 }
 
-
-// ! Não testado - Apenas criado para poupar tempo
-export async function solicitarCancelamento(id_sessao) {
+export async function solicitarCancelamento(id_sessao, dados) {
   try {
-      const response = await api.get(`/solicitarCancelamento/${id_sessao}`)
+      const response = await api.post(`/solicitarCancelamento/${id_sessao}`, dados)
 
       return response.data
   } catch (error) {
@@ -164,10 +210,10 @@ export async function solicitarCancelamento(id_sessao) {
   }
 }
 
-export async function solicitarReagendamento(id_sessao) {
+export async function solicitarReagendamento(id_sessao, dados) {
   try {
-      const response = await api.get(`/solicitarReagendamento/${id_sessao}`)
-
+      const response = await api.post(`/solicitarReagendamento/${id_sessao}`, dados)
+      console.log(response)
       return response.data
   } catch (error) {
     console.log('Erro', "Não foi possível solicitar o reagendamento da consulta.{'\n}", error)
@@ -189,3 +235,28 @@ export async function detalhesConsulta(id_sessao) {
     throw error;
   }
 }
+
+export async function minhasSessoes(id_sessao) {
+  try {
+      const response = await api.get('/minhasSessoes')
+      return response.data
+  } catch (error) {
+    console.log('Erro', "Não foi possível visualizar as minhas sessões.{'\n}", error)
+
+    // 👇 FORÇA quem chama a tratar erro
+    throw error;
+  }
+}
+
+export async function pacienteHistorico(id_sessao) {
+  try {
+      const response = await api.get('/pacienteHistorico')
+      return response.data
+  } catch (error) {
+    console.log('Erro', "Não foi possível visualizar as minhas sessões anteriores.{'\n}", error)
+
+    // 👇 FORÇA quem chama a tratar erro
+    throw error;
+  }
+}
+

@@ -12,6 +12,7 @@ import {
 import styles from "./styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { cadastroPaciente } from "../../services/authService";
+import ModalApp from "../../components/modalApp";
 
 export default function CadastroConta() {
   const [email, setEmail] = useState("");
@@ -89,7 +90,9 @@ export default function CadastroConta() {
     setCarregando(true);
 
     try {
-      const data = {
+      
+
+    const data = {
         nome,
         username: nickname,
         email,
@@ -99,25 +102,25 @@ export default function CadastroConta() {
         data: convData(dataNasc),
         cpf: limparCpf(cpf),
         termos: aceitoTermos,
-      };
+        foto_perfil: imagem
+      };  
 
-      console.log("📤 Dados enviados:", JSON.stringify(data, null, 2));
-      
-      // Enviar dados com foto
-      const response = await cadastroPaciente(data, imagem);
 
-      console.log("✅ Usuário criado:", response);
-      
-      Alert.alert("Sucesso", "Cadastro realizado com sucesso!");
-      
-      navigation.navigate("cadastroFin");
+    const response = await cadastroPaciente(data);
+
+    navigation.navigate("cadastroFin");
 
     } catch (error) {
       console.log("❌ Erro:", error);
       console.log("Resposta do servidor:", error.response?.data);
       
       const mensagemErro = error.response?.data?.message || "Erro ao cadastrar";
-      Alert.alert("Erro", mensagemErro);
+      <ModalApp
+        titulo="Erro"
+        mensagem={mensagemErro}
+        tipo="erro"
+        onCancelar={() => setModal(false)}
+        />
       
       setErro(mensagemErro);
     } finally {

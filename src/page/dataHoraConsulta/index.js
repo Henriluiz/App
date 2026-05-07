@@ -162,7 +162,7 @@ export default function DataHoraConsulta({ route }) {
     }
 
     navigation.navigate("confirConsulta", {
-      psicologo, diaSelecionado, horaSelecionada, userPerfil
+      modo: 'criar', psicologo, diaSelecionado, horaSelecionada, userPerfil
     })
   };
 
@@ -282,7 +282,7 @@ export default function DataHoraConsulta({ route }) {
         <View style={styles.footerAgenda}>
           <Pressable
             style={[styles.botaoConfirmar, agendando && { opacity: 0.6 }]}
-            onPress={handleConfirmarAgendamento}
+            onPress={() => handleConfirmarAgendamento()}
             disabled={agendando}
           >
             {agendando ? (

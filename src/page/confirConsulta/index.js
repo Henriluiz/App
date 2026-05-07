@@ -11,20 +11,23 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import NavBar from "../../components/NavBar";
 import ModalApp from "../../components/modalApp";
+import { useAuth } from "../../context/AuthContext";
 
 import { useNavigation } from "@react-navigation/native";
 
-export default function confirConsulta({ route }) {
-    const navigation = useNavigation();
+export default function ConfirConsulta({ route }) {
+  const navigation = useNavigation();
 
-  const { psicologo, diaSelecionado, horaSelecionada, userPerfil } = route.params ?? {};
- 
+  const { 
+  modo, id_sessao, psicologo, diaSelecionado, horaSelecionada, userPerfil, sessaoOriginal } = route.params ?? {};
+  
+  const { agendarSessaoCont, user, SolReagendarCons } = useAuth();
+
   const [agendando, setAgendando] = useState(false);
+  const [text, setText] = useState("")
 
   const [modal, setModal] = useState(false);
  
-  // TODO: Importar do AuthContext quando disponível
-  // const { agendarSessaoCont } = useAuth();
  
   // ─── Dados estáticos para desenvolvimento ───────────────────────────────────
   // TODO: Remover os dados abaixo e usar os vindos de route.params
@@ -47,21 +50,37 @@ export default function confirConsulta({ route }) {
  
   const handleSolicitarAgendamento = async () => {
     setAgendando(true);
- 
+    console.log("👤 user completo:", JSON.stringify(user, null, 2));
+    
     try {
-      // TODO: Descomentar e ajustar quando API estiver disponível
-      // const payload = {
-      //   id_psicologo: psicologo.id_psicologo,
-      //   id_paciente: userPerfil.id_usuario,
-      //   data_sessao: diaSelecionado.iso,
-      //   hora_inicio: horaSelecionada,
-      // };
-      // await agendarSessaoCont(payload);
+      if (modo == "criar") {
+        const payload = {
+          id_paciente: user.id_paciente,
+          id_psicologo: psicologo.id_psicologo,
+          data_sessao: diaSelecionado.iso,
+          hora_inicio: horaSelecionada+ ":00",
+        };
+        await agendarSessaoCont(payload);
+        setText("Solicitação Enviada")
+      } else if (modo == "reagendar") {
+        const payload = {
+          nova_data: diaSelecionado.iso,
+          nova_hora: horaSelecionada+ ":00",
+        };
+        await SolReagendarCons(sessaoOriginal.id_sessao, payload);
+        setText("Reagendamento Enviado")
+      }
+      
+      
+      <ModalApp
+        visible={modal}
+        titulo={text}
+        mensagem="Em breve, será confirmada sua sessão"
+        tipo="sucesso"
+        onCancelar={() => setModal(false)}
+        />
  
-      // 🔧 Simulação de delay — remover quando API estiver pronta
-      await new Promise((resolve) => setTimeout(resolve, 1200));
- 
-      navigation.navigate("minhasSessoes"); // TODO: ajustar rota de sucesso
+      navigation.replace("menu");
     } catch (error) {
       console.error("Erro ao agendar:", error);
       if (error.response?.status === 400) {

@@ -44,7 +44,7 @@ export default StyleSheet.create({
     },
 
     check: {
-        width: wp("37%"),
+        width: wp("41%"),
         height: hp("19%"),
     },
 

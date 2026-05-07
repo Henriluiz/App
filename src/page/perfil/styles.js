@@ -167,6 +167,13 @@ export default StyleSheet.create({
     height: 35,
   },
 
+  imagem: {
+      width: '100%',
+      height: '100%',
+      resizeMode: 'cover',
+      borderRadius: 57,
+    },
+
   iconeEditar: {
     position: "absolute",
     bottom: 5,

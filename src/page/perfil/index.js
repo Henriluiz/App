@@ -38,7 +38,8 @@ export default function Perfil({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState(false);
 
-  const { user, removeAccount, signOut, updateUser} = useAuth();
+
+  const { user, removeAccount, signOut, updateUser, BASE_URL} = useAuth();
 
   function formatarNickname(text) {
     return text
@@ -188,17 +189,24 @@ export default function Perfil({ navigation }) {
 
           <View style={styles.card}>
             <View style={styles.fotoContainer}>
-              <View style={styles.fotoPerfil}>
-                <Ionicons name="person-outline" size={50} color="white"  style={styles.fotoPerfil2}/>
-              </View>
-
-              {editando && (
-                <View style={styles.iconeEditar}>
-                  <Ionicons name="camera" size={16} color="#fff" />
-                </View>
+            <View style={styles.fotoPerfil}>
+              {user?.foto_perfil ? (
+                <Image
+                  source={{ uri: `${BASE_URL}${user.foto_perfil}` }}
+                  style={styles.imagem} // mesmo estilo que usou no CadastroFoto
+                  resizeMode="cover"
+                />
+              ) : (
+                <Ionicons name="person-outline" size={50} color="white" style={styles.fotoPerfil2} />
               )}
-
             </View>
+
+            {editando && (
+              <View style={styles.iconeEditar}>
+                <Ionicons name="camera" size={16} color="#fff" />
+              </View>
+            )}
+          </View>
 
             <View>
               <Text style={styles.nomePessoa}>{user.nome}</Text>

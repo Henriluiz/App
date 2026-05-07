@@ -43,7 +43,7 @@ export default function CadastroFoto({ route }) {
       const resultado = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        quality: 1,
+        quality: 0.5,
       });
 
       if (!resultado.canceled && resultado.assets[0]) {
@@ -64,7 +64,7 @@ export default function CadastroFoto({ route }) {
       const resultado = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        quality: 1,
+        quality: 0.5,
       });
 
       if (!resultado.canceled && resultado.assets[0]) {

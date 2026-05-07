@@ -39,6 +39,13 @@ export default StyleSheet.create({
     marginTop: 30,
   },
 
+  imagem: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    borderRadius: 57,
+  },
+
   nomePessoa: {
     color: "#290041",
     fontSize: 23,

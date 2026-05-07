@@ -14,9 +14,9 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function ReagendarConsulta({ route }) {
   const navigation = useNavigation();
-  const { verHorariosDisponiveis } = useAuth();
+  const { verHorariosDisponiveis, user } = useAuth();
 
-  const { psicologo, userPerfil, sessao } = route.params ?? {};
+  const { psicologo, sessao } = route.params ?? {};
 
   const [indexDiaSelecionado, setIndexDiaSelecionado] = useState(0);
   const [horaSelecionada, setHoraSelecionada] = useState(null);
@@ -116,10 +116,11 @@ export default function ReagendarConsulta({ route }) {
     }
 
     navigation.navigate("confirConsulta", {
+      modo: "reagendar",
       psicologo,
       diaSelecionado,
       horaSelecionada,
-      userPerfil,
+      userPerfil: user,
       sessaoOriginal: sessao,
     });
   };
@@ -140,7 +141,7 @@ export default function ReagendarConsulta({ route }) {
             <View style={styles.sessaoCard}>
 
               <Text style={styles.sessaoNome}>
-                {sessao.psicologo_nome}
+                {psicologo.nome}
               </Text>
 
               <View style={styles.sessaoHorarioRow}>

@@ -4,21 +4,22 @@ import { Platform } from "react-native";
 
 const getBaseURL = () => {
   if (Platform.OS === "android") {
-    return "http://192.168.18.9:8000/api";
+    return "http://10.131.235.116:8000/api";
   }
 
   if (Platform.OS === "web") {
-    return "http://192.168.18.9:8000/api";
+    return "http://10.131.235.116:8000/api";
+    // http://localhost:8000/api
   }
 
-  return "http://localhost:8082/api";
+  return "http://localhost:8081/api";
 };
 
 const api = axios.create({
-  baseURL: getBaseURL(), // ! Seguir a tabela abaixo
+  baseURL: "http://10.148.229.116:8000/api", // ! Seguir a tabela abaixo
   // php artisan serve --host=0.0.0.0 --port=8000
   // http://192.168.18.99:8000/api
-  timeout: 10000,
+  timeout: 70000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -55,6 +56,10 @@ api.interceptors.request.use(async (config) => {
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
   }
 
   return config;

@@ -12,58 +12,27 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./styles";
 import NavBar from "../../components/NavBar";
-
 import { useNavigation } from "@react-navigation/native";
 
-// 📋 Dados estáticos de sessões para desenvolvimento
-// TODO: Remover SESSOES_ESTATICAS e utilizar a resposta da API no lugar
-const SESSOES_ESTATICAS = [
-  {
-    id: "1",
-    psicologo_nome: "Dr. Carlos Mendes",
-    data_sessao: "2025-04-29",
-    hora_inicio: "09:00",
-    status: "agendada",
-  },
-  {
-    id: "2",
-    psicologo_nome: "Dra. Ana Lima",
-    data_sessao: "2025-05-01",
-    hora_inicio: "14:30",
-    status: "agendada",
-  },
-  {
-    id: "3",
-    psicologo_nome: "Dr. Carlos Mendes",
-    data_sessao: "2025-03-28",
-    hora_inicio: "10:00",
-    status: "concluida",
-  },
-];
-
 export default function MinhasSessoes({ route }) {
-  // TODO: Descomentar e usar quando a API estiver disponível
   const navigation = useNavigation();
-  
-  // const { listarSessoes } = useAuth();
-  // const { userPerfil } = route.params ?? {};
+  const { mSessoes } = useAuth();
 
+  const [todasSessoes, setTodasSessoes] = useState([]);
   const [sessoes, setSessoes] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Modal bottom sheet
   const [modalVisible, setModalVisible] = useState(false);
   const [sessaoSelecionada, setSessaoSelecionada] = useState(null);
   const slideAnim = useRef(new Animated.Value(400)).current;
 
-  // 📅 Gerar lista de 30 dias centrada no dia de hoje
   const gerarDiasList = () => {
     const lista = [];
     const agora = new Date();
     const offset = agora.getTimezoneOffset() * 60000;
     const dataLocal = new Date(agora.getTime() - offset);
     dataLocal.setHours(0, 0, 0, 0);
-    dataLocal.setDate(dataLocal.getDate() - 15); // começa 15 dias atrás
+    dataLocal.setDate(dataLocal.getDate() - 15);
 
     const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
     const diasCompletos = [
@@ -78,7 +47,6 @@ export default function MinhasSessoes({ route }) {
     for (let i = 0; i < 30; i++) {
       const data = new Date(dataLocal);
       data.setDate(data.getDate() + i);
-
       const ano = data.getFullYear();
       const mes = String(data.getMonth() + 1).padStart(2, "0");
       const dia = String(data.getDate()).padStart(2, "0");
@@ -94,7 +62,6 @@ export default function MinhasSessoes({ route }) {
         dataObj: data,
       });
     }
-
     return lista;
   };
 
@@ -103,32 +70,33 @@ export default function MinhasSessoes({ route }) {
   const [indexAtual, setIndexAtual] = useState(HOJE_INDEX);
   const diaSelecionado = diasLista[indexAtual];
 
-  // 📋 Carregar sessões do dia
-  const carregarSessoesDoDia = async (index) => {
+  useEffect(() => {
+    const buscarSessoes = async () => {
+      setLoading(true);
+      try {
+        const resposta = await mSessoes();
+        const lista = resposta?.sessoes ?? [];
+        setTodasSessoes(lista);
+        filtrarPorDia(lista, HOJE_INDEX);
+      } catch (error) {
+        console.error("Erro ao buscar sessões:", error);
+        setTodasSessoes([]);
+        setSessoes([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    buscarSessoes();
+  }, []);
+
+  const filtrarPorDia = (lista, index) => {
+    const isoAlvo = diasLista[index].iso;
+    setSessoes(lista.filter((s) => s.data_sessao === isoAlvo));
+  };
+
+  const carregarSessoesDoDia = (index) => {
     setIndexAtual(index);
-    setLoading(true);
-
-    try {
-      const item = diasLista[index];
-
-      // TODO: Substituir pelo bloco abaixo quando a API estiver pronta:
-      // const dados = await listarSessoes(userPerfil.id_usuario, item.iso);
-      // setSessoes(dados || []);
-
-      // 🔧 Simulação com dados estáticos — remover quando API estiver pronta
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      const sessoesDoDia = SESSOES_ESTATICAS.filter(
-        (s) => s.data_sessao === item.iso
-      );
-      setSessoes(sessoesDoDia);
-      // 🔧 Fim do bloco de simulação
-
-    } catch (error) {
-      console.error("Erro ao carregar sessões:", error);
-      setSessoes([]);
-    } finally {
-      setLoading(false);
-    }
+    filtrarPorDia(todasSessoes, index);
   };
 
   const handleProximoDia = () => {
@@ -139,7 +107,6 @@ export default function MinhasSessoes({ route }) {
     if (indexAtual > 0) carregarSessoesDoDia(indexAtual - 1);
   };
 
-  // 🔽 Abrir modal bottom sheet com animação
   const abrirModal = (sessao) => {
     setSessaoSelecionada(sessao);
     setModalVisible(true);
@@ -150,7 +117,6 @@ export default function MinhasSessoes({ route }) {
     }).start();
   };
 
-  // 🔼 Fechar modal com animação
   const fecharModal = () => {
     Animated.timing(slideAnim, {
       toValue: 400,
@@ -162,48 +128,51 @@ export default function MinhasSessoes({ route }) {
     });
   };
 
-  // 📅 Reagendar — navega para tela de agendamento
-  const handleReagendar = () => {
-    fecharModal();
-    // TODO: Passar os dados corretos do psicólogo se necessário
-    navigation.navigate("DataHoraConsulta", {
-      psicologo: { id_psicologo: sessaoSelecionada?.id_psicologo },
-      sessaoOrigem: sessaoSelecionada,
-    });
+
+  const formatarHora = (hora) => {
+    if (!hora) return "";
+    return hora.slice(0, 5);
   };
 
-  // ❌ Cancelar consulta — navega para tela de confirmação
-  const handleCancelarConsulta = () => {
+  const getNomePsicologo = (sessao) =>
+    sessao?.psicologo?.usuario?.nome ?? sessao?.psicologo_nome ?? "Profissional";
+
+  const handlecancelar = () => {
     fecharModal();
-    // TODO: Ajustar o nome da rota conforme o Navigator do projeto
-    navigation.navigate("CancelarSessao", {
+    navigation.navigate("cancelamento", {
       sessao: sessaoSelecionada,
+      psicologo: { nome: getNomePsicologo(sessaoSelecionada) }  // ← adiciona isso
     });
-  };
+  }
+    
 
   const getStatusConfig = (status) => {
     switch (status) {
       case "agendada":
-        return { label: "Consulta Agendada", cor: "#8E7CFF", corFundo: "#EAE0FF", borderCor: "#8E7CFF" };
-      case "concluida":
-        return { label: "Concluída", cor: "#4CAF50", corFundo: "#E8F5E9", borderCor: "#4CAF50" };
+        return { label: "Agendada", cor: "#8E7CFF", corFundo: "#EAE0FF", borderCor: "#8E7CFF" };
+      case "realizada":
+        return { label: "Realizada", cor: "#4CAF50", corFundo: "#E8F5E9", borderCor: "#4CAF50" };
       case "cancelada":
         return { label: "Cancelada", cor: "#F44336", corFundo: "#FFEBEE", borderCor: "#F44336" };
+      case "pendente":
+        return { label: "Pendente", cor: "#FF9800", corFundo: "#FFF3E0", borderCor: "#FF9800" };
+      case "bloqueado":
+        return { label: "Cancelada", cor: "#F44336", corFundo: "#F5F5F5", borderCor: "#9E9E9E" };
+      case "cancelamento_solicitado":
+        return { label: "Cancelamento Solicitado", cor: "#E53935", corFundo: "#FFEBEE", borderCor: "#E53935" };
+      case "reagendamento_solicitado":
+        return { label: "Reagendamento Solicitado", cor: "#1E88E5", corFundo: "#E3F2FD", borderCor: "#1E88E5" };
+      case "recusada":
+        return { label: "Recusada", cor: "#B71C1C", corFundo: "#FFCDD2", borderCor: "#B71C1C" };
       default:
-        return { label: "Agendada", cor: "#8E7CFF", corFundo: "#EAE0FF", borderCor: "#8E7CFF" };
+        return { label: status ?? "Agendada", cor: "#8E7CFF", corFundo: "#EAE0FF", borderCor: "#8E7CFF" };
     }
   };
 
-  useEffect(() => {
-  carregarSessoesDoDia(HOJE_INDEX);
-
-  setTimeout(() => {
-    abrirModal(SESSOES_ESTATICAS[0]);
-  }, 500);
-}, []);
+  
 
   const isHoje = indexAtual === HOJE_INDEX;
-  
+
   return (
     <View style={styles.containerAgenda}>
       <ScrollView
@@ -259,28 +228,26 @@ export default function MinhasSessoes({ route }) {
           ) : sessoes.length > 0 ? (
             <View style={styles.sessoesLista}>
               {sessoes.map((sessao) => {
-                const config = getStatusConfig(sessao.status);
+                const config = getStatusConfig(sessao.status_sessao);
                 return (
                   <Pressable
-                    key={sessao.id}
+                    key={sessao.id_sessao ?? sessao.id}
                     style={[
                       styles.sessaoCard,
                       { backgroundColor: config.corFundo, borderLeftColor: config.borderCor },
                     ]}
-                    onPress={() => sessao.status === "agendada" ? abrirModal(sessao) : null}
+                    onPress={() => abrirModal(sessao)} // ← qualquer card abre o modal
                     android_ripple={{ color: "rgba(142,124,255,0.1)" }}
                   >
                     <Text style={[styles.sessaoStatus, { color: config.cor }]}>
                       {config.label}
                     </Text>
-                    <Text style={styles.sessaoNome}>{sessao.psicologo_nome}</Text>
+                    <Text style={styles.sessaoNome}>{getNomePsicologo(sessao)}</Text>
                     <View style={styles.sessaoHorarioRow}>
                       <Ionicons name="time-outline" size={16} color="#666" />
-                      <Text style={styles.sessaoHorario}>Horário: {sessao.hora_inicio}</Text>
+                      {/* ✂️ hora formatada */}
+                      <Text style={styles.sessaoHorario}>Horário: {formatarHora(sessao.hora_inicio)}</Text>
                     </View>
-                    {sessao.status === "agendada" && (
-                      <Text style={styles.sessaoToque}>Toque para gerenciar →</Text>
-                    )}
                   </Pressable>
                 );
               })}
@@ -294,24 +261,20 @@ export default function MinhasSessoes({ route }) {
         </View>
       </ScrollView>
 
-      {/* ──────────────── MODAL BOTTOM SHEET ──────────────── */}
+      {/* MODAL BOTTOM SHEET */}
       <Modal
         visible={modalVisible}
         transparent
         animationType="none"
         onRequestClose={fecharModal}
       >
-        {/* Overlay — toque fora fecha */}
         <Pressable style={styles.modalOverlay} onPress={fecharModal} />
 
-        {/* Painel deslizante de baixo */}
         <Animated.View
           style={[styles.bottomSheet, { transform: [{ translateY: slideAnim }] }]}
         >
-          {/* Handle de arraste */}
           <View style={styles.bottomSheetHandle} />
 
-          {/* Informações da sessão selecionada */}
           {sessaoSelecionada && (() => {
             const config = getStatusConfig(sessaoSelecionada.status);
             return (
@@ -320,12 +283,13 @@ export default function MinhasSessoes({ route }) {
                   {config.label}
                 </Text>
                 <Text style={styles.bottomSheetNome}>
-                  {sessaoSelecionada.psicologo_nome}
+                  {getNomePsicologo(sessaoSelecionada)}
                 </Text>
                 <View style={styles.sessaoHorarioRow}>
                   <Ionicons name="time-outline" size={16} color="#666" />
+                  {/* ✂️ hora formatada no modal também */}
                   <Text style={styles.sessaoHorario}>
-                    Horário: {sessaoSelecionada.hora_inicio}
+                    Horário: {formatarHora(sessaoSelecionada.hora_inicio)}
                   </Text>
                 </View>
               </View>
@@ -334,49 +298,39 @@ export default function MinhasSessoes({ route }) {
 
           <View style={styles.bottomSheetDivisor} />
 
-          {/* Botões de ação */}
           <View style={styles.bottomSheetBotoes}>
-          <Pressable
-            style={styles.botaoReagendar}
-            onPress={() => {
-              if (!sessaoSelecionada) {
-                alert("Selecione uma sessão");
-                return;
-              }
+            {sessaoSelecionada?.status_sessao === "agendada" && (
+              <Pressable
+                style={styles.botaoReagendar}
+                onPress={() => {
+                  if (!sessaoSelecionada) return;
+                  fecharModal();
+                  navigation.navigate("reagendarConsulta", {
+                    psicologo: {
+                      id_psicologo: sessaoSelecionada.id_psicologo,
+                      nome: getNomePsicologo(sessaoSelecionada),
+                    },
+                    userPerfil: route?.params?.userPerfil,
+                    sessao: sessaoSelecionada,
+                  });
+                }}
+              >
+                <Text style={styles.botaoReagendarTexto}>Reagendar</Text>
+              </Pressable>
+            )}
+            {sessaoSelecionada?.status_sessao === "agendada" && (
+              <Pressable
+                style={styles.botaoCancelarConsulta}
+                onPress={() => 
+                  handlecancelar()}
+              >
+                <Text style={styles.botaoCancelarConsultaTexto}>Cancelar Consulta</Text>
+              </Pressable>
+            )}
 
-              fecharModal();
-
-              navigation.navigate("reagendarConsulta", {
-                psicologo: {
-                  id_psicologo: sessaoSelecionada.id_psicologo,
-                  nome: sessaoSelecionada.psicologo_nome,
-                },
-                userPerfil: route?.params?.userPerfil,
-                sessao: sessaoSelecionada,
-              });
-            }}
-          >
-            <Text style={styles.botaoReagendarTexto}>
-              Reagendar
-            </Text>
-          </Pressable>
-
-            <Pressable
-              style={styles.botaoCancelarConsulta}
-              onPress={() =>
-                navigation.navigate("cancelamento", {
-                  sessao: sessaoSelecionada
-                })
-              }
-            >
-              <Text style={styles.botaoCancelarConsultaTexto}>
-                Cancelar Consulta
-              </Text>
-            </Pressable>
-
-            <Pressable style={styles.botaoVoltarSheet} onPress={fecharModal}>
-              <Text style={styles.botaoVoltarSheetTexto}>Voltar</Text>
-            </Pressable>
+              <Pressable style={styles.botaoVoltarSheet} onPress={fecharModal}>
+                <Text style={styles.botaoVoltarSheetTexto}>Voltar</Text>
+              </Pressable>
           </View>
         </Animated.View>
       </Modal>

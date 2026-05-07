@@ -8,7 +8,7 @@ import VisualizarPsi from "../page/visualizarPsi";
 import Pesquisa from "../page/pesquisa";
 import Central from "../page/central-de-cuidado";
 import DataHoraConsulta from "../page/dataHoraConsulta";
-import confirConsulta from "../page/confirConsulta"
+import ConfirConsulta from "../page/confirConsulta"
 import MinhasSessoes from "../page/minhaSessao"
 import ReagendarConsulta from "../page/reagendarCons"
 import Cancelamento from "../page/cancelamento";
@@ -18,7 +18,7 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   return (
     <Stack.Navigator 
-      initialRouteName="minhasSessoes"
+      // initialRouteName="minhasSessoes"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="menu" component={Menu} />
@@ -46,7 +46,7 @@ export default function AppNavigator() {
         headerTintColor: '#A383FB',
         
       }}  />
-      <Stack.Screen name="confirConsulta" component={confirConsulta} options={{ 
+      <Stack.Screen name="confirConsulta" component={ConfirConsulta} options={{ 
         headerShown: true,
         title: 'Minhas Sessões',
         headerStyle: { backgroundColor: '#FFFFFF' },

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import {
   View, Text, TextInput, FlatList,
-  Pressable, Modal, ActivityIndicator
+  Pressable, Modal, ActivityIndicator, Image
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -13,7 +13,7 @@ import NavBar from "../../components/NavBar";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Pesquisa( {route} ) {
-  const { listarPsicologos, verHorariosDisponiveis, agendarSessaoCont } = useAuth();
+  const { listarPsicologos, verHorariosDisponiveis, agendarSessaoCont, BASE_URL } = useAuth();
 
   const {buscaInicial} = route.params ?? {};
 
@@ -27,9 +27,6 @@ export default function Pesquisa( {route} ) {
 
   const [agendados, setAgendados] = useState({});
 
-  // 🔹 MODAL DE CONFIRMAÇÃO CANCELAR
-  const [modalCancelarVisible, setModalCancelarVisible] = useState(false);
-  const [cancelando, setCancelando] = useState(null);
 
   // 🔥 FILTROS
   const [especialidadeFiltro, setEspecialidadeFiltro] = useState([]);
@@ -121,7 +118,15 @@ export default function Pesquisa( {route} ) {
         }
       >
         <View style={styles.topoCard}>
-          <View style={styles.avatar} />
+          {item.foto_perfil ? (
+            <Image
+              source={{ uri: `${BASE_URL}${item.foto_perfil}` }}
+              style={styles.avatar}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.avatar} />
+          )}
 
           <View style={{ flex: 1 }}>
             <Text style={styles.nome}>{item.nome}</Text>
@@ -146,28 +151,6 @@ export default function Pesquisa( {route} ) {
             </View>
           </View>
 
-          <Pressable
-            style={[styles.botao, agendado && { backgroundColor: "#ccc" }]}
-            onPress={(e) => {
-              e.stopPropagation();
-
-              if (agendado) {
-                // Abre modal de confirmação para cancelar
-                setCancelando(item);
-                setModalCancelarVisible(true);
-                return;
-              }
-              console.log("Item selecionado:", item)
-              setSelecionado(item);
-              setDiaSelecionado(null);
-              setHoraSelecionada(null);
-              setModalVisible(true);
-            }}
-          >
-            <Text style={[styles.botaoTexto, agendado && { color: "green" }]}>
-              {agendado ? "✔ Agendado" : "Agendar"}
-            </Text>
-          </Pressable>
         </View>
       </Pressable>
     );
@@ -554,40 +537,6 @@ export default function Pesquisa( {route} ) {
         </View>
       </Modal>
 
-      {/* MODAL CONFIRMAÇÃO CANCELAMENTO */}
-      <Modal visible={modalCancelarVisible} transparent animationType="fade">
-        <View style={styles.modalOverlay} importantForAccessibility="yes">
-          <View style={styles.modalBox}>
-            <Text style={styles.modalTitulo}>
-              Deseja realmente cancelar este agendamento?
-            </Text>
-
-            <View style={styles.modalButtons}>
-              <Pressable
-                onPress={() => setModalCancelarVisible(false)}
-                style={[styles.btnCancelar, { paddingHorizontal: 20 }]}
-              >
-                <Text style={{ color: "red", fontWeight: "bold" }}>Não</Text>
-              </Pressable>
-
-              <Pressable
-                style={styles.btnConfirmar}
-                onPress={() => {
-                  if (cancelando) {
-                    const novo = { ...agendados };
-                    delete novo[cancelando.nome];
-                    setAgendados(novo);
-                  }
-                  setModalCancelarVisible(false);
-                  setCancelando(null);
-                }}
-              >
-                <Text style={{ color: "#fff", fontWeight: "bold" }}>Sim</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
 
       {/* NAVBAR */}
       <NavBar tela="pesquisa" />

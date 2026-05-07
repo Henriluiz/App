@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Text, View, ScrollView, KeyboardAvoidingView,
-  Platform, Pressable, Modal, ActivityIndicator
+  Platform, Pressable, Modal, ActivityIndicator, Image
 } from "react-native";
 
 import { useAuth } from "../../context/AuthContext"
@@ -35,7 +35,7 @@ export default function VisualizarPsi({ route }) {
 
   const dias = ["Seg", "Ter", "Qua", "Qui", "Sex"];
 
-  const { verPsicologo, verHorariosDisponiveis, agendarSessaoCont } = useAuth();
+  const { verPsicologo, verHorariosDisponiveis, agendarSessaoCont, BASE_URL } = useAuth();
 
   // 📅 GERAR DATA EM FORMATO ISO CORRETO COM FUSO HORÁRIO DO BRASIL
   const gerarDataPorDia = (dia) => {
@@ -169,12 +169,20 @@ export default function VisualizarPsi({ route }) {
           <View style={styles.card}>
             <View style={styles.fotoContainer}>
               <View style={styles.fotoPerfil}>
-                <Ionicons
-                  name="person-outline"
-                  size={120}
-                  color="white"
-                  style={styles.fotoPerfil2}
-                />
+                {userPerfil?.foto_perfil ? (
+                  <Image
+                    source={{ uri: `${BASE_URL}${userPerfil.foto_perfil}` }}
+                    style={styles.imagem}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <Ionicons
+                    name="person-outline"
+                    size={120}
+                    color="white"
+                    style={styles.fotoPerfil2}
+                  />
+                )}
               </View>
             </View>
 

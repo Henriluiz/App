@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo, PesquisaPsicologo, horariosDisponiveis, agendarSessao, solicitarCancelamento, solicitarReagendamento,
-  detalhesConsulta
+import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo, PesquisaPsicologo, horariosDisponiveis, agendarSessao, solicitarCancelamento, solicitarReagendamento, 
+  detalhesConsulta, minhasSessoes, pacienteHistorico
 } from "../services/authService";
 import {
   saveSession,
@@ -18,6 +18,8 @@ const AuthContext = createContext({});
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  const BASE_URL = "http://10.148.229.116:8000/storage/";
 
   async function signIn(loginInput, senha) {
 
@@ -163,9 +165,9 @@ export function AuthProvider({ children }) {
     }
   };
 
-  async function SolReagendarCons(id_sessao) {
+  async function SolReagendarCons(id_sessao, dados) {
     try {
-      const resposta = await solicitarReagendamento(id_sessao);
+      const resposta = await solicitarReagendamento(id_sessao, dados);
       return resposta;
     } catch (e) {
       console.error("Erro completo (SolReagendarCons):", e.response?.data);
@@ -178,7 +180,27 @@ export function AuthProvider({ children }) {
       const resposta = await detalhesConsulta(id_sessao);
       return resposta;
     } catch (e) {
-      console.error("Erro completo (SolReagendarCons):", e.response?.data);
+      console.error("Erro completo (detalhesCons):", e.response?.data);
+      return null;
+    }
+  };
+
+  async function mSessoes() {
+    try {
+      const resposta = await minhasSessoes();
+      return resposta;
+    } catch (e) {
+      console.error("Erro completo (mSessoes):", e.response?.data);
+      return null;
+    }
+  };
+
+  async function historico() {
+    try {
+      const resposta = await pacienteHistorico();
+      return resposta;
+    } catch (e) {
+      console.error("Erro completo (mSessoes):", e.response?.data);
       return null;
     }
   };
@@ -232,6 +254,7 @@ export function AuthProvider({ children }) {
       value={{
         user,
         loading,
+        BASE_URL,
 
         // CRUD
         signIn,
@@ -250,6 +273,10 @@ export function AuthProvider({ children }) {
 
         // Agenda
         SolCancelamentoCons,
+        detalhesCons,
+        SolReagendarCons,
+        mSessoes
+
       }}
     >
       {children}
