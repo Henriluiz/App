@@ -10,13 +10,14 @@ const getBaseURL = () => {
   if (Platform.OS === "web") {
     return "http://10.131.235.116:8000/api";
     // http://localhost:8000/api
+    // http://10.148.229.116:8000/api
   }
 
   return "http://localhost:8081/api";
 };
 
 const api = axios.create({
-  baseURL: "http://10.148.229.116:8000/api", // ! Seguir a tabela abaixo
+  baseURL: "http://localhost:8000/api", // ! Seguir a tabela abaixo
   // php artisan serve --host=0.0.0.0 --port=8000
   // http://192.168.18.99:8000/api
   timeout: 70000,

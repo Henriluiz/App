@@ -240,7 +240,9 @@ export default function MinhasSessoes({ route }) {
                     android_ripple={{ color: "rgba(142,124,255,0.1)" }}
                   >
                     <Text style={[styles.sessaoStatus, { color: config.cor }]}>
-                      {config.label}
+                      {config.label} {(config.label === "Cancelada" || config.label === "Recusada") && (
+                                      <Text>- Motivo: {sessao.observacoes}</Text>
+                                    )}
                     </Text>
                     <Text style={styles.sessaoNome}>{getNomePsicologo(sessao)}</Text>
                     <View style={styles.sessaoHorarioRow}>
