@@ -41,13 +41,13 @@ export default function CadastroFoto({ route }) {
 
     try {
       const resultado = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+         mediaTypes: ["images"],
         allowsEditing: true,
         quality: 0.5,
       });
 
       if (!resultado.canceled && resultado.assets[0]) {
-        setImagem(resultado.assets[0].uri);
+        setImagem(resultado.assets[0]);
       }
       console.log(imagem)
     } catch (error) {
@@ -62,13 +62,13 @@ export default function CadastroFoto({ route }) {
 
     try {
       const resultado = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+         mediaTypes: ["images"],
         allowsEditing: true,
         quality: 0.5,
       });
 
       if (!resultado.canceled && resultado.assets[0]) {
-        setImagem(resultado.assets[0].uri);
+        setImagem(resultado.assets[0]);
       }
     } catch (error) {
       console.error("Erro ao selecionar da galeria:", error);
@@ -77,7 +77,7 @@ export default function CadastroFoto({ route }) {
   };
 
   async function enviar() {
-    console.log("🖼️ Imagem sendo enviada:", imagem); // Debug
+    console.log("🖼️ Imagem sendo enviada:", imagem?.uri); // Debug
     
     navigation.navigate("cadastroConta", {
       nome,
@@ -105,7 +105,7 @@ export default function CadastroFoto({ route }) {
         <View style={styles.fotoContainer}>
           <Pressable style={styles.fotoPerfil} onPress={() => tirarFoto()}>
             {imagem ? (
-              <Image source={{ uri: imagem }} style={styles.imagem} />
+              <Image source={{ uri: imagem.uri }} style={styles.imagem} />
             ) : (
               <Ionicons
                 name="person-outline"

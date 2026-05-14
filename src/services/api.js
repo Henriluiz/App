@@ -2,22 +2,15 @@ import axios from "axios";
 import { getToken, clearSession } from "./authStogare";
 import { Platform } from "react-native";
 
-const getBaseURL = () => {
-  if (Platform.OS === "android") {
-    return "http://192.168.18.99:8000/api";
-  }
+const BASE_URL =
+  Platform.OS === "web"
+    ? "http://localhost:8000"
+    : "http://192.168.18.99:8000";
 
-  if (Platform.OS === "web") {
-    return "http://localhost:8000/api";
-    // http://localhost:8000/api
-    // http://10.148.229.116:8000/api
-  }
-
-  return "http://localhost:8081/api";
-};
+export { BASE_URL };
 
 const api = axios.create({
-  baseURL: "http://localhost:8000/api", // ! Seguir a tabela abaixo
+  baseURL: `${BASE_URL}/api`,
   // php artisan serve --host=0.0.0.0 --port=8000
   // http://192.168.18.99:8000/api
   timeout: 70000,

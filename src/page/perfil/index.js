@@ -1,4 +1,5 @@
 import React, { useState, useEffect} from "react";
+import { BASE_URL } from "../../services/api";
 import {
   Text,View, TextInput, ScrollView, KeyboardAvoidingView,
   Platform, Pressable, Image, Modal, ActivityIndicator,
@@ -166,6 +167,9 @@ export default function Perfil({ navigation }) {
     }
   }, [user]);
 
+  console.log("FOTO:", user?.foto_perfil)
+console.log("URL FINAL:", `${BASE_URL}${user?.foto_perfil}`)
+
   return (
     <SafeAreaView
       style={{ flex: 1 }}
@@ -192,7 +196,7 @@ export default function Perfil({ navigation }) {
             <View style={styles.fotoPerfil}>
               {user?.foto_perfil ? (
                 <Image
-                  source={{ uri: `${BASE_URL}${user.foto_perfil}` }}
+                  source={{ uri: `http://localhost:8000/storage/${user.foto_perfil}` }}
                   style={styles.imagem} // mesmo estilo que usou no CadastroFoto
                   resizeMode="cover"
                 />

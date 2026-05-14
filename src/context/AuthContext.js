@@ -1,12 +1,27 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo, PesquisaPsicologo, horariosDisponiveis, agendarSessao, solicitarCancelamento, solicitarReagendamento, 
-  detalhesConsulta, minhasSessoes, pacienteHistorico
+import {
+  login,
+  getPerfil,
+  logout,
+  deleteConta,
+  patchPerfil,
+  verificarCPF,
+  verificarUsername,
+  PerfilPsicologo,
+  PesquisaPsicologo,
+  horariosDisponiveis,
+  agendarSessao,
+  solicitarCancelamento,
+  solicitarReagendamento,
+  detalhesConsulta,
+  minhasSessoes,
+  pacienteHistorico,
 } from "../services/authService";
 import {
   saveSession,
   clearSession,
   getToken,
-  getUser, 
+  getUser,
 } from "../services/authStogare";
 import { authEvents } from "../services/authEvents";
 import { errorMonitor } from "events";
@@ -18,11 +33,10 @@ const AuthContext = createContext({});
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   const BASE_URL = "http://10.148.229.116:8000/storage/";
 
   async function signIn(loginInput, senha) {
-
     const data = await login(loginInput, senha);
 
     const token = data.access_token;
@@ -31,12 +45,10 @@ export function AuthProvider({ children }) {
     await saveSession(token, user);
 
     setUser(user);
-
   }
 
   // Deslogar
   async function signOut() {
-
     try {
       await logout();
     } catch (e) {}
@@ -44,12 +56,10 @@ export function AuthProvider({ children }) {
     await clearSession();
 
     setUser(null);
-
   }
 
   // Deletar a conta
   async function removeAccount() {
-
     try {
       await deleteConta();
     } catch (e) {
@@ -58,19 +68,16 @@ export function AuthProvider({ children }) {
 
     await clearSession();
     setUser(null);
-
   }
 
   // Atualizar nome, email e telefone do usuário
   async function updateUser(data) {
     try {
-
       const updatedUser = await patchPerfil(data);
-      
+
       setUser(updatedUser);
-      
+
       await saveSession(await getToken(), updatedUser);
-      
     } catch (error) {
       console.log("Erro ao atualizar usuário", error);
       throw error;
@@ -79,23 +86,27 @@ export function AuthProvider({ children }) {
 
   async function verificarDisponibilidade(username, cpf) {
     try {
-      const verificacao = await getUserCPF(username, cpf);
+      const verificacaoUsername = await verificarUsername(username);
+
+      const verificacaoCPF = await verificarCPF(cpf);
 
       return {
-        usernameDisponivel: verificacao.username_disponivel,
-        cpfDisponivel: verificacao.cpf_disponivel,
+        usernameDisponivel: verificacaoUsername.username_disponivel,
+        cpfDisponivel: verificacaoCPF.cpf_disponivel,
       };
-
     } catch (e) {
-      console.error("ERRO COMPLETO (verificarDisponibilidade):", e.response?.data);
+      console.error(
+        "ERRO COMPLETO (verificarDisponibilidade):",
+        e.response?.data,
+      );
 
       return {
         usernameDisponivel: false,
         cpfDisponivel: false,
-        erro: true
+        erro: true,
       };
     }
-  };
+  }
 
   async function verPsicologo(id) {
     try {
@@ -110,38 +121,41 @@ export function AuthProvider({ children }) {
 
       return {
         user: false,
-        psicologo: false
+        psicologo: false,
       };
     }
-  };
+  }
 
   async function listarPsicologos(id) {
     try {
       const perfil = await PesquisaPsicologo();
 
       return {
-        psicologos: perfil.psicologos
+        psicologos: perfil.psicologos,
       };
     } catch (e) {
       console.error("ERRO COMPLETO (listarPsicologos):", e.response?.data);
 
       return {
         user: false,
-        psicologos: false
+        psicologos: false,
       };
     }
-  };
+  }
 
   async function verHorariosDisponiveis(id, data) {
     try {
       const dados = await horariosDisponiveis(id, data);
-      console.log(dados)
+      console.log(dados);
       return dados;
     } catch (e) {
-      console.error("ERRO COMPLETO: (verHorariosDisponiveis)", e.response?.data);
+      console.error(
+        "ERRO COMPLETO: (verHorariosDisponiveis)",
+        e.response?.data,
+      );
       return [];
     }
-  };
+  }
 
   async function agendarSessaoCont(dados) {
     try {
@@ -151,7 +165,7 @@ export function AuthProvider({ children }) {
       console.error("Erro completo (agendarSessao):", e.response?.data);
       return null;
     }
-  };
+  }
 
   // ! Não testado - Apenas criado para poupar tempo
 
@@ -163,7 +177,7 @@ export function AuthProvider({ children }) {
       console.error("Erro completo (SolCancelamentoCons):", e.response?.data);
       return null;
     }
-  };
+  }
 
   async function SolReagendarCons(id_sessao, dados) {
     try {
@@ -173,7 +187,7 @@ export function AuthProvider({ children }) {
       console.error("Erro completo (SolReagendarCons):", e.response?.data);
       return null;
     }
-  };
+  }
 
   async function detalhesCons(id_sessao) {
     try {
@@ -183,7 +197,7 @@ export function AuthProvider({ children }) {
       console.error("Erro completo (detalhesCons):", e.response?.data);
       return null;
     }
-  };
+  }
 
   async function mSessoes() {
     try {
@@ -193,7 +207,7 @@ export function AuthProvider({ children }) {
       console.error("Erro completo (mSessoes):", e.response?.data);
       return null;
     }
-  };
+  }
 
   async function historico() {
     try {
@@ -203,12 +217,10 @@ export function AuthProvider({ children }) {
       console.error("Erro completo (mSessoes):", e.response?.data);
       return null;
     }
-  };
+  }
 
   const bootstrap = async () => {
-
     try {
-
       const token = await getToken();
 
       if (!token) {
@@ -218,19 +230,13 @@ export function AuthProvider({ children }) {
 
       const user = await getUser();
       setUser(user);
-
     } catch (error) {
-
       console.log("Erro no bootstrap", error);
       setUser(null);
-
     } finally {
-
       setLoading(false);
-
     }
-
-  }
+  };
 
   useEffect(() => {
     bootstrap();
@@ -275,8 +281,7 @@ export function AuthProvider({ children }) {
         SolCancelamentoCons,
         detalhesCons,
         SolReagendarCons,
-        mSessoes
-
+        mSessoes,
       }}
     >
       {children}

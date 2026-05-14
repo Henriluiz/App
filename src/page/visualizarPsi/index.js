@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { BASE_URL } from "../../services/api";
 import {
   Text, View, ScrollView, KeyboardAvoidingView,
   Platform, Pressable, Modal, ActivityIndicator, Image
@@ -171,7 +172,7 @@ export default function VisualizarPsi({ route }) {
               <View style={styles.fotoPerfil}>
                 {userPerfil?.foto_perfil ? (
                   <Image
-                    source={{ uri: `${BASE_URL}${userPerfil.foto_perfil}` }}
+                    source={{ uri: `http://localhost:8000/storage/${userPerfil.foto_perfil}` }}
                     style={styles.imagem}
                     resizeMode="cover"
                   />
@@ -247,7 +248,7 @@ export default function VisualizarPsi({ route }) {
             </View>
 
           </View>
-        </View>
+        </View>     
       </ScrollView>
       <NavBar 
         tela = "home"

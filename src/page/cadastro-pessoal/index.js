@@ -127,10 +127,10 @@ export default function CadastroPessoal({ navigation }) {
       setErroCpf("CPF deve conter 11 dígitos, Sem as pontuanções.");
       return false;
     } 
-    // else if (!validarCpf(numcpf)) {
-    //   setErroCpf("Digite um CPF válido.");
-    //   return false;
-    // }
+    else if (!validarCpf(numcpf)) {
+      setErroCpf("Digite um CPF válido.");
+      return false;
+    }
     
     
     // Um proteção caso houve uma falha e retorne null

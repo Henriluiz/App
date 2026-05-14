@@ -1,4 +1,5 @@
 import api from "./api";
+import { Platform } from "react-native";
 
 export async function cadastroPaciente(data) {
   const formData = new FormData();
@@ -13,16 +14,28 @@ export async function cadastroPaciente(data) {
   formData.append("cpf", data.cpf);
   formData.append("termos", data.termos ? "1" : "0");
 
-  if (data.foto_perfil) {
-    const filename = data.foto_perfil.split("/").pop();
-    const match = /\.(\w+)$/.exec(filename);
-    const type = match ? `image/${match[1]}` : "image/jpeg";
 
-    formData.append("foto", {
-      uri: data.foto_perfil,
-      name: filename,
-      type,
-    });
+  if (data.foto_perfil) {
+    // WEB
+    if (Platform.OS === "web") {
+      const response = await fetch(data.foto_perfil.uri);
+      const blob = await response.blob();
+
+      formData.append("foto", blob, "foto.jpg");
+    } else {
+      // MOBILE
+      const filename = data.foto_perfil.uri.split("/").pop();
+
+      const match = /\.(\w+)$/.exec(filename);
+
+      const type = match ? `image/${match[1]}` : "image/jpeg";
+
+      formData.append("foto", {
+        uri: data.foto_perfil.uri,
+        name: filename,
+        type,
+      });
+    }
   }
 
   // console.log("📦 FormData entries:");
@@ -58,48 +71,46 @@ export async function cadastroPaciente(data) {
 }
 
 export async function login(login, senha) {
-
   const response = await api.post("/login", {
     login,
-    senha
+    senha,
   });
 
   return response.data;
 }
 
 export async function getPerfil() {
-
   const response = await api.get("/perfil");
 
   return response.data.user;
-
 }
 
 export async function logout() {
-
   const response = await api.post("/logout");
 
   return response.data;
-
 }
 
-export async function getUserCPF(username, cpf) {
-  
+export async function verificarCPF(cpf) {
   const response = await api.post("/verificarUserCPF", {
-    username,
     cpf,
   });
 
   return response.data;
+}
 
+export async function verificarUsername(username) {
+  const response = await api.post("/verificarUsername", {
+    username,
+  });
+
+  return response.data;
 }
 
 export async function patchPerfil(data) {
-
   const response = await api.patch("/update", data);
 
   return response.data.user;
-
 }
 
 export async function deleteConta() {
@@ -109,48 +120,50 @@ export async function deleteConta() {
 
 export async function solicitarCodigo(email) {
   try {
-      const response = await api.post("/recuperacao/enviar", {email: email})
-      
-      const data = response.data;
-      console.log('Sucesso', data.message);
-      return true
-    } catch (error) {
-      console.log('Error', error);
-      return false
+    const response = await api.post("/recuperacao/enviar", { email: email });
+
+    const data = response.data;
+    console.log("Sucesso", data.message);
+    return true;
+  } catch (error) {
+    console.log("Error", error);
+    return false;
   }
 }
 
 export async function verificarCodigo(email, codigo) {
   try {
-      const response = await api.post("/recuperacao/verificar", {
-        email, codigo
-      })
+    const response = await api.post("/recuperacao/verificar", {
+      email,
+      codigo,
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (response.ok) {
-          console.log('Sucesso', data.message);
-          return true;
-          // navegue para a tela de nova senha
-      } else {
-          console.log('Erro', data.message);
-          return false;
-      }
+    if (response.ok) {
+      console.log("Sucesso", data.message);
+      return true;
+      // navegue para a tela de nova senha
+    } else {
+      console.log("Erro", data.message);
+      return false;
+    }
   } catch (error) {
-      console.log('Erro', 'Não foi possível verificar o código.');
+    console.log("Erro", "Não foi possível verificar o código.");
   }
 }
 
 export async function PerfilPsicologo(id) {
-  try { // /verPsicologo/{id}
-      const response = await api.get(`/verPsicologo/${id}`)
+  try {
+    // /verPsicologo/{id}
+    const response = await api.get(`/verPsicologo/${id}`);
 
-      return { 
-        "user" : response.data.user,
-        "psicologo" : response.data.psicologo
-      }
+    return {
+      user: response.data.user,
+      psicologo: response.data.psicologo,
+    };
   } catch (error) {
-    console.log('Erro', "Não foi consulta perfil do psicologo.")
+    console.log("Erro", "Não foi consultar perfil do psicologo.");
 
     // 👇 FORÇA quem chama a tratar erro
     throw error;
@@ -159,13 +172,13 @@ export async function PerfilPsicologo(id) {
 
 export async function PesquisaPsicologo(id) {
   try {
-      const response = await api.get('/listarPsicologos')
+    const response = await api.get("/listarPsicologos");
 
-      return { 
-        "psicologos" : response.data.psicologos,
-      }
+    return {
+      psicologos: response.data.psicologos,
+    };
   } catch (error) {
-    console.log('Erro', "Não foi consulta perfil do psicologo.")
+    console.log("Erro", "Não foi consultar perfil do psicologo.");
 
     // 👇 FORÇA quem chama a tratar erro
     throw error;
@@ -174,16 +187,16 @@ export async function PesquisaPsicologo(id) {
 
 export async function horariosDisponiveis(id, data) {
   try {
-      const response = await api.get(`/horariosDisponiveis/${id}`, {
-        params: { data }
-      });
+    const response = await api.get(`/horariosDisponiveis/${id}`, {
+      params: { data },
+    });
 
-      return response.data
+    return response.data;
   } catch (error) {
-    console.log('Erro', "Não foi consulta perfil do psicologo.")
+    console.log("Erro", "Não foi consulta perfil do psicologo.");
 
     // 👇 FORÇA quem chama a tratar erro
-    throw error;  
+    throw error;
   }
 }
 
@@ -199,13 +212,17 @@ export async function agendarSessao(dados) {
 
 export async function solicitarCancelamento(id_sessao, motivo) {
   try {
-      const response = await api.post(`/solicitarCancelamento/${id_sessao}`,  {
-        motivo: motivo,
-      })
+    const response = await api.post(`/solicitarCancelamento/${id_sessao}`, {
+      motivo: motivo,
+    });
 
-      return response.data
+    return response.data;
   } catch (error) {
-    console.log('Erro', "Não foi possível solicitar o cancelamento da consulta.{'\n}", error)
+    console.log(
+      "Erro",
+      "Não foi possível solicitar o cancelamento da consulta.{'\n}",
+      error,
+    );
 
     // 👇 FORÇA quem chama a tratar erro
     throw error;
@@ -214,11 +231,18 @@ export async function solicitarCancelamento(id_sessao, motivo) {
 
 export async function solicitarReagendamento(id_sessao, dados) {
   try {
-      const response = await api.post(`/solicitarReagendamento/${id_sessao}`, dados)
-      console.log(response)
-      return response.data
+    const response = await api.post(
+      `/solicitarReagendamento/${id_sessao}`,
+      dados,
+    );
+    console.log(response);
+    return response.data;
   } catch (error) {
-    console.log('Erro', "Não foi possível solicitar o reagendamento da consulta.{'\n}", error)
+    console.log(
+      "Erro",
+      "Não foi possível solicitar o reagendamento da consulta.{'\n}",
+      error,
+    );
 
     // 👇 FORÇA quem chama a tratar erro
     throw error;
@@ -227,11 +251,15 @@ export async function solicitarReagendamento(id_sessao, dados) {
 
 export async function detalhesConsulta(id_sessao) {
   try {
-      const response = await api.get(`/detalhesConsulta/${id_sessao}`)
+    const response = await api.get(`/detalhesConsulta/${id_sessao}`);
 
-      return response.data
+    return response.data;
   } catch (error) {
-    console.log('Erro', "Não foi possível visualizar os detalhes da consulta.{'\n}", error)
+    console.log(
+      "Erro",
+      "Não foi possível visualizar os detalhes da consulta.{'\n}",
+      error,
+    );
 
     // 👇 FORÇA quem chama a tratar erro
     throw error;
@@ -240,10 +268,14 @@ export async function detalhesConsulta(id_sessao) {
 
 export async function minhasSessoes(id_sessao) {
   try {
-      const response = await api.get('/minhasSessoes')
-      return response.data
+    const response = await api.get("/minhasSessoes");
+    return response.data;
   } catch (error) {
-    console.log('Erro', "Não foi possível visualizar as minhas sessões.{'\n}", error)
+    console.log(
+      "Erro",
+      "Não foi possível visualizar as minhas sessões.{'\n}",
+      error,
+    );
 
     // 👇 FORÇA quem chama a tratar erro
     throw error;
@@ -252,13 +284,16 @@ export async function minhasSessoes(id_sessao) {
 
 export async function pacienteHistorico(id_sessao) {
   try {
-      const response = await api.get('/pacienteHistorico')
-      return response.data
+    const response = await api.get("/pacienteHistorico");
+    return response.data;
   } catch (error) {
-    console.log('Erro', "Não foi possível visualizar as minhas sessões anteriores.{'\n}", error)
+    console.log(
+      "Erro",
+      "Não foi possível visualizar as minhas sessões anteriores.{'\n}",
+      error,
+    );
 
     // 👇 FORÇA quem chama a tratar erro
     throw error;
   }
 }
-
