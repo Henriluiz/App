@@ -241,8 +241,16 @@ export default function MinhasSessoes({ route }) {
                   >
                     <Text style={[styles.sessaoStatus, { color: config.cor }]}>
                       {config.label} {(config.label === "Cancelada" || config.label === "Recusada") && (
-                                      <Text>- Motivo: {sessao.observacoes}</Text>
-                                    )}
+                        sessao.observacoes ? (
+                          <Text>
+                            - Motivo: {sessao.observacoes}
+                          </Text>
+                        ) : (
+                          <Text>
+                            por mim
+                          </Text>
+                        )
+                      )}
                     </Text>
                     <Text style={styles.sessaoNome}>{getNomePsicologo(sessao)}</Text>
                     <View style={styles.sessaoHorarioRow}>
