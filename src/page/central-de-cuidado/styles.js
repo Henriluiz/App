@@ -99,6 +99,15 @@ export default StyleSheet.create({
     alignItems: 'center',
     marginTop: 15,
   },
+
+  btnAgendar: {
+    backgroundColor: '#66E4D5',
+    paddingVertical: 14, 
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 15,
+    paddingHorizontal: 25,
+  },
   btnText: {
     color: '#FFF',
     fontWeight: 'bold',

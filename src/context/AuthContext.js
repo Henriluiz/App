@@ -155,9 +155,9 @@ export function AuthProvider({ children }) {
 
   // ! Não testado - Apenas criado para poupar tempo
 
-  async function SolCancelamentoCons(id_sessao) {
+  async function SolCancelamentoCons(id_sessao, motivo) {
     try {
-      const resposta = await solicitarCancelamento(id_sessao);
+      const resposta = await solicitarCancelamento(id_sessao, motivo);
       return resposta;
     } catch (e) {
       console.error("Erro completo (SolCancelamentoCons):", e.response?.data);

@@ -10,6 +10,8 @@ import styles from "./styles";
 import NavBar from "../../components/NavBar";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../context/AuthContext";
+import ModalApp from "../../components/modalApp"
+import { Modal } from "react-native-web";
 
 export default function Cancelamento({ route }) {
   const navigation = useNavigation();
@@ -33,18 +35,22 @@ export default function Cancelamento({ route }) {
       alert("Selecione um motivo");
       return;
     }
+    console.log(motivoSelecionado)
 
-    await SolCancelamentoCons(sessao.id_sessao);
+    await SolCancelamentoCons(sessao.id_sessao, motivoSelecionado);
 
+    setModalSucesso(true)
     console.log("Cancelando:", sessao, motivoSelecionado);
+
 
     <ModalApp
       visible={modalSucesso}
       titulo="Solicitação Enviada"
       mensagem="Solicitação de cancelamento da Consulta enviada com sucesso!"
       tipo="sucesso"
-      onCancelar={() => setModal(false)}
+      onCancelar={() => setModalSucesso(false)}
       />
+    
     navigation.goBack();
   };
 

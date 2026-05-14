@@ -113,13 +113,13 @@ export default function CentralCuidado() {
               </>
             ) : (
               // Nenhuma sessão futura
-              <View style={{ alignItems: "center", paddingVertical: 20, gap: 8 }}>
+              <View style={{ alignItems: "center", paddingVertical: 5 }}>
                 <Ionicons name="calendar-outline" size={36} color="#ccc" />
                 <Text style={{ color: "#aaa", fontSize: 14 }}>
                   Nenhuma sessão agendada
                 </Text>
                 <Pressable
-                  style={({ pressed }) => [styles.btnEntrar, { opacity: pressed ? 0.8 : 1 }]}
+                  style={({ pressed }) => [styles.btnAgendar, { opacity: pressed ? 0.8 : 1 }]}
                   onPress={() => navigation.navigate("pesquisa")}
                 >
                   <Text style={styles.btnText}>Agendar Sessão</Text>

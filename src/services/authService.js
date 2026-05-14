@@ -43,7 +43,7 @@ export async function cadastroPaciente(data) {
   //   throw error;
   // }
   try {
-    const response = await fetch("http://10.148.229.116:8000/api/registerPaciente", {
+    const response = await fetch("http://localhost:8000/api/registerPaciente", {
       method: "POST",
       body: formData,
     });
@@ -197,9 +197,11 @@ export async function agendarSessao(dados) {
   }
 }
 
-export async function solicitarCancelamento(id_sessao, dados) {
+export async function solicitarCancelamento(id_sessao, motivo) {
   try {
-      const response = await api.post(`/solicitarCancelamento/${id_sessao}`, dados)
+      const response = await api.post(`/solicitarCancelamento/${id_sessao}`,  {
+        motivo: motivo,
+      })
 
       return response.data
   } catch (error) {

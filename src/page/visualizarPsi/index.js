@@ -223,27 +223,27 @@ export default function VisualizarPsi({ route }) {
 
                   <View style={styles.rowCont}>
                     <Text style={styles.textoCont}>Valor</Text>
-                    <Text style={styles.texto}>R$ {psicologo.preco_sessao}</Text>
+                    <Text style={styles.texto}>R$ {psicologo.preco_sessao ? <Text>{psicologo.preco_sessao}</Text> : <Text>85,00</Text>}</Text>
                   </View>
                 </View>
               </View>
 
 
-              <View style={{justifyContent: "flex-end"}}>
-                <Pressable
-                  style={styles.botao}
-                  onPress={() => {navigation.navigate("dataHoraConsulta", {
-                    psicologo, userPerfil
-                  })
-                  }}
-                >
-                  <Feather name="calendar" size={24} color="#FFF" />
-                  <Text style={styles.botaoTexto}>
-                  Ver Horários Disponíveis
-                  </Text>
-                </Pressable>
-              </View>
 
+            </View>
+            <View style={{justifyContent: "flex-end", paddingHorizontal: 20, marginBottom: 25}}>
+              <Pressable
+                style={styles.botao}
+                onPress={() => {navigation.navigate("dataHoraConsulta", {
+                  psicologo, userPerfil
+                })
+                }}
+              >
+                <Feather name="calendar" size={24} color="#FFF" />
+                <Text style={styles.botaoTexto}>
+                Ver Horários Disponíveis
+                </Text>
+              </Pressable>
             </View>
 
           </View>
