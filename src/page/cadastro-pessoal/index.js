@@ -1,4 +1,6 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,}from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { MaskedTextInput } from "react-native-mask-text";
@@ -7,7 +9,7 @@ import styles from "./styles";
 
 import {useAuth} from "../../context/AuthContext"
 
-export default function CadastroPessoal({ navigation }) {
+export default function CadastroPessoal({ navigation, route }) {
   const { verificarDisponibilidade } = useAuth()
 
   const [nomeCompleto, setNomeCompleto] = useState("");
@@ -110,6 +112,12 @@ export default function CadastroPessoal({ navigation }) {
       return false;
     }
     setErroFone("");
+    const anoAtual = new Date().getFullYear();
+    const idade = anoAtual - dataNascimento.slice(4,8)
+
+    if (idade <= 18) {
+      setErroData("Idade não permitida.")
+    }
 
     if (dataNascimento.length !== 10) {
       setErroData("Digite uma data válida.");
@@ -131,6 +139,7 @@ export default function CadastroPessoal({ navigation }) {
       setErroCpf("Digite um CPF válido.");
       return false;
     }
+    setErroCpf("");
     
     
     // Um proteção caso houve uma falha e retorne null
@@ -155,7 +164,7 @@ export default function CadastroPessoal({ navigation }) {
     setErroNick("");
 
     if (!cpfDisponivel){
-      setErroCpf("O cpf já é existe!")
+      setErroCpf("O CPF já é existe!")
       return false;
     }
     setErroCpf("");
