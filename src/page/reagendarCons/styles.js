@@ -7,7 +7,6 @@ export default StyleSheet.create({
   containerAgenda: {
     flex: 1,
     backgroundColor: "#F5F3FF",
-    marginBottom: 20,
   },
 
   scrollAgenda: {

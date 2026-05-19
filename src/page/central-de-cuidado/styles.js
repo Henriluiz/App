@@ -72,19 +72,19 @@ export default StyleSheet.create({
     color: '#7F8C8D',
   },
   nomeDoutora: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#2C3E50',
   },
   especialidade: {
-    fontSize: 12,
+    fontSize: 16,
     color: '#95A5A6',
   },
   tempoContainer: {
     alignItems: 'flex-end',
   },
   labelHoje: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#95A5A6',
   },
   horario: {
@@ -119,6 +119,7 @@ export default StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 5,
     marginBottom: 15,
   },
   pressableBase: {
@@ -144,15 +145,67 @@ export default StyleSheet.create({
     color: '#95A5A6',
   },
   secaoTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#2C3E50',
+    color: 'white',
     marginVertical: 15,
   },
+  // Remova marginBottom: 120 do cardHistorico e atualize:
   cardHistorico: {
     backgroundColor: '#FFF',
     padding: 20,
     borderRadius: 20,
-    marginBottom: 120, // Aumento para dar espac acima da NavBar
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+
+  // Novos:
+  flatListItem: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  flatListContent: {
+    paddingTop: 4,
+    paddingBottom: 100, // espaço acima da NavBar
+  },
+  emptyHistorico: {
+    alignItems: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+  },
+  historicoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  historicoIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F4F0FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  badgeStatus: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  badgeText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  historicoFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  historicoData: {
+    fontSize: 16,
+    color: '#95A5A6',
   },
 });

@@ -12,13 +12,14 @@ import ConfirConsulta from "../page/confirConsulta"
 import MinhasSessoes from "../page/minhaSessao"
 import ReagendarConsulta from "../page/reagendarCons"
 import Cancelamento from "../page/cancelamento";
+import Pagamento from "../page/pagamento";
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
   return (
     <Stack.Navigator 
-      // initialRouteName="minhasSessoes"
+      // initialRouteName="pagamento"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="menu" component={Menu} />
@@ -86,6 +87,18 @@ export default function AppNavigator() {
       <Stack.Screen name="cancelamento" component={Cancelamento} options={{ 
         headerShown: true,
         title: 'Cancelar Consulta',
+        headerStyle: { backgroundColor: '#FFFFFF' },
+        headerTitleStyle: {
+          fontSize: 23,
+          fontWeight: '600', // SemiBold
+        },
+        headerTintColor: '#A383FB',
+        
+      }}  />
+
+      <Stack.Screen name="pagamento" component={Pagamento} options={{ 
+        headerShown: true,
+        title: 'Pagamento da Sessão',
         headerStyle: { backgroundColor: '#FFFFFF' },
         headerTitleStyle: {
           fontSize: 23,

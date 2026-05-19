@@ -112,17 +112,39 @@ export default function CadastroPessoal({ navigation, route }) {
       return false;
     }
     setErroFone("");
-    const anoAtual = new Date().getFullYear();
-    const idade = anoAtual - dataNascimento.slice(4,8)
-
-    if (idade <= 18) {
-      setErroData("Idade não permitida.")
-    }
-
+    
     if (dataNascimento.length !== 10) {
       setErroData("Digite uma data válida.");
       return false;
     }
+    
+    const [dia, mes, ano] = dataNascimento.split("/");
+    
+    const hoje = new Date();
+
+    if (ano < 1920 || ano >= hoje.getFullYear()) {
+      setErroData("Data indisponível")
+      return false;
+    };
+    
+    let idade = hoje.getFullYear() - Number(ano);
+    
+    const aindaNaoFezAniversario =
+      hoje.getMonth() + 1 < Number(mes) ||
+      (
+        hoje.getMonth() + 1 === Number(mes) &&
+        hoje.getDate() < Number(dia)
+      );
+    
+    if (aindaNaoFezAniversario) {
+      idade--;
+    }
+    
+    if (idade < 18) {
+      setErroData("Idade não permitida.");
+      return false;
+    }
+    
     setErroData("");
 
     if (!genero) {

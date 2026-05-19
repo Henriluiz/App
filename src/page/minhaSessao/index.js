@@ -345,7 +345,7 @@ export default function MinhasSessoes({ route }) {
         </Animated.View>
       </Modal>
 
-      <NavBar tela="sessoes" />
+      <NavBar tela="central"/>
     </View>
   );
 }

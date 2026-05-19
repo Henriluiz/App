@@ -122,8 +122,8 @@ export default StyleSheet.create({
   },
 
   btnVoltar: {
-    width: width * 0.13,
-    height: width * 0.13,
+    width: width * 0.15,
+    height: width * 0.15,
     borderRadius: 100,
     backgroundColor: "#A383FB",
     justifyContent: "center",
@@ -134,6 +134,8 @@ export default StyleSheet.create({
   setaVoltar: {
     color: "#ffffff",
     fontSize: width * 0.07,
+    marginBottom: 7,
+    marginRight: 3,
     fontWeight: "bold",
   },
 
@@ -165,7 +167,9 @@ export default StyleSheet.create({
 
   setaProximo: {
     color: "#A383FB",
-    fontSize: width * 0.06,
+    fontSize: width * 0.07,
+    marginBottom: 5,
+    marginLeft: 3,
     fontWeight: "bold",
   },
 });

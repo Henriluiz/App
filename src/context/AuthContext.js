@@ -270,6 +270,7 @@ export function AuthProvider({ children }) {
 
         // Verificar dados antes de salvar no banco (CPF, Nickname - Unique)
         verificarDisponibilidade,
+        historico,
 
         // Psicologo
         verPsicologo,

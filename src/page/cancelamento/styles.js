@@ -227,7 +227,7 @@ export default StyleSheet.create({
   // 🔹 FOOTER FIXO
   footerAgenda: {
     position: "absolute",
-    bottom: 60,
+    bottom: 70,
     left: 0,
     right: 0,
     paddingHorizontal: 20,
