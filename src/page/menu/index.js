@@ -100,14 +100,23 @@ export default function Menu({ navigation }) {
 
         {/* REGISTRO DE HUMOR */}
         <Text style={styles.sectionTitle}>Registre seu humor</Text>
+
         <View style={styles.moodContainer}>
-          {["sad-outline", "happy-outline", "heart-outline", "sunny-outline", "thumbs-up-outline"].map(
-            (icon, index) => (
-              <Pressable key={index} style={styles.moodButton}>
-                <Ionicons name={icon} size={22} color="#555" />
-              </Pressable>
-            )
-          )}
+          {[
+            { icon: "sad-outline", color: "#999" },
+            { icon: "sad-outline", color: "#999" },
+            { icon: "remove-circle-outline", color: "#999" }, // neutro
+            { icon: "happy-outline", color: "#999" },
+            { icon: "happy-outline", color: "#999" },
+          ].map((item, index) => (
+            <Pressable key={index} style={styles.moodButton}>
+              <Ionicons
+                name={item.icon}
+                size={30}
+                color={item.color}
+              />
+            </Pressable>
+          ))}
         </View>
 
         {/* PARA VOCÊ */}

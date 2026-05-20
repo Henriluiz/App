@@ -360,7 +360,8 @@ export default function Pesquisa({ route }) {
         data={disponiveisFiltrados}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => renderCard(item)}
-        contentContainerStyle={{ padding: 15, paddingBottom: 100 }}
+        contentContainerStyle={{ padding: 15, paddingBottom: 30 }}
+        bounces={false}
       />
 
       {/* MODAL AGENDAR */}

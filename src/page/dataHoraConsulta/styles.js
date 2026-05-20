@@ -14,7 +14,7 @@ export default StyleSheet.create({
   scrollAgenda: {
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 100, // Aumentado para dar espaço ao footer fixo
+    paddingBottom: 10, // Aumentado para dar espaço ao footer fixo
   },
 
   // CARDS

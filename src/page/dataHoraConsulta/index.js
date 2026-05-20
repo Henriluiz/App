@@ -244,7 +244,7 @@ export default function DataHoraConsulta({ route }) {
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#8E7CFF" />
             </View>
-          ) : horarios.length > 0 ? (
+          ) : horarios.length > 0 ? ( 
             <View style={styles.horariosGrid}>
               {horarios.map((hora, index) => (
                 <Pressable
