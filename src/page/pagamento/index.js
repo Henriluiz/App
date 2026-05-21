@@ -2,131 +2,138 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Pressable,
   ScrollView,
-  ActivityIndicator,
+  Pressable,
+  Image,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import styles from "./styles";
-import NavBar from "../../components/NavBar";
-import ModalApp from "../../components/modalApp";
-import { useAuth } from "../../context/AuthContext";
 
+import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Pagamento({ route }) {
+import styles from "./styles";
+
+export default function Pagamento() {
   const navigation = useNavigation();
+  const [formaSelecionada, setFormaSelecionada] = useState("cartao");
 
-  const { id } = route.params ?? {};
-
-  const { verPsicologo } = useAuth();
-
-  const [modal, setModal] = useState(false);
- 
-  const [userPerfil, setUserPerfil] = useState(null)
-  const [psicologo, setPsicologo] = useState(null)
-  const [loading, setLoading] = useState(true);
- 
-  // ─── Dados estáticos para desenvolvimento ───────────────────────────────────
-  // TODO: Remover os dados abaixo e usar os vindos de route.params
-    useEffect(() => {
-        async function fetchPsicologo() {
-        try {
-            const response = await verPsicologo(id);
-            console.log(response);
-            setUserPerfil(response.user);
-            setPsicologo(response.psicologo);
-
-        } catch (error) {
-            console.log("Erro ao buscar psicólogo", error);
-        } finally {
-            setLoading(false);
-        }
-        }
-
-        fetchPsicologo();
-    }, [id]); // importante
-
-  // ────────────────────────────────────────────────────────────────────────────
- 
   return (
     <View style={styles.container}>
+      {/* HEADER */}
+      
+
+      {/* CONTEÚDO */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
-      >        
+      >
         {/* CARD RESUMO */}
         <View style={styles.card}>
-          <Text style={styles.cardTitulo}>Resumo da Sessão</Text>
+          <Text style={styles.cardTitulo}>RESUMO DA SESSÃO</Text>
 
-            <View style={styles.fotoContainer}>
-                <View style={styles.fotoPerfil}>
-                    {userPerfil?.foto_perfil ? (
-                    <Image
-                        source={{ uri: `http://localhost:8000/storage/${userPerfil.foto_perfil}` }}
-                        style={styles.imagem}
-                        resizeMode="cover"
-                    />
-                    ) : (
-                    <Ionicons
-                        name="person-outline"
-                        size={120}
-                        color="white"
-                        style={styles.fotoPerfil2}
-                    />
-                    )}
-                </View>
+          {/* PERFIL */}
+          <View style={styles.perfilRow}>
+            <Image
+              source={{
+                uri: "https://static.vecteezy.com/ti/vetor-gratis/p1/73022350-desenho-animado-profissional-mulher-dentro-uma-o-negocio-terno-sorridente-para-a-avatar-perfil-icone-vetor.jpg", // Substitua pela sua nova imagem/avatar se necessário
+              }}
+              style={styles.avatar}
+            />
+            <View style={styles.perfilInfo}>
+              <Text style={styles.nome}>Dra. Eloísa Almeida</Text>
+              <Text style={styles.especialidade}>Psicóloga clínica</Text>
             </View>
- 
-          {/* Psicólogo */}
-          <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>Psicólogo</Text>
-            <Text style={styles.infoValor}>Luiz</Text>
-            <Text style={styles.infoEspecialidade}>Sobre mim</Text>
           </View>
- 
-          {/* Data */}
-          <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>Data</Text>
-            <Text style={styles.infoValor}>data</Text>
+
+          {/* INFO DATA */}
+          <View style={styles.infoContainer}>
+            <View style={styles.infoRow}>
+              <Feather name="calendar" size={24} color="#46C2BE" />
+              <Text style={styles.infoTexto}>Quarta-feira, 15 de Outubro</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Feather name="clock" size={24} color="#46C2BE" />
+              <Text style={styles.infoTexto}>14:00 - 14:50 (50 min)</Text>
+            </View>
           </View>
- 
-          {/* Horário */}
-          <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>Horário</Text>
-            <Text style={styles.infoValor}>data</Text>
-          </View>
- 
-          {/* Valor */}
+
+          {/* DIVISOR */}
+          <View style={styles.divisor} />
+
+          {/* VALOR */}
           <View style={styles.valorRow}>
-            <Text style={styles.valorLabel}>Valor da Consulta</Text>
-            <Text style={styles.valorPreco}>R$10000</Text>
+            <Text style={styles.valorLabel}>Valor total</Text>
+            <Text style={styles.valorPreco}>R$150,00</Text>
           </View>
         </View>
-      </ScrollView>
- 
-      {/* BOTÕES FIXOS NA BASE */}
-      <View style={styles.footer}>
+
+        {/* TÍTULO FORMA DE PAGAMENTO */}
+        <Text style={styles.formaTitulo}>Forma de pagamento</Text>
+
+        {/* OPÇÃO CARTÃO DE CRÉDITO */}
         <Pressable
-          style={[styles.botaoSolicitar, agendando && { opacity: 0.7 }]}
-          onPress={() => {setModal(true)}}
-          disabled={agendando}
+          style={[
+            styles.pagamentoCard,
+            formaSelecionada === "cartao" && styles.pagamentoCardSelecionado,
+          ]}
+          onPress={() => setFormaSelecionada("cartao")}
         >
-          {agendando ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.botaoSolicitarTexto}>Solicitar Agendamento</Text>
-          )}
+          {/* Tag Recomendado */}
+          <View style={styles.tagRecomendado}>
+            <Text style={styles.tagRecomendadoTexto}>RECOMENDADO</Text>
+          </View>
+
+          <View style={styles.pagamentoLeft}>
+            <Ionicons
+              name={formaSelecionada === "cartao" ? "radio-button-on" : "radio-button-off"}
+              size={28}
+              color="#000000"
+              style={styles.radioIcon}
+            />
+            <MaterialCommunityIcons name="credit-card-outline" size={32} color="#46C2BE" />
+            <View style={styles.textosPagamento}>
+              <Text style={styles.pagamentoTitulo}>Cartão de crédito</Text>
+              <Text style={styles.pagamentoSub}>•••• 4242</Text>
+            </View>
+          </View>
         </Pressable>
- 
-        <Pressable style={styles.botaoVoltar} onPress={() => navigation.goBack()}>
-          <Text style={styles.botaoVoltarTexto}>Voltar</Text>
+
+        {/* OPÇÃO PIX */}
+        <Pressable
+          style={[
+            styles.pagamentoCard,
+            formaSelecionada === "pix" && styles.pagamentoCardSelecionado,
+          ]}
+          onPress={() => setFormaSelecionada("pix")}
+        >
+          <View style={styles.pagamentoLeft}>
+            <Ionicons
+              name={formaSelecionada === "pix" ? "radio-button-on" : "radio-button-off"}
+              size={28}
+              color="#000000"
+              style={styles.radioIcon}
+            />
+            <MaterialCommunityIcons name="credit-card-outline" size={32} color="#000000" />
+            <View style={styles.textosPagamento}>
+              <Text style={styles.pagamentoTitulo}>Pix</Text>
+            </View>
+          </View>
+        </Pressable>
+
+        {/* SELO DE SEGURANÇA */}
+        <View style={styles.seloSeguranca}>
+          <Feather name="shield" size={18} color="#46C2BE" />
+          <Text style={styles.seloSegurancaTexto}>Pagamento seguro e criptografado</Text>
+        </View>
+      </ScrollView>
+
+      {/* FOOTER BOTAO */}
+      <View style={styles.footer}>
+        <Pressable style={styles.botaoPagar}>
+          <Text style={styles.botaoPagarTexto}>Pagar Agora</Text>
+          <Text style={styles.botaoPagarValor}>R$150,00</Text>
         </Pressable>
       </View>
-
-
-
-      <NavBar tela="pesquisa" />
     </View>
   );
 }

@@ -4,10 +4,10 @@ import Splash from "../page/splash"
 import { useAuth } from "../context/AuthContext";
 
 export default function RootNavigator() {
-  const { user, loading } = useAuth();
+  // const { user, loading } = useAuth();
   
-  // const user = false
-  // const loading = false
+  const user = true
+  const loading = false
 
   if (loading) {
     return <Splash />;
