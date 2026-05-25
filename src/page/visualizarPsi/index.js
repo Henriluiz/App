@@ -232,18 +232,17 @@ export default function VisualizarPsi({ route }) {
 
 
             </View>
-            <View style={{justifyContent: "flex-end", paddingHorizontal: 20, marginBottom: 25}}>
+            <View style={styles.botaoContainer}>
               <Pressable
                 style={styles.botao}
-                onPress={() => {navigation.navigate("dataHoraConsulta", {
-                  psicologo, userPerfil
-                })
+                onPress={() => {
+                  navigation.navigate("dataHoraConsulta", {
+                    psicologo, userPerfil,
+                  });
                 }}
               >
                 <Feather name="calendar" size={24} color="#FFF" />
-                <Text style={styles.botaoTexto}>
-                Ver Horários Disponíveis
-                </Text>
+                <Text style={styles.botaoTexto}>Ver Horários Disponíveis</Text>
               </Pressable>
             </View>
 

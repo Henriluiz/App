@@ -26,18 +26,23 @@ export default StyleSheet.create({
   },
 
   fotoPerfil: {
-    width: 140,
-    height: 140,
-    borderRadius: 60,
+    width: width * 0.35,
+    height: width * 0.35,
+    maxWidth: 140,
+    maxHeight: 140,
+    minWidth: 110,
+    minHeight: 110,
+    borderRadius: 80,
     borderWidth: 3,
     borderColor: "#fff",
-    backgroundColor: "#6C63FF"
+    backgroundColor: "#6C63FF",
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   fotoPerfil2: {
-    width: "100%",
-    height: "100%",
-    margin: 40,
+    width: 50,
+    height: 50,
   },
 
   nomePessoa: {
@@ -60,38 +65,45 @@ export default StyleSheet.create({
     color: "#A383FB",
     marginTop: height * 0.04,
     marginBottom: 10,
-    marginHorizontal: 20,
+    marginHorizontal: width * 0.05,
   },
 
   // 🔥 MAIS ESPAÇO GERAL
   container2: {
     flex: 1,
     marginTop: height * 0.04,
-    paddingHorizontal: 20,
+    paddingHorizontal: width * 0.05,
     paddingBottom: 40,
     backgroundColor: "#ffffff",
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    marginHorizontal: height * 0.02,
+    marginHorizontal: width * 0.03,
   },
 
   colunaEsquerda: {
-    width: 150,
+    flex: 1,
+    marginRight: 10,
+    minWidth: 0,
   },
 
   colunaDireita: {
-    width: 150,
+    flex: 1,
+    minWidth: 0,
   },
 
   // 🔥 MAIS ESPAÇO ENTRE LINHAS
   rowWrap: {
     flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "stretch",
+    justifyContent: "space-between",
     gap: 15,
     marginTop: 20,
   },
 
   colunaFlex: {
     flex: 1,
+    minWidth: 0,
   },
 
   // 🔥 LABEL MAIS ESPAÇADO
@@ -103,23 +115,38 @@ export default StyleSheet.create({
     fontWeight: "600",
   },
 
-  dados: {
+  input: {
     width: "100%",
-    height: 30,
-    borderColor: "transparent",
-    borderWidth: 1.5,
+    height: 46,
     borderRadius: 12,
-    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: "#E6E6E6",
+    backgroundColor: "#F7F7FB",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     fontSize: width * 0.04,
-    textAlignVertical: "center",
+    color: "#000",
+  },
+
+  fieldValue: {
+    width: "100%",
+    minHeight: 46,
+    borderRadius: 12,
+    backgroundColor: "#F7F7FB",
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    justifyContent: "center",
+  },
+
+  fieldValueText: {
+    fontSize: width * 0.04,
+    color: "#000",
   },
 
   inputEditando: {
     borderWidth: 1.5,
     borderColor: "#A383FB",
-    paddingVertical: 5,
-    paddingHorizontal: 8,
-    borderRadius: 10,
+    backgroundColor: "#FFFFFF",
   },
 
   dadoEmail: {
@@ -132,10 +159,9 @@ export default StyleSheet.create({
   nicknameContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "transparent",
     borderRadius: 12,
-    height: 35,
+    height: 46,
+    backgroundColor: "#F7F7FB",
     paddingHorizontal: 12,
   },
 
@@ -154,17 +180,27 @@ export default StyleSheet.create({
 
   modalContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8F4FF",
     paddingTop: 60,
     paddingHorizontal: 20,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
   },
 
   fecharModal: {
     position: "absolute",
-    top: 50,
+    top: 40,
     right: 20,
-    width: 30,
-    height: 35,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 4,
   },
 
   imagem: {
@@ -199,24 +235,76 @@ export default StyleSheet.create({
   modalTitulo: {
     fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 40,
+    marginBottom: 8,
+    color: "#6C63FF",
+  },
+
+  modalSubtitulo: {
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 24,
   },
 
   opcao: {
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderColor: "#eee",
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+
+  opcaoConteudo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+  },
+
+  opcaoTextoContainer: {
+    flex: 1,
+  },
+
+  opcaoTexto: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#141414",
+  },
+
+  opcaoLegenda: {
+    marginTop: 4,
+    color: "#7A7A7A",
+    fontSize: 14,
+  },
+
+  opcaoSaida: {
+    borderColor: "#FF4B4B",
+    borderWidth: 1,
   },
 
   botaoExcluir: {
-    marginTop: 25,
-    backgroundColor: "#fff",
+    marginTop: 12,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 18,
+    paddingVertical: 16,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
 
   textoExcluir: {
     color: "#FF4B4B",
+    fontWeight: "bold",
+  },
+
+  textoBotao: {
+    fontSize: 16,
+    color: "#6C63FF",
     fontWeight: "bold",
   },
 

@@ -11,13 +11,15 @@ export default StyleSheet.create({
   },
 
   card: {
-    // flex: 0.7,
     backgroundColor: "#FFFFFF",
     borderRadius: 20,
-    height: "auto",
-    minHeight: 680,
-    marginHorizontal: 30,
-    marginVertical: 25,
+    width: "94%",
+    minHeight: 620,
+    marginVertical: 16,
+    paddingBottom: 20,
+    paddingTop: 12,
+    paddingHorizontal: 16,
+    alignSelf: "center",
   },
 
   fotoContainer: {
@@ -65,9 +67,7 @@ export default StyleSheet.create({
   },
 
   container2: {
-    flex: 1,
     paddingHorizontal: 20,
-    // paddingVertical: 20,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     marginHorizontal: height * 0.02,
@@ -82,7 +82,7 @@ export default StyleSheet.create({
 
   rowWrap: {
     marginTop: 5,
-    marginBottom: 15,
+    marginBottom: 12,
   },
 
   rowCont: {
@@ -195,10 +195,17 @@ export default StyleSheet.create({
     gap: 10,
     backgroundColor: "#8E7CFF",
     borderRadius: 12,
-    marginTop: 12,
+    marginTop: 8,
     width: "100%",
-    height: 50,
+    height: 48,
     elevation: 3,
+  },
+
+  botaoContainer: {
+    justifyContent: "flex-end",
+    paddingHorizontal: 18,
+    marginTop: 18,
+    marginBottom: 12,
   },
   
   botaoTexto: {
