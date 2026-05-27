@@ -5,47 +5,46 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: "#A78BFA",
   },
+
   scroll: {
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 140,
+    paddingBottom: 180,
   },
 
-  // HEADER
-  headerContainer: {
-    backgroundColor: "#FFFFFF",
-    paddingTop: 50,
-    paddingBottom: 15,
-    paddingHorizontal: 20,
+  header: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 22,
+    gap: 10,
   },
-  botaoBack: {
-    width: 45,
-    height: 45,
-    borderRadius: 25,
-    backgroundColor: "#BDBDBD",
+
+  headerVoltar: {
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    backgroundColor: "rgba(142, 124, 255, 0.12)",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 20,
   },
+
   headerTitulo: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "700",
     color: "#9B7BFF",
   },
 
-  // CARD RESUMO
   card: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 30,
+    borderRadius: 28,
     padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowColor: "#8E7CFF",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    elevation: 6,
   },
+
   cardTitulo: {
     fontSize: 16,
     fontWeight: "700",
@@ -56,135 +55,95 @@ export default StyleSheet.create({
   perfilRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 18,
   },
-  avatar: {
-    width: 80,
-    height: 81,
-    borderRadius: 40,
-    marginRight: 16,
-    borderWidth: 2,
-    borderColor: "#FFA4A4", 
+
+  fotoPerfil: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#8E7CFF",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
   },
-  perfilInfo: {
-    flex: 1,
+
+  imagem: {
+    width: "100%",
+    height: "100%",
   },
-  nome: {
-    fontSize: 18,
+
+  infoBox: {
+    backgroundColor: "#F7F5FF",
+    borderRadius: 18,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+
+  infoLabel: {
+    fontSize: 13,
     fontWeight: "700",
-    color: "#000000",
-    marginBottom: 4,
+    color: "#290041",
+    marginBottom: 6,
   },
-  especialidade: {
-    fontSize: 14,
-    color: "#46C2BE",
+
+  infoValor: {
+    fontSize: 15,
+    color: "#242424",
     fontWeight: "600",
   },
-  infoContainer: {
-    gap: 12,
-    marginBottom: 24,
+
+  infoEspecialidade: {
+    fontSize: 13,
+    color: "#8E7CFF",
+    fontWeight: "500",
+    marginTop: 4,
   },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  infoTexto: {
-    fontSize: 15,
-    color: "#757575",
-    marginLeft: 12,
-  },
-  divisor: {
-    height: 1,
-    backgroundColor: "#E0E0E0",
-    marginHorizontal: -24,
-    marginBottom: 20,
-  },
+
   valorRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginTop: 4,
+    paddingHorizontal: 4,
   },
+
   valorLabel: {
     fontSize: 16,
     color: "#757575",
     fontWeight: "500",
   },
-  valorPreco: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: "#000000",
-  },
 
-  // SEÇÃO FORMA DE PAGAMENTO
-  formaTitulo: {
+  valorPreco: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#310062",
-    marginTop: 28,
-    marginBottom: 16,
-  },
-  pagamentoCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    marginBottom: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderWidth: 3,
-    borderColor: "transparent",
-    position: "relative",
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 2,
-  },
-  pagamentoCardSelecionado: {
-    borderColor: "#76EAD7", 
-  },
-  pagamentoLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  radioIcon: {
-    marginRight: 12,
-  },
-  textosPagamento: {
-    marginLeft: 12,
-  },
-  pagamentoTitulo: {
-    fontSize: 15,
-    fontWeight: "700",
     color: "#000000",
   },
-  pagamentoSub: {
-    fontSize: 13,
-    color: "#757575",
-    marginTop: 2,
-  },
 
-  // TAG RECOMENDADO
-  tagRecomendado: {
+  footer: {
     position: "absolute",
-    top: 0,
+    bottom: 72,
+    left: 0,
     right: 0,
-    backgroundColor: "#A7FFEB",
-    paddingVertical: 4,
-    paddingHorizontal: 16,
-    borderBottomLeftRadius: 14,
-  },
-  tagRecomendadoTexto: {
-    fontSize: 10,
-    fontWeight: "800",
-    color: "#004D40",
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: "#EDE9FF",
+    gap: 12,
   },
 
-  // SELO DE SEGURANÇA
-  seloSeguranca: {
-    flexDirection: "row",
+  botaoSolicitar: {
+    backgroundColor: "#8E7CFF",
+    borderRadius: 50,
+    paddingVertical: 18,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
@@ -194,27 +153,16 @@ export default StyleSheet.create({
     marginTop: 10,
     backgroundColor: "rgba(70, 194, 190, 0.1)",
   },
-  seloSegurancaTexto: {
-    fontSize: 13,
-    color: "#4A4A4A",
-    marginLeft: 8,
-    fontWeight: "500",
+
+  botaoSolicitarTexto: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#FFFFFF",
   },
 
-  // FOOTER E BOTÃO NOVO (VERDE)
-  footer: {
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    right: 20,
-  },
-  botaoPagar: {
-    backgroundColor: "#40BFA7",
-    borderRadius: 16,
-    paddingVertical: 18,
-    paddingHorizontal: 24,
-    flexDirection: "row",
-    justifyContent: "space-between",
+  botaoVoltar: {
+    borderRadius: 50,
+    paddingVertical: 16,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -222,14 +170,10 @@ export default StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
   },
-  botaoPagarTexto: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  botaoPagarValor: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "700",
+
+  botaoVoltarTexto: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#8E7CFF",
   },
 });

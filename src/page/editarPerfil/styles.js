@@ -135,6 +135,98 @@ export default StyleSheet.create({
     borderColor: "#E6E0FF",
   },
 
+  avatarContainer: {
+    alignItems: "center",
+    marginTop: height * 0.03,
+    marginBottom: height * 0.02,
+  },
+
+  avatarWrapper: {
+    width: width * 0.28,
+    height: width * 0.28,
+    borderRadius: width * 0.14,
+    backgroundColor: "#6C63FF",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: "#fff",
+    overflow: "hidden",
+  },
+
+  avatar: {
+    width: "100%",
+    height: "100%",
+    borderRadius: width * 0.14,
+  },
+
+  cameraBtnWrapper: {
+    position: "absolute",
+    bottom: 0,
+    right: width * 0.31,
+  },
+
+  cameraBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 24,
+    backgroundColor: "#6A37E5",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: "#fff",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 8,
+  },
+
+  fotoCameraModal: {
+    width: "85%",
+    backgroundColor: "#F8F4FF",
+    borderRadius: 24,
+    padding: 24,
+    shadowColor: "#6C63FF",
+    shadowOpacity: 0.12,
+    shadowRadius: 18,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: "#E6E0FF",
+  },
+
+  fotoOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: "#E8E4F3",
+  },
+
+  fotoOptionText: {
+    marginLeft: 16,
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#6A37E5",
+  },
+
+  fotoCancelBtn: {
+    marginTop: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: "#FF4B4B",
+  },
+
+  fotoCancelText: {
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#ffffff",
+  },
+
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",

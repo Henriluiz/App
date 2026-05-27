@@ -7,20 +7,27 @@ import {
   Platform,
   Pressable,
   TextInput,
-  Modal
+  Modal,
+  Image,
+  Alert,
+  ActivityIndicator
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
+import * as ImagePicker from "expo-image-picker";
 
 import styles from "./styles";
 
 export default function EditarPerfil({ navigation }) {
 
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, BASE_URL } = useAuth();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
+  const [fotoPerfil, setFotoPerfil] = useState(null);
+  const [fotoCameraVisible, setFotoCameraVisible] = useState(false);
+  const [carregandoFoto, setCarregandoFoto] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [activeField, setActiveField] = useState(null);
   const [fieldValue, setFieldValue] = useState("");
@@ -30,8 +37,75 @@ export default function EditarPerfil({ navigation }) {
       setNome(user.nome || "");
       setEmail(user.email || "");
       setTelefone(user.telefone || "");
+      if (user.foto_perfil) {
+        setFotoPerfil(user.foto_perfil);
+      }
     }
   }, [user]);
+
+  const handleSelecionarFoto = async () => {
+    try {
+      const resultado = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!resultado.canceled && resultado.assets[0]) {
+        await enviarFoto(resultado.assets[0].uri);
+      }
+      setFotoCameraVisible(false);
+    } catch (err) {
+      console.error("Erro ao selecionar foto:", err);
+      Alert.alert("Erro", "Não foi possível selecionar a foto");
+    }
+  };
+
+  const handleTirarFoto = async () => {
+    try {
+      const permissao = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permissao.granted) {
+        Alert.alert("Permissão negada", "Precisamos de acesso à câmera");
+        return;
+      }
+
+      const resultado = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!resultado.canceled && resultado.assets[0]) {
+        await enviarFoto(resultado.assets[0].uri);
+      }
+      setFotoCameraVisible(false);
+    } catch (err) {
+      console.error("Erro ao tirar foto:", err);
+      Alert.alert("Erro", "Não foi possível tirar a foto");
+    }
+  };
+
+  const enviarFoto = async (uri) => {
+    try {
+      setCarregandoFoto(true);
+      const formData = new FormData();
+      formData.append("foto_perfil", {
+        uri,
+        type: "image/jpeg",
+        name: `foto_${Date.now()}.jpg`,
+      });
+
+      await updateUser(formData);
+      setFotoPerfil(uri);
+      Alert.alert("Sucesso", "Foto de perfil atualizada com sucesso!");
+    } catch (err) {
+      console.error("Erro ao enviar foto:", err);
+      Alert.alert("Erro", "Não foi possível atualizar a foto");
+    } finally {
+      setCarregandoFoto(false);
+    }
+  };
 
   const openFieldModal = (field) => {
     setActiveField(field);
@@ -122,6 +196,33 @@ export default function EditarPerfil({ navigation }) {
               </Pressable>
             </View>
 
+            <View style={styles.avatarContainer}>
+              <View style={styles.avatarWrapper}>
+                {carregandoFoto ? (
+                  <ActivityIndicator size="large" color="#6A37E5" />
+                ) : fotoPerfil ? (
+                  <Image
+                    source={{
+                      uri: fotoPerfil.startsWith("http")
+                        ? fotoPerfil
+                        : `${BASE_URL}${fotoPerfil}`,
+                    }}
+                    style={styles.avatar}
+                  />
+                ) : (
+                  <Ionicons name="person-outline" size={60} color="#ffffff" />
+                )}
+              </View>
+              <Pressable
+                style={styles.cameraBtnWrapper}
+                onPress={() => setFotoCameraVisible(true)}
+              >
+                <View style={styles.cameraBtn}>
+                  <Ionicons name="camera" size={18} color="#fff" />
+                </View>
+              </Pressable>
+            </View>
+
             <View style={styles.container2}>
 
               <Text style={styles.tituloCard}>Suas informações</Text>
@@ -178,6 +279,38 @@ export default function EditarPerfil({ navigation }) {
                         <Text style={[styles.modalButtonText, styles.modalSaveText]}>Salvar</Text>
                       </Pressable>
                     </View>
+                  </View>
+                </View>
+              </Modal>
+
+              <Modal
+                visible={fotoCameraVisible}
+                transparent={true}
+                animationType="fade"
+              >
+                <View style={styles.modalOverlay}>
+                  <View style={styles.fotoCameraModal}>
+                    <Text style={styles.modalTitle}>Atualizar foto</Text>
+                    <Pressable
+                      style={styles.fotoOption}
+                      onPress={handleTirarFoto}
+                    >
+                      <Ionicons name="camera" size={24} color="#6A37E5" />
+                      <Text style={styles.fotoOptionText}>Tirar foto</Text>
+                    </Pressable>
+                    <Pressable
+                      style={styles.fotoOption}
+                      onPress={handleSelecionarFoto}
+                    >
+                      <Ionicons name="image" size={24} color="#6A37E5" />
+                      <Text style={styles.fotoOptionText}>Galeria</Text>
+                    </Pressable>
+                    <Pressable
+                      style={styles.fotoCancelBtn}
+                      onPress={() => setFotoCameraVisible(false)}
+                    >
+                      <Text style={styles.fotoCancelText}>Cancelar</Text>
+                    </Pressable>
                   </View>
                 </View>
               </Modal>
