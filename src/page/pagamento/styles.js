@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#A78BFA",
+    backgroundColor: "#EDE9FF",
   },
 
   scroll: {
@@ -31,7 +31,7 @@ export default StyleSheet.create({
   headerTitulo: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#9B7BFF",
+    color: "#8E7CFF",
   },
 
   card: {
@@ -46,14 +46,13 @@ export default StyleSheet.create({
   },
 
   cardTitulo: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "700",
-    color: "#8C8C8C",
+    color: "#290041",
     marginBottom: 20,
-    letterSpacing: 0.5,
   },
-  perfilRow: {
-    flexDirection: "row",
+
+  fotoContainer: {
     alignItems: "center",
     marginBottom: 18,
   },
@@ -117,15 +116,15 @@ export default StyleSheet.create({
   },
 
   valorLabel: {
-    fontSize: 16,
-    color: "#757575",
+    fontSize: 14,
+    color: "#555",
     fontWeight: "500",
   },
 
   valorPreco: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#000000",
+    color: "#290041",
   },
 
   footer: {
@@ -146,12 +145,6 @@ export default StyleSheet.create({
     paddingVertical: 18,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#46C2BE",
-    borderRadius: 4,
-    paddingVertical: 8,
-    marginTop: 10,
-    backgroundColor: "rgba(70, 194, 190, 0.1)",
   },
 
   botaoSolicitarTexto: {
@@ -164,11 +157,10 @@ export default StyleSheet.create({
     borderRadius: 50,
     paddingVertical: 16,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
+    justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: "#8E7CFF",
+    backgroundColor: "transparent",
   },
 
   botaoVoltarTexto: {
