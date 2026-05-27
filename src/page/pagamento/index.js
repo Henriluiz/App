@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Pressable,
   ScrollView,
   ActivityIndicator,
   Image,
@@ -12,13 +11,15 @@ import { useNavigation } from "@react-navigation/native";
 import styles from "./styles";
 import NavBar from "../../components/NavBar";
 
-export default function Pagamento({ route }) {
+import styles from "./styles";
+
+export default function Pagamento() {
   const navigation = useNavigation();
   const [agendando, setAgendando] = useState(false);
 
   const {
     psicologo = "Dra. Maria Silva",
-    especialidade = "Psicóloga Clínica",
+    especialidade = "Psicï¿½loga Clï¿½nica",
     data = "Quarta Feira, 10 de Abril",
     horario = "09:00",
     valor = "R$180",
@@ -35,6 +36,10 @@ export default function Pagamento({ route }) {
 
   return (
     <View style={styles.container}>
+      {/* HEADER */}
+      
+
+      {/* CONTEÃšDO */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
@@ -60,7 +65,7 @@ export default function Pagamento({ route }) {
           </View>
 
           <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>Psicólogo</Text>
+            <Text style={styles.infoLabel}>Psicï¿½logo</Text>
             <Text style={styles.infoValor}>{psicologo}</Text>
             <Text style={styles.infoEspecialidade}>{especialidade}</Text>
           </View>
@@ -71,7 +76,7 @@ export default function Pagamento({ route }) {
           </View>
 
           <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>Horário</Text>
+            <Text style={styles.infoLabel}>Horï¿½rio</Text>
             <Text style={styles.infoValor}>{horario}</Text>
           </View>
 
@@ -98,9 +103,43 @@ export default function Pagamento({ route }) {
         <Pressable style={styles.botaoVoltar} onPress={() => navigation.goBack()}>
           <Text style={styles.botaoVoltarTexto}>Voltar</Text>
         </Pressable>
-      </View>
 
-      <NavBar tela="pesquisa" />
+        {/* OPÃ‡ÃƒO PIX */}
+        <Pressable
+          style={[
+            styles.pagamentoCard,
+            formaSelecionada === "pix" && styles.pagamentoCardSelecionado,
+          ]}
+          onPress={() => setFormaSelecionada("pix")}
+        >
+          <View style={styles.pagamentoLeft}>
+            <Ionicons
+              name={formaSelecionada === "pix" ? "radio-button-on" : "radio-button-off"}
+              size={28}
+              color="#000000"
+              style={styles.radioIcon}
+            />
+            <MaterialCommunityIcons name="credit-card-outline" size={32} color="#000000" />
+            <View style={styles.textosPagamento}>
+              <Text style={styles.pagamentoTitulo}>Pix</Text>
+            </View>
+          </View>
+        </Pressable>
+
+        {/* SELO DE SEGURANÃ‡A */}
+        <View style={styles.seloSeguranca}>
+          <Feather name="shield" size={18} color="#46C2BE" />
+          <Text style={styles.seloSegurancaTexto}>Pagamento seguro e criptografado</Text>
+        </View>
+      </ScrollView>
+
+      {/* FOOTER BOTAO */}
+      <View style={styles.footer}>
+        <Pressable style={styles.botaoPagar}>
+          <Text style={styles.botaoPagarTexto}>Pagar Agora</Text>
+          <Text style={styles.botaoPagarValor}>R$150,00</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
