@@ -22,7 +22,7 @@ export default StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: '#E0F7F3',
+    color: '#A569BD',
     marginTop: 5,
   },
   content: {

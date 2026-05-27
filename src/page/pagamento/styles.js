@@ -1,51 +1,50 @@
-import { StyleSheet, Dimensions } from "react-native";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-
-const { width, height } = Dimensions.get("window");
+import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-  // Container principal
   container: {
     flex: 1,
     backgroundColor: "#EDE9FF",
   },
- 
+
   scroll: {
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 160,
+    paddingBottom: 180,
   },
- 
-  // CABEÇALHO
+
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 28,
+    marginBottom: 22,
     gap: 10,
   },
- 
+
   headerVoltar: {
-    padding: 4,
+    width: 40,
+    height: 40,
+    borderRadius: 14,
+    backgroundColor: "rgba(142, 124, 255, 0.12)",
+    alignItems: "center",
+    justifyContent: "center",
   },
- 
+
   headerTitulo: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "700",
     color: "#8E7CFF",
   },
- 
-  // CARD BRANCO
+
   card: {
     backgroundColor: "#FFFFFF",
-    borderRadius: 24,
+    borderRadius: 28,
     padding: 24,
     shadowColor: "#8E7CFF",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    elevation: 6,
   },
- 
+
   cardTitulo: {
     fontSize: 18,
     fontWeight: "700",
@@ -55,97 +54,91 @@ export default StyleSheet.create({
 
   fotoContainer: {
     alignItems: "center",
-    marginVertical: 10,
+    marginBottom: 18,
   },
 
   fotoPerfil: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    borderWidth: 3,
-    borderColor: "#ffffff",
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     backgroundColor: "#8E7CFF",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    overflow: "hidden",
   },
 
-  fotoPerfil2: {
-    marginTop: 30,
+  imagem: {
+    width: "100%",
+    height: "100%",
   },
- 
-  // CAIXAS DE INFO
+
   infoBox: {
     backgroundColor: "#F7F5FF",
-    borderRadius: 14,
+    borderRadius: 18,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: "#FFFFFF",
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 12,
-
-    // Sombra (iOS)
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 }, // simula "distribuição"
-    shadowOpacity: 0.15,
-    shadowRadius: 4, // desfoque
-
-    // Sombra (Android)
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 2,
   },
- 
+
   infoLabel: {
     fontSize: 13,
     fontWeight: "700",
     color: "#290041",
-    marginBottom: 4,
+    marginBottom: 6,
   },
- 
+
   infoValor: {
-    fontSize: 14,
-    color: "#444",
-    fontWeight: "400",
+    fontSize: 15,
+    color: "#242424",
+    fontWeight: "600",
   },
- 
+
   infoEspecialidade: {
     fontSize: 13,
     color: "#8E7CFF",
     fontWeight: "500",
-    marginTop: 2,
+    marginTop: 4,
   },
- 
-  // LINHA DE VALOR
+
   valorRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 4,
     paddingHorizontal: 4,
   },
- 
+
   valorLabel: {
     fontSize: 14,
     color: "#555",
     fontWeight: "500",
   },
- 
+
   valorPreco: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "700",
     color: "#290041",
   },
- 
-  // FOOTER COM BOTÕES
+
   footer: {
     position: "absolute",
-    bottom: 60,
+    bottom: 72,
     left: 0,
     right: 0,
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingTop: 10,
+    paddingBottom: 10,
     backgroundColor: "#EDE9FF",
     gap: 12,
   },
- 
+
   botaoSolicitar: {
     backgroundColor: "#8E7CFF",
     borderRadius: 50,
@@ -153,13 +146,13 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
- 
+
   botaoSolicitarTexto: {
     fontSize: 16,
     fontWeight: "700",
     color: "#FFFFFF",
   },
- 
+
   botaoVoltar: {
     borderRadius: 50,
     paddingVertical: 16,
@@ -169,7 +162,7 @@ export default StyleSheet.create({
     borderColor: "#8E7CFF",
     backgroundColor: "transparent",
   },
- 
+
   botaoVoltarTexto: {
     fontSize: 16,
     fontWeight: "600",
