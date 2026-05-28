@@ -1,29 +1,20 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  ActivityIndicator,
-  Image,
-  Pressable,
-} from "react-native";
+import { View, Text, ScrollView, ActivityIndicator, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import styles from "./styles";
-import NavBar from "../../components/NavBar";
 
 export default function Pagamento() {
   const navigation = useNavigation();
   const [agendando, setAgendando] = useState(false);
 
-  const psicologo = "Dra. Maria Silva";
-  const especialidade = "Psicóloga Clínica";
-  const data = "Quarta Feira, 10 de Abril";
-  const horario = "09:00";
-  const valor = "R$180";
-  const foto_perfil = null;
+  const psicologo = "Dra. Eloisa Almeida";
+  const especialidade = "Psicologia clínica";
+  const data = "Quarta-feira, 15 de Outubro";
+  const horario = "14:00 - 14:50 (50 min)";
+  const valor = "R$150,00";
 
-  const handleConfirmarAgendamento = () => {
+  const handleConfirmarPagamento = () => {
     setAgendando(true);
     setTimeout(() => {
       setAgendando(false);
@@ -37,68 +28,112 @@ export default function Pagamento() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
       >
-        {/* HEADER */}
-        <View style={styles.header}>
-          <Pressable style={styles.headerVoltar} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={22} color="#8E7CFF" />
-          </Pressable>
-          <Text style={styles.headerTitulo}>Confirmar Agendamento</Text>
-        </View>
-
-        {/* CARD RESUMO */}
         <View style={styles.card}>
-          <Text style={styles.cardTitulo}>Resumo da Consulta</Text>
+  <Text style={styles.cardTitulo}>Resumo da Sessão</Text>
 
-          <View style={styles.fotoContainer}>
-            <View style={styles.fotoPerfil}>
-              {foto_perfil ? (
-                <Image source={{ uri: foto_perfil }} style={styles.imagem} resizeMode="cover" />
-              ) : (
-                <Ionicons name="person-outline" size={50} color="#FFFFFF" />
-              )}
-            </View>
-          </View>
+  <View style={styles.psicologoRow}>
+    <View style={styles.avatar}>
+      <Ionicons name="person" size={26} color="#FFF" />
+    </View>
 
-          <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>Psicólogo</Text>
-            <Text style={styles.infoValor}>{psicologo}</Text>
-            <Text style={styles.infoEspecialidade}>{especialidade}</Text>
-          </View>
+    <View style={{ flex: 1 }}>
+      <Text style={styles.summaryName}>{psicologo}</Text>
+      <Text style={styles.summarySpecialty}>{especialidade}</Text>
 
-          <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>Data</Text>
-            <Text style={styles.infoValor}>{data}</Text>
-          </View>
+      <View style={styles.infoRow}>
+        <Ionicons name="calendar-outline" size={14} color="#5DE2D4" />
+        <Text style={styles.infoText}>{data}</Text>
+      </View>
 
-          <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>Horário</Text>
-            <Text style={styles.infoValor}>{horario}</Text>
-          </View>
+      <View style={styles.infoRow}>
+        <Ionicons name="time-outline" size={14} color="#5DE2D4" />
+        <Text style={styles.infoText}>{horario}</Text>
+      </View>
+    </View>
+  </View>
 
-          <View style={styles.valorRow}>
-            <Text style={styles.valorLabel}>Valor da Consulta</Text>
-            <Text style={styles.valorPreco}>{valor}</Text>
-          </View>
+  <View style={styles.valorRow}>
+    <Text style={styles.valorLabel}>Valor total</Text>
+    <Text style={styles.valorValue}>{valor}</Text>
+  </View>
+</View>
+
+<View style={styles.section}>
+  <View style={styles.pixContainer}>
+    <Text style={styles.pixTitle}>Pague com Pix</Text>
+
+    <View style={styles.pixHeader}>
+      <Ionicons name="qr-code-outline" size={15} color="#8E7CFF" />
+      <Text style={styles.pixHeaderText}>QR Code Pix</Text>
+
+      <Pressable style={styles.copyButton}>
+        <Text style={styles.copyButtonText}>Copiar código</Text>
+      </Pressable>
+    </View>
+
+    <View style={styles.pixContent}>
+      <View style={styles.qrCode}>
+        <Ionicons name="qr-code" size={90} color="#000" />
+      </View>
+
+      <View style={{ flex: 1 }}>
+        <Text style={styles.pixDescription2}>
+          Escaneie o QR Code com o app do seu banco para pagar.
+        </Text>
+
+        <View style={styles.alertBox}>
+          <Ionicons
+            name="information-circle"
+            size={16}
+            color="#8E7CFF"
+          />
+
+          <Text style={styles.alertText}>
+            O pagamento é processado pelo banco e o comprovante deverá ser anexado.
+          </Text>
         </View>
+      </View>
+    </View>
+  </View>
+</View>
+
+<View style={styles.uploadContainer}>
+  <Text style={styles.uploadLabel}>
+    Anexar comprovante
+  </Text>
+
+  <Pressable style={styles.uploadArea}>
+    <Ionicons
+      name="cloud-upload-outline"
+      size={34}
+      color="#8E7CFF"
+    />
+
+    <Text style={styles.uploadAreaText}>
+      Clique para anexar ou arraste o arquivo aqui
+    </Text>
+  </Pressable>
+
+  <Text style={styles.fileText}>
+    Nenhum comprovante anexado
+  </Text>
+</View>
       </ScrollView>
 
       {/* FOOTER */}
       <View style={styles.footer}>
         <Pressable
-          style={[styles.botaoSolicitar, agendando && { opacity: 0.7 }]}
-          onPress={handleConfirmarAgendamento}
+          style={[styles.actionButton, agendando && { opacity: 0.7 }]}
+          onPress={handleConfirmarPagamento}
           disabled={agendando}
         >
           {agendando ? (
             <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
-            <Text style={styles.botaoSolicitarTexto}>Solicitar Agendamento</Text>
+            <Text style={styles.actionButtonText}>Finalizar e enviar comprovante</Text>
           )}
         </Pressable>
-
-        <Pressable style={styles.botaoVoltar} onPress={() => navigation.goBack()}>
-          <Text style={styles.botaoVoltarTexto}>Voltar</Text>
-        </Pressable>
+        <Text style={styles.footerNote}>Pagamento seguro e criptografado</Text>
       </View>
     </View>
   );

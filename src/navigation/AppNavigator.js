@@ -1,4 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import Menu from "../page/menu";
 import CentralCuidado from "../page/central-de-cuidado";
@@ -96,17 +98,35 @@ export default function AppNavigator() {
         
       }}  />
 
-      <Stack.Screen name="pagamento" component={Pagamento} options={{ 
-        headerShown: true,
-        title: 'Pagamento da Sessão',
-        headerStyle: { backgroundColor: '#FFFFFF' },
-        headerTitleStyle: {
-          fontSize: 23,
-          fontWeight: '600', // SemiBold
-        },
-        headerTintColor: '#A383FB',
-        
-      }}  />
+      <Stack.Screen
+        name="pagamento"
+        component={Pagamento}
+        options={({ navigation }) => ({
+          headerShown: true,
+          title: 'Perfil Psicólogo',
+          headerStyle: { backgroundColor: '#FFFFFF' },
+          headerTitleStyle: {
+            fontSize: 23,
+            fontWeight: '600', // SemiBold
+          },
+          headerTintColor: '#A383FB',
+          headerLeftContainerStyle: {
+            paddingRight: 12,
+          },
+          headerLeft: ({ tintColor }) => (
+            <Pressable
+              onPress={() => navigation.navigate('central')}
+              style={({ pressed }) => ({
+                marginLeft: 12,
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Ionicons name="arrow-back" size={24} color={tintColor} />
+            </Pressable>
+          ),
+          headerBackTitleVisible: false,
+        })}
+      />
 
     </Stack.Navigator>
   );

@@ -221,7 +221,7 @@ export default function CentralCuidado() {
               <Text style={styles.miniCardTitle}>Prontuário</Text>
               <Text style={styles.miniCardSub}>Meus dados</Text>
             </Pressable>
-            <Pressable style={getPressableStyle} onPress={() => {}}>
+            <Pressable style={getPressableStyle} onPress={() => navigation.navigate("pagamento") }>
               <Ionicons name="card-outline" size={24} color="#EB984E" />
               <Text style={styles.miniCardTitle}>Pagamento</Text>
               <Text style={styles.miniCardSub}>Faturas</Text>
