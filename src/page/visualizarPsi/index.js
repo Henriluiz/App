@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../../services/api";
 import {
-  Text, View, ScrollView, KeyboardAvoidingView,
-  Platform, Pressable, Modal, ActivityIndicator, Image
+  Text,
+  View,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  Modal,
+  ActivityIndicator,
+  Image,
 } from "react-native";
 
-import { useAuth } from "../../context/AuthContext"
+import { useAuth } from "../../context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import NavBar from "../../components/NavBar";
-import * as Animatable from 'react-native-animatable';
-import Feather from '@expo/vector-icons/Feather';
+import * as Animatable from "react-native-animatable";
+import Feather from "@expo/vector-icons/Feather";
 
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function VisualizarPsi({ route }) {
   const navigation = useNavigation();
@@ -23,8 +30,8 @@ export default function VisualizarPsi({ route }) {
   const { id } = route.params ?? {};
 
   const [menuAberto, setMenuAberto] = useState(false);
-  const [userPerfil, setUserPerfil] = useState(null)
-  const [psicologo, setPsicologo] = useState(null)
+  const [userPerfil, setUserPerfil] = useState(null);
+  const [psicologo, setPsicologo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // 🔹 ESTADOS PARA AGENDAMENTO
@@ -36,17 +43,18 @@ export default function VisualizarPsi({ route }) {
 
   const dias = ["Seg", "Ter", "Qua", "Qui", "Sex"];
 
-  const { verPsicologo, verHorariosDisponiveis, agendarSessaoCont, BASE_URL } = useAuth();
+  const { verPsicologo, verHorariosDisponiveis, agendarSessaoCont, BASE_URL } =
+    useAuth();
 
   // 📅 GERAR DATA EM FORMATO ISO CORRETO COM FUSO HORÁRIO DO BRASIL
   const gerarDataPorDia = (dia) => {
     // 🌎 Considerar fuso horário de São Paulo (UTC-3)
     const agora = new Date();
-    
+
     // Ajustar para horário local do Brasil
     const offset = agora.getTimezoneOffset() * 60000;
     const dataLocal = new Date(agora.getTime() - offset);
-    
+
     const mapa = {
       Dom: 0,
       Seg: 1,
@@ -68,12 +76,14 @@ export default function VisualizarPsi({ route }) {
 
     // Formatar como ISO (YYYY-MM-DD)
     const ano = proximaData.getFullYear();
-    const mes = String(proximaData.getMonth() + 1).padStart(2, '0');
-    const data = String(proximaData.getDate()).padStart(2, '0');
-    
+    const mes = String(proximaData.getMonth() + 1).padStart(2, "0");
+    const data = String(proximaData.getDate()).padStart(2, "0");
+
     const dataISO = `${ano}-${mes}-${data}`;
-    console.log(`📅 Data gerada para ${dia}: ${dataISO} (Dia semana: ${proximaData.getDay()})`);
-    
+    console.log(
+      `📅 Data gerada para ${dia}: ${dataISO} (Dia semana: ${proximaData.getDay()})`,
+    );
+
     return dataISO;
   };
 
@@ -124,7 +134,6 @@ export default function VisualizarPsi({ route }) {
       setHorarios([]);
       setDiaSelecionado(null);
       setHoraSelecionada(null);
-
     } catch (e) {
       console.error("❌ Erro ao agendar:", e);
       if (e.response?.status === 400) {
@@ -144,7 +153,6 @@ export default function VisualizarPsi({ route }) {
         console.log(response);
         setUserPerfil(response.user);
         setPsicologo(response.psicologo);
-
       } catch (error) {
         console.log("Erro ao buscar psicólogo", error);
       } finally {
@@ -155,16 +163,20 @@ export default function VisualizarPsi({ route }) {
     fetchPsicologo();
   }, [id]); // importante
 
-  if (loading) return <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-    <ActivityIndicator size="large" color="#2E7D32" /></View>;
+  if (loading)
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator size="large" color="#2E7D32" />
+      </View>
+    );
   if (!userPerfil) return <Text>Erro ao carregar dados</Text>;
 
-
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, marginBottom: 20}}
+    <KeyboardAvoidingView style={{ flex: 1, marginBottom: 20 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: 0, flexGrow: 1 }}
       >
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingTop: 0, flexGrow: 1}} > 
         <View style={styles.container}>
           {/* CARD DO PSICÓLOGO */}
           <View style={styles.card}>
@@ -172,7 +184,9 @@ export default function VisualizarPsi({ route }) {
               <View style={styles.fotoPerfil}>
                 {userPerfil?.foto_perfil ? (
                   <Image
-                    source={{ uri: `http://localhost:8000/storage/${userPerfil.foto_perfil}` }}
+                    source={{
+                      uri: `http://localhost:8000/storage/${userPerfil.foto_perfil}`,
+                    }}
                     style={styles.imagem}
                     resizeMode="cover"
                   />
@@ -187,36 +201,70 @@ export default function VisualizarPsi({ route }) {
               </View>
             </View>
 
-            <Text style={styles.nomePessoa}>{userPerfil.genero === "MASCULINO" ? <Text>Dr. {userPerfil.nome}</Text> : <Text>Dra. {userPerfil.nome}</Text>}</Text>
+            <Text style={styles.nomePessoa}>
+              {userPerfil.genero === "MASCULINO" ? (
+                <Text>Dr. {userPerfil.nome}</Text>
+              ) : (
+                <Text>Dra. {userPerfil.nome}</Text>
+              )}
+            </Text>
             <Text style={styles.profissao}>Psicóloga Clínica</Text>
 
             <View style={styles.infoContainer}>
               <View style={styles.estrelas}>
                 <Ionicons name="star" size={18} color="#FFD700" />
-                <Text style={styles.textoAvaliacao}>
-                  {psicologo.avaliacao} 
-                </Text>
+                <Text style={styles.textoAvaliacao}>{psicologo.avaliacao}</Text>
               </View>
-
             </View>
 
             {/* INFORMAÇÕES */}
             <View style={styles.container2}>
-
               <View style={styles.rowWrap}>
                 <Text style={styles.tituloCard}>Sobre</Text>
-                <Text style={styles.texto} numberOfLines={3} ellipsizeMode="tail">{psicologo.biografia}</Text>
+                <Text
+                  style={styles.texto}
+                  numberOfLines={3}
+                  ellipsizeMode="tail"
+                >
+                  {psicologo.biografia}
+                </Text>
               </View>
 
               <View style={styles.rowWrap}>
                 <Text style={styles.tituloCard}>Especialidades</Text>
-                <Text style={styles.texto}>{psicologo.especialidades.map(item => item.nome).join(", ")}</Text>
-              </View>
 
+                <Text style={styles.texto}>
+                  {(() => {
+                    let especialidades = [];
+
+                    if (Array.isArray(psicologo?.especialidades)) {
+                      especialidades = psicologo.especialidades.map((item) =>
+                        typeof item === "object" ? item.nome : item,
+                      );
+                    } else if (typeof psicologo?.especialidades === "string") {
+                      try {
+                        const parsed = JSON.parse(psicologo.especialidades);
+
+                        especialidades = Array.isArray(parsed)
+                          ? parsed.map((item) =>
+                              typeof item === "object" ? item.nome : item,
+                            )
+                          : [psicologo.especialidades];
+                      } catch {
+                        especialidades = [psicologo.especialidades];
+                      }
+                    }
+
+                    return especialidades.length > 0
+                      ? especialidades.join(", ")
+                      : "Nenhuma especialidade";
+                  })()}
+                </Text>
+              </View>
               <View>
                 <Text style={styles.tituloCard}>Informações</Text>
 
-                <View style={{gap: 10, marginTop: 5, marginBottom: 7}}>
+                <View style={{ gap: 10, marginTop: 5, marginBottom: 7 }}>
                   <View style={styles.rowCont}>
                     <Text style={styles.textoCont}>Duração da Consulta</Text>
                     <Text style={styles.texto}>50 Minutos</Text>
@@ -224,20 +272,25 @@ export default function VisualizarPsi({ route }) {
 
                   <View style={styles.rowCont}>
                     <Text style={styles.textoCont}>Valor</Text>
-                    <Text style={styles.texto}>R$ {psicologo.preco_sessao ? <Text>{psicologo.preco_sessao}</Text> : <Text>85,00</Text>}</Text>
+                    <Text style={styles.texto}>
+                      R${" "}
+                      {psicologo.preco_sessao ? (
+                        <Text>{psicologo.preco_sessao}</Text>
+                      ) : (
+                        <Text>85,00</Text>
+                      )}
+                    </Text>
                   </View>
                 </View>
               </View>
-
-
-
             </View>
             <View style={styles.botaoContainer}>
               <Pressable
                 style={styles.botao}
                 onPress={() => {
                   navigation.navigate("dataHoraConsulta", {
-                    psicologo, userPerfil,
+                    psicologo,
+                    userPerfil,
                   });
                 }}
               >
@@ -245,13 +298,10 @@ export default function VisualizarPsi({ route }) {
                 <Text style={styles.botaoTexto}>Ver Horários Disponíveis</Text>
               </Pressable>
             </View>
-
           </View>
-        </View>     
+        </View>
       </ScrollView>
-      <NavBar 
-        tela = "home"
-      />
+      <NavBar tela="home" />
     </KeyboardAvoidingView>
   );
 }

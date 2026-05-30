@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  Image,
-} from "react-native";
+import { View, Text, ScrollView, Pressable, Image } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather } from "@expo/vector-icons";
@@ -32,7 +26,10 @@ export default function Menu({ navigation }) {
   useEffect(() => {
     const carregarUltimoPsicologo = async () => {
       try {
-        const [sessoesResp, historicoResp] = await Promise.all([mSessoes(), historico()]);
+        const [sessoesResp, historicoResp] = await Promise.all([
+          mSessoes(),
+          historico(),
+        ]);
         const sessoes = sessoesResp?.sessoes ?? [];
         const realizadas = historicoResp?.realizadas ?? [];
         const cancelamentos = historicoResp?.cancelamentos ?? [];
@@ -52,9 +49,11 @@ export default function Menu({ navigation }) {
         if (ultima) {
           const psicologo = ultima.psicologo;
           setUltimoPsicologo(psicologo);
-          setUltimoUserPerfil(psicologo?.usuario ?? {
-            nome: psicologo?.nome ?? "Psicólogo",
-          });
+          setUltimoUserPerfil(
+            psicologo?.usuario ?? {
+              nome: psicologo?.nome ?? "Psicólogo",
+            },
+          );
         }
       } catch (err) {
         console.error("Erro ao buscar último psicólogo:", err);
@@ -100,14 +99,18 @@ export default function Menu({ navigation }) {
               </Pressable>
               <View style={styles.profileText}>
                 <Text style={styles.welcomeText}>Bem-vindo(a)</Text>
-                <Pressable onPress={() => navigation.navigate("editarPerfil")}> 
+                <Pressable onPress={() => navigation.navigate("editarPerfil")}>
                   <Text style={styles.userName}>{capitalize(user?.nome)}</Text>
                 </Pressable>
               </View>
             </View>
 
             <View style={styles.topIcons}>
-              <Ionicons name="information-circle-outline" size={22} color="#fff" />
+              <Ionicons
+                name="information-circle-outline"
+                size={22}
+                color="#fff"
+              />
               <Ionicons
                 name="notifications-outline"
                 size={22}
@@ -116,8 +119,6 @@ export default function Menu({ navigation }) {
               />
             </View>
           </View>
-
-          <Text style={styles.subtitle}>Como você está se sentindo hoje?</Text>
           <Pressable
             style={styles.searchContainer}
             onPress={() => navigation.navigate("pesquisa")}
@@ -132,10 +133,7 @@ export default function Menu({ navigation }) {
         </View>
 
         <View style={styles.quickActions}>
-          <Pressable
-            style={styles.actionCard}
-            onPress={handleAgendarUltimo}
-          >
+          <Pressable style={styles.actionCard} onPress={handleAgendarUltimo}>
             <View style={styles.actionIcon}>
               <Feather name="edit" size={22} color="#6A37E5" />
             </View>
@@ -161,7 +159,9 @@ export default function Menu({ navigation }) {
 
         <View style={styles.promoCard}>
           <View style={styles.promoText}>
-            <Text style={styles.promoTitle}>Cuide da sua saúde mental com praticidade</Text>
+            <Text style={styles.promoTitle}>
+              Cuide da sua saúde mental com praticidade
+            </Text>
             <Text style={styles.promoDescription}>
               Encontre o psicólogo ideal e agende sua sessão online.
             </Text>

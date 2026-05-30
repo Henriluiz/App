@@ -1,11 +1,10 @@
 import axios from "axios";
 import { getToken, clearSession } from "./authStogare";
+import { reset } from "./navigationService";
 import { Platform } from "react-native";
 
 const BASE_URL =
-  Platform.OS === "web"
-    ? "http://localhost:8000"
-    : "http://192.168.18.99:8000";
+  Platform.OS === "web" ? "http://localhost:8000" : "http://192.168.18.99:8000";
 
 export { BASE_URL };
 
@@ -45,7 +44,6 @@ function processQueue(error, token = null) {
 
 // 1) Adiciona access token em toda requisição
 api.interceptors.request.use(async (config) => {
-
   const token = await getToken();
 
   if (token) {
@@ -57,25 +55,23 @@ api.interceptors.request.use(async (config) => {
   }
 
   return config;
-
 });
 
 // 2) Intercepta 401 e tenta refresh
 api.interceptors.response.use(
-  response => response,
+  (response) => response,
 
-  async error => {
-
+  async (error) => {
     if (error.response?.status === 401) {
-
       await clearSession();
 
       console.log("Sessão expirada");
 
+      reset("login");
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

@@ -69,7 +69,8 @@ const styles = StyleSheet.create({
     maxWidth: "85%",
   },
   searchContainer: {
-    marginTop: 24,  backgroundColor: "#A99EFF",
+    marginTop: 24,
+    backgroundColor: "#A99EFF",
     borderRadius: 18,
     flexDirection: "row",
     alignItems: "center",
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
   },
   promoButton: {
     marginTop: 16,
-    backgroundColor: "#6A37E5",
+    backgroundColor: "#8E7CFF",
     borderRadius: 16,
     paddingVertical: 12,
     alignItems: "center",
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderRadius: 20,
-    backgroundColor: "#6A37E5",
+    backgroundColor: "#8E7CFF",
     justifyContent: "center",
     alignItems: "center",
   },

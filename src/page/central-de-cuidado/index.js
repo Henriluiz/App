@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
-  View, Text, Pressable, SafeAreaView, StatusBar,
-  Platform, ActivityIndicator, FlatList
-} from 'react-native';
-import { Feather, Ionicons } from '@expo/vector-icons';
+  View,
+  Text,
+  Pressable,
+  SafeAreaView,
+  StatusBar,
+  Platform,
+  ActivityIndicator,
+  FlatList,
+} from "react-native";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import NavBar from "../../components/NavBar";
-import styles from './styles';
+import styles from "./styles";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../context/AuthContext";
 
@@ -25,7 +31,9 @@ function CardHistorico({ item }) {
       <View style={styles.historicoHeader}>
         <View style={styles.historicoIconCircle}>
           <Ionicons
-            name={isCancelada ? "close-circle-outline" : "checkmark-circle-outline"}
+            name={
+              isCancelada ? "close-circle-outline" : "checkmark-circle-outline"
+            }
             size={22}
             color={isCancelada ? "#E74C3C" : "#52BE80"}
           />
@@ -38,14 +46,18 @@ function CardHistorico({ item }) {
             {item.psicologo?.especialidade ?? "Psicólogo(a)"}
           </Text>
         </View>
-        <View style={[
-          styles.badgeStatus,
-          { backgroundColor: isCancelada ? "#FDEDEC" : "#EAFAF1" }
-        ]}>
-          <Text style={[
-            styles.badgeText,
-            { color: isCancelada ? "#E74C3C" : "#27AE60" }
-          ]}>
+        <View
+          style={[
+            styles.badgeStatus,
+            { backgroundColor: isCancelada ? "#FDEDEC" : "#EAFAF1" },
+          ]}
+        >
+          <Text
+            style={[
+              styles.badgeText,
+              { color: isCancelada ? "#E74C3C" : "#27AE60" },
+            ]}
+          >
             {isCancelada ? "Cancelada" : "Realizada"}
           </Text>
         </View>
@@ -76,13 +88,16 @@ export default function CentralCuidado() {
         const resposta = await mSessoes();
         const lista = resposta?.sessoes ?? [];
         const hoje = new Date().toISOString().split("T")[0];
-        const futura = lista
-          .filter((s) => s.data_sessao >= hoje && s.status_sessao === "agendada")
-          .sort((a, b) => {
-            if (a.data_sessao !== b.data_sessao)
-              return a.data_sessao.localeCompare(b.data_sessao);
-            return a.hora_inicio.localeCompare(b.hora_inicio);
-          })[0] ?? null;
+        const futura =
+          lista
+            .filter(
+              (s) => s.data_sessao >= hoje && s.status_sessao === "agendada",
+            )
+            .sort((a, b) => {
+              if (a.data_sessao !== b.data_sessao)
+                return a.data_sessao.localeCompare(b.data_sessao);
+              return a.hora_inicio.localeCompare(b.hora_inicio);
+            })[0] ?? null;
         setProximaSessao(futura);
       } catch (error) {
         console.error("Erro ao buscar próxima sessão:", error);
@@ -116,7 +131,7 @@ export default function CentralCuidado() {
 
   const getPressableStyle = ({ pressed }) => [
     styles.pressableBase,
-    { opacity: pressed ? 0.7 : 1 }
+    { opacity: pressed ? 0.7 : 1 },
   ];
 
   const getNomePsicologo = (sessao) =>
@@ -135,7 +150,10 @@ export default function CentralCuidado() {
   const formatarHora = (hora) => hora?.slice(0, 5) ?? "";
 
   return (
-    <SafeAreaView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+    <SafeAreaView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <StatusBar barStyle="light-content" backgroundColor="#9B59B6" />
 
       {/* ── BLOCO FIXO — não rola ─────────────────────────────── */}
@@ -147,7 +165,6 @@ export default function CentralCuidado() {
       </View>
 
       <View style={styles.content}>
-
         {/* Card Próxima Sessão */}
         <View style={styles.cardSessao}>
           <View style={styles.sessaoHeader}>
@@ -158,13 +175,19 @@ export default function CentralCuidado() {
           </View>
 
           {loadingSessao ? (
-            <ActivityIndicator size="small" color="#76D7C4" style={{ marginVertical: 16 }} />
+            <ActivityIndicator
+              size="small"
+              color="#76D7C4"
+              style={{ marginVertical: 16 }}
+            />
           ) : proximaSessao ? (
             <>
               <View style={styles.infoDoutora}>
                 <View>
                   <Text style={styles.labelProfissional}>Profissional</Text>
-                  <Text style={styles.nomeDoutora}>{getNomePsicologo(proximaSessao)}</Text>
+                  <Text style={styles.nomeDoutora}>
+                    {getNomePsicologo(proximaSessao)}
+                  </Text>
                   <Text style={styles.especialidade}>
                     {proximaSessao.psicologo?.especialidade ?? "Psicólogo(a)"}
                   </Text>
@@ -179,7 +202,10 @@ export default function CentralCuidado() {
                 </View>
               </View>
               <Pressable
-                style={({ pressed }) => [styles.btnEntrar, { opacity: pressed ? 0.8 : 1 }]}
+                style={({ pressed }) => [
+                  styles.btnEntrar,
+                  { opacity: pressed ? 0.8 : 1 },
+                ]}
                 onPress={() => console.log("Entrando na sessão...")}
               >
                 <Text style={styles.btnText}>Entrar na Sessão</Text>
@@ -192,7 +218,10 @@ export default function CentralCuidado() {
                 Nenhuma sessão agendada
               </Text>
               <Pressable
-                style={({ pressed }) => [styles.btnAgendar, { opacity: pressed ? 0.8 : 1 }]}
+                style={({ pressed }) => [
+                  styles.btnAgendar,
+                  { opacity: pressed ? 0.8 : 1 },
+                ]}
                 onPress={() => navigation.navigate("pesquisa")}
               >
                 <Text style={styles.btnText}>Agendar Sessão</Text>
@@ -204,7 +233,10 @@ export default function CentralCuidado() {
         {/* Grid de Atalhos */}
         <View style={styles.grid}>
           <View style={styles.row}>
-            <Pressable style={getPressableStyle} onPress={() => navigation.navigate("minhasSessoes")}>
+            <Pressable
+              style={getPressableStyle}
+              onPress={() => navigation.navigate("minhasSessoes")}
+            >
               <Ionicons name="time-outline" size={24} color="#5DADE2" />
               <Text style={styles.miniCardTitle}>Sessões</Text>
               <Text style={styles.miniCardSub}>Ver histórico</Text>
@@ -217,11 +249,18 @@ export default function CentralCuidado() {
           </View>
           <View style={styles.row}>
             <Pressable style={getPressableStyle} onPress={() => {}}>
-              <Ionicons name="document-text-outline" size={24} color="#52BE80" />
+              <Ionicons
+                name="document-text-outline"
+                size={24}
+                color="#52BE80"
+              />
               <Text style={styles.miniCardTitle}>Prontuário</Text>
               <Text style={styles.miniCardSub}>Meus dados</Text>
             </Pressable>
-            <Pressable style={getPressableStyle} onPress={() => navigation.navigate("pagamento") }>
+            <Pressable
+              style={getPressableStyle}
+              onPress={() => navigation.navigate("pagamento")}
+            >
               <Ionicons name="card-outline" size={24} color="#EB984E" />
               <Text style={styles.miniCardTitle}>Pagamento</Text>
               <Text style={styles.miniCardSub}>Faturas</Text>
@@ -231,12 +270,15 @@ export default function CentralCuidado() {
 
         {/* Título da seção */}
         <Text style={styles.secaoTitle}>Histórico Recente</Text>
-
       </View>
 
       <View style={{ flex: 1, paddingHorizontal: 15 }}>
         {loadingHistorico ? (
-          <ActivityIndicator size="small" color="#76D7C4" style={{ marginTop: 12 }} />
+          <ActivityIndicator
+            size="small"
+            color="#76D7C4"
+            style={{ marginTop: 12 }}
+          />
         ) : (
           <FlatList
             data={listaHistorico}
