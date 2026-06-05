@@ -6,6 +6,7 @@ import {
   ScrollView,
   ActivityIndicator,
   StyleSheet,
+  Modal
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
@@ -27,6 +28,7 @@ export default function ConfirConsulta({ route }) {
   const [text, setText] = useState("")
 
   const [modal, setModal] = useState(false);
+  const [modalSucesso, setModalSucesso] = useState(false)
  
  
   // ─── Dados estáticos para desenvolvimento ───────────────────────────────────
@@ -60,7 +62,12 @@ export default function ConfirConsulta({ route }) {
           data_sessao: diaSelecionado.iso,
           hora_inicio: horaSelecionada+ ":00",
         };
-        await agendarSessaoCont(payload);
+        const retorno_agendamento = await agendarSessaoCont(payload);
+        if (!retorno_agendamento.sucesso) {
+          setAgendando(false)
+          setModal(false)
+          return false
+        }
         setText("Solicitação Enviada")
       } else if (modo == "reagendar") {
         const payload = {
@@ -71,14 +78,11 @@ export default function ConfirConsulta({ route }) {
         setText("Reagendamento Enviado")
       }
       
-      
-      <ModalApp
-        visible={modal}
-        titulo={text}
-        mensagem="Em breve, será confirmada sua sessão"
-        tipo="sucesso"
-        onCancelar={() => setModal(false)}
-        />
+      setModal(false)
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setModalSucesso(true);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      setModalSucesso(false);
  
       navigation.replace("menu");
     } catch (error) {
@@ -167,7 +171,27 @@ export default function ConfirConsulta({ route }) {
         />
         
 
-        {/* TODO: Fazer o modal de sucesso e continua a produção */}
+      <Modal
+        visible={modalSucesso}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalSucesso(false)}
+      >
+        <View style={styles.successOverlay}>
+          <View style={styles.successContainer}>
+
+            {/* Ícone */}
+            <View style={styles.successIconContainer}>
+              <Ionicons
+                name="checkmark-circle"
+                size={300}
+                color="#22C55E"
+              />
+            </View>
+
+          </View>
+        </View>
+      </Modal>
 
       <NavBar tela="pesquisa" />
     </View>

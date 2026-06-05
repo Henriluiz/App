@@ -1,5 +1,4 @@
 import React, { useState, useEffect} from "react";
-import { BASE_URL } from "../../services/api";
 import {
   Text,View, TextInput, ScrollView, KeyboardAvoidingView,
   Platform, Pressable, Image, Modal, ActivityIndicator,
@@ -40,7 +39,7 @@ export default function Perfil({ navigation }) {
   const [erro, setErro] = useState(false);
 
 
-  const { user, removeAccount, signOut, updateUser, BASE_URL} = useAuth();
+  const { user, removeAccount, signOut, updateUser, FOTO} = useAuth();
 
   function formatarNickname(text) {
     return text
@@ -168,7 +167,7 @@ export default function Perfil({ navigation }) {
   }, [user]);
 
   console.log("FOTO:", user?.foto_perfil)
-console.log("URL FINAL:", `${BASE_URL}${user?.foto_perfil}`)
+  console.log("URL FINAL:", `${FOTO}${user?.foto_perfil}`)
 
   return (
     <SafeAreaView

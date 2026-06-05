@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { BASE_URL } from "../../services/api";
 import {
   Text,
   View,
@@ -43,7 +42,7 @@ export default function VisualizarPsi({ route }) {
 
   const dias = ["Seg", "Ter", "Qua", "Qui", "Sex"];
 
-  const { verPsicologo, verHorariosDisponiveis, agendarSessaoCont, BASE_URL } =
+  const { verPsicologo, verHorariosDisponiveis, agendarSessaoCont, FOTO } =
     useAuth();
 
   // 📅 GERAR DATA EM FORMATO ISO CORRETO COM FUSO HORÁRIO DO BRASIL
@@ -185,10 +184,12 @@ export default function VisualizarPsi({ route }) {
                 {userPerfil?.foto_perfil ? (
                   <Image
                     source={{
-                      uri: `http://localhost:8000/storage/${userPerfil.foto_perfil}`,
+                      uri: `${FOTO}${userPerfil.foto_perfil}`,
                     }}
                     style={styles.imagem}
                     resizeMode="cover"
+                    onLoad={() => console.log("✅ Imagem carregada")}
+                    onError={(e) => console.log("❌ Erro imagem:", e.nativeEvent)}
                   />
                 ) : (
                   <Ionicons

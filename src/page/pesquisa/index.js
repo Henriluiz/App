@@ -23,7 +23,7 @@ export default function Pesquisa({ route }) {
     listarPsicologos,
     verHorariosDisponiveis,
     agendarSessaoCont,
-    BASE_URL,
+    FOTO,
   } = useAuth();
 
   const { buscaInicial } = route.params ?? {};
@@ -129,10 +129,7 @@ export default function Pesquisa({ route }) {
           {item.foto_perfil ? (
             <Image
               source={{
-                uri: `${BASE_URL.replace("10.148.229.116", "localhost").replace(
-                  "/api",
-                  "",
-                )}${item.foto_perfil}`,
+                uri: `${FOTO}${item.foto_perfil}`,
               }}
               style={styles.avatar}
               resizeMode="cover"

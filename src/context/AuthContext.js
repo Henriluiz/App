@@ -34,11 +34,11 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const BASE_URL = "http://10.148.229.116:8000/storage/";
+  const FOTO = "http://192.168.18.99:8000/storage/";
 
   async function signIn(loginInput, senha) {
     const data = await login(loginInput, senha);
-
+    
     const token = data.access_token;
     const user = data.user;
 
@@ -160,10 +160,10 @@ export function AuthProvider({ children }) {
   async function agendarSessaoCont(dados) {
     try {
       const resposta = await agendarSessao(dados);
-      return resposta;
+      return { sucesso: true, dados: resposta };
     } catch (e) {
-      console.error("Erro completo (agendarSessao):", e.response?.data);
-      return null;
+      console.error("Erro completo (agendarSessao):", e.response?.data || e.message);
+      return { sucesso: false, erro: e.response?.data?.message || "Erro desconhecido" };
     }
   }
 
@@ -260,7 +260,7 @@ export function AuthProvider({ children }) {
       value={{
         user,
         loading,
-        BASE_URL,
+        FOTO,
 
         // CRUD
         signIn,

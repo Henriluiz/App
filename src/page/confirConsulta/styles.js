@@ -155,4 +155,26 @@ export default StyleSheet.create({
     fontWeight: "600",
     color: "#8E7CFF",
   },
+
+  // Modal de Sucesso, check
+
+  successOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  
+  successContainer: {
+    width: '100%',
+    maxWidth: 340,
+    paddingVertical: 36,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+  },
+  
+  successIconContainer: {
+    marginBottom: 20,
+  },
 });

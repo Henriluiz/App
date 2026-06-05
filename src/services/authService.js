@@ -1,5 +1,6 @@
 import api from "./api";
 import { Platform } from "react-native";
+import { BASE_URL } from "./api";
 
 export async function cadastroPaciente(data) {
   const formData = new FormData();
@@ -15,33 +16,33 @@ export async function cadastroPaciente(data) {
   formData.append("termos", data.termos ? "1" : "0");
 
 
-  if (data.foto_perfil) {
-    // WEB
-    if (Platform.OS === "web") {
-      const response = await fetch(data.foto_perfil.uri);
-      const blob = await response.blob();
+  // if (data.foto_perfil) {
+  //   // WEB
+  //   if (Platform.OS === "web") {
+  //     const response = await fetch(data.foto_perfil.uri);
+  //     const blob = await response.blob();
 
-      formData.append("foto", blob, "foto.jpg");
-    } else {
-      // MOBILE
-      const filename = data.foto_perfil.uri.split("/").pop();
+  //     formData.append("foto", blob, "foto.jpg");
+  //   } else {
+  //     // MOBILE
+  //     const filename = data.foto_perfil.uri.split("/").pop();
 
-      const match = /\.(\w+)$/.exec(filename);
+  //     const match = /\.(\w+)$/.exec(filename);
 
-      const type = match ? `image/${match[1]}` : "image/jpeg";
+  //     const type = match ? `image/${match[1]}` : "image/jpeg";
 
-      formData.append("foto", {
-        uri: data.foto_perfil.uri,
-        name: filename,
-        type,
-      });
-    }
-  }
-
-  // console.log("📦 FormData entries:");
-  // for (let pair of formData._parts) {
-  //   console.log(pair[0], "=>", pair[1]);
+  //     formData.append("foto", {
+  //       uri: data.foto_perfil.uri,
+  //       name: filename,
+  //       type,
+  //     });
+  //   }
   // }
+
+  console.log("📦 FormData entries:");
+  for (let pair of formData._parts) {
+    console.log(pair[0], "=>", pair[1]);
+  }
 
   // try {
   //   const response = await api.post("/registerPaciente", formData, {
@@ -56,13 +57,16 @@ export async function cadastroPaciente(data) {
   //   throw error;
   // }
   try {
-    const response = await fetch("http://localhost:8000/api/registerPaciente", {
+    const response = await fetch(`${BASE_URL}/api/registerPaciente`, {
       method: "POST",
       body: formData,
     });
 
     const json = await response.json();
-    console.log("✅ Resposta:", JSON.stringify(json, null, 2));
+
+    console.log("STATUS:", response.status);
+    console.log("JSON:", json);
+
     return json;
   } catch (error) {
     console.log("❌ Erro fetch:", error.message);
@@ -201,13 +205,8 @@ export async function horariosDisponiveis(id, data) {
 }
 
 export async function agendarSessao(dados) {
-  try {
-    const response = await api.post("/agendarSessao", dados);
-    return response.data;
-  } catch (error) {
-    console.log("Erro ao agendar sessão:", error.response?.data || error);
-    throw error;
-  }
+  const response = await api.post("/agendarSessao", dados);
+  return response.data;
 }
 
 export async function solicitarCancelamento(id_sessao, motivo) {

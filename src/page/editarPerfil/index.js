@@ -21,7 +21,7 @@ import styles from "./styles";
 
 export default function EditarPerfil({ navigation }) {
 
-  const { user, updateUser, BASE_URL } = useAuth();
+  const { user, updateUser, FOTO } = useAuth();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -205,7 +205,7 @@ export default function EditarPerfil({ navigation }) {
                     source={{
                       uri: fotoPerfil.startsWith("http")
                         ? fotoPerfil
-                        : `${BASE_URL}${fotoPerfil}`,
+                        : `${FOTO}${fotoPerfil}`,
                     }}
                     style={styles.avatar}
                   />

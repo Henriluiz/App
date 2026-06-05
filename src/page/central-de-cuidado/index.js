@@ -239,7 +239,7 @@ export default function CentralCuidado() {
             >
               <Ionicons name="time-outline" size={24} color="#5DADE2" />
               <Text style={styles.miniCardTitle}>Sessões</Text>
-              <Text style={styles.miniCardSub}>Ver histórico</Text>
+              <Text style={styles.miniCardSub}>Próximas sessões</Text>
             </Pressable>
             <Pressable style={getPressableStyle} onPress={() => {}}>
               <Ionicons name="chatbubble-outline" size={24} color="#A569BD" />
@@ -248,14 +248,14 @@ export default function CentralCuidado() {
             </Pressable>
           </View>
           <View style={styles.row}>
-            <Pressable style={getPressableStyle} onPress={() => {}}>
+            <Pressable style={getPressableStyle} onPress={() => navigation.navigate("historico")}>
               <Ionicons
                 name="document-text-outline"
                 size={24}
                 color="#52BE80"
               />
-              <Text style={styles.miniCardTitle}>Prontuário</Text>
-              <Text style={styles.miniCardSub}>Meus dados</Text>
+              <Text style={styles.miniCardTitle}>Histórico</Text>
+              <Text style={styles.miniCardSub}>Sessões anteriores</Text>
             </Pressable>
             <Pressable
               style={getPressableStyle}
@@ -268,38 +268,6 @@ export default function CentralCuidado() {
           </View>
         </View>
 
-        {/* Título da seção */}
-        <Text style={styles.secaoTitle}>Histórico Recente</Text>
-      </View>
-
-      <View style={{ flex: 1, paddingHorizontal: 15 }}>
-        {loadingHistorico ? (
-          <ActivityIndicator
-            size="small"
-            color="#76D7C4"
-            style={{ marginTop: 12 }}
-          />
-        ) : (
-          <FlatList
-            data={listaHistorico}
-            keyExtractor={(item) => String(item.id_sessao)}
-            showsVerticalScrollIndicator={true}
-            contentContainerStyle={styles.flatListContent}
-            ListEmptyComponent={
-              <View style={styles.emptyHistorico}>
-                <Ionicons name="file-tray-outline" size={36} color="white" />
-                <Text style={{ color: "white", fontSize: 14, marginTop: 8 }}>
-                  Nenhuma sessão no histórico
-                </Text>
-              </View>
-            }
-            renderItem={({ item }) => (
-              <View style={styles.flatListItem}>
-                <CardHistorico item={item} />
-              </View>
-            )}
-          />
-        )}
       </View>
       <NavBar tela="central" />
     </SafeAreaView>

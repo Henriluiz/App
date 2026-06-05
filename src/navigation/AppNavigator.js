@@ -15,6 +15,7 @@ import MinhasSessoes from "../page/minhaSessao";
 import ReagendarConsulta from "../page/reagendarCons";
 import Cancelamento from "../page/cancelamento";
 import Pagamento from "../page/pagamento";
+import Historico from "../page/historico";
 
 const Stack = createNativeStackNavigator();
 
@@ -144,6 +145,20 @@ export default function AppNavigator() {
           ),
           headerBackTitleVisible: false,
         })}
+      />
+      <Stack.Screen
+        name="historico"
+        component={Historico}
+        options={{
+          headerShown: true,
+          title: "Histórico de Sessões",
+          headerStyle: { backgroundColor: "#FFFFFF" },
+          headerTitleStyle: {
+            fontSize: 23,
+            fontWeight: "600", // SemiBold
+          },
+          headerTintColor: "#A383FB",
+        }}
       />
     </Stack.Navigator>
   );
