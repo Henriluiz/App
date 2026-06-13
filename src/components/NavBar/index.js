@@ -38,11 +38,18 @@ export default function NavBar({ tela }) {
       {tabs.map((tab) => (
         <Pressable
           key={tab.key}
+          hitSlop={28}
           onPress={() => {
             if (route.name !== tab.route) {
               navigation.navigate(tab.route);
             }
           }}
+          style={({ pressed }) => [
+            {
+              opacity: pressed ? 0.8 : 1,
+              transform: [{ scale: pressed ? 0.75 : 1 }],
+            },
+          ]}
         >
           <Ionicons
             name={tab.icon}

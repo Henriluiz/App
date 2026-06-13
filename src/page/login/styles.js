@@ -70,6 +70,14 @@ export default StyleSheet.create ({
         width: wp("75%"),
     },
 
+    mensagemErro: {
+        color: "red",
+        textAlign: "center",
+        marginTop: 5,
+        fontSize: 14,
+        marginBottom: -20,
+    },
+
     esenha: { // Esqueceu Senha
         color: "white",
         textDecorationLine: "underline",
@@ -107,6 +115,11 @@ export default StyleSheet.create ({
         display: "flex",
         flexDirection: "row",
         gap: wp("7%"),
+    },
+    
+    iconContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
     contaNova: {

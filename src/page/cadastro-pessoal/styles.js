@@ -108,10 +108,10 @@ export default StyleSheet.create({
   },
 
   mensagemErro: {
-  color: "red",
-  marginTop: 5,
-  fontSize: 14,
-},
+    color: "red",
+    marginTop: 5,
+    fontSize: 14,
+  },
 
 
   containerBotoes: {

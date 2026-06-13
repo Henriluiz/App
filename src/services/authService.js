@@ -16,46 +16,34 @@ export async function cadastroPaciente(data) {
   formData.append("termos", data.termos ? "1" : "0");
 
 
-  // if (data.foto_perfil) {
-  //   // WEB
-  //   if (Platform.OS === "web") {
-  //     const response = await fetch(data.foto_perfil.uri);
-  //     const blob = await response.blob();
+  if (data.foto_perfil) {
+    // WEB
+    if (Platform.OS === "web") {
+      const response = await fetch(data.foto_perfil.uri);
+      const blob = await response.blob();
 
-  //     formData.append("foto", blob, "foto.jpg");
-  //   } else {
-  //     // MOBILE
-  //     const filename = data.foto_perfil.uri.split("/").pop();
+      formData.append("foto", blob, "foto.jpg");
+    } else {
+      // MOBILE
+      const filename = data.foto_perfil.uri.split("/").pop();
 
-  //     const match = /\.(\w+)$/.exec(filename);
+      const match = /\.(\w+)$/.exec(filename);
 
-  //     const type = match ? `image/${match[1]}` : "image/jpeg";
+      const type = match ? `image/${match[1]}` : "image/jpeg";
 
-  //     formData.append("foto", {
-  //       uri: data.foto_perfil.uri,
-  //       name: filename,
-  //       type,
-  //     });
-  //   }
-  // }
+      formData.append("foto", {
+        uri: data.foto_perfil.uri,
+        name: filename,
+        type,
+      });
+    }
+  }
 
   console.log("📦 FormData entries:");
   for (let pair of formData._parts) {
     console.log(pair[0], "=>", pair[1]);
   }
 
-  // try {
-  //   const response = await api.post("/registerPaciente", formData, {
-  //     headers: {
-  //       "Content-Type": undefined,
-  //     },
-  //   });
-  //   return response.data;
-  // } catch (error) {
-  //   console.log("❌ Status:", error.response?.status);
-  //   console.log("❌ Erro completo:", JSON.stringify(error.response?.data, null, 2));
-  //   throw error;
-  // }
   try {
     const response = await fetch(`${BASE_URL}/api/registerPaciente`, {
       method: "POST",

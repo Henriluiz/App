@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F6FA",
   },
   scrollContent: {
-    paddingBottom: 10, // Aumentado para dar espaço ao footer fixo
+    paddingBottom: 25, // Aumentado para dar espaço ao footer fixo
   },
   topSection: {
     backgroundColor: "#8E7CFF",

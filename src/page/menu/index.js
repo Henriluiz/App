@@ -8,7 +8,7 @@ import NavBar from "../../components/NavBar";
 import styles from "./styles";
 
 export default function Menu({ navigation }) {
-  const { user, mSessoes, historico } = useAuth();
+  const { user, mSessoes, historico, FOTO } = useAuth();
   const [ultimoPsicologo, setUltimoPsicologo] = useState(null);
   const [ultimoUserPerfil, setUltimoUserPerfil] = useState(null);
 
@@ -89,7 +89,7 @@ export default function Menu({ navigation }) {
               >
                 {user?.foto_perfil ? (
                   <Image
-                    source={{ uri: user.foto_perfil }}
+                    source={{ uri: `${FOTO}${user.foto_perfil}` }}
                     style={styles.avatarImage}
                     resizeMode="cover"
                   />
@@ -192,7 +192,9 @@ export default function Menu({ navigation }) {
         </View>
       </ScrollView>
 
-      <NavBar tela="home" />
+      <View style={{backgroundColor: "black" }}>
+        <NavBar tela="home" />
+      </View>
     </SafeAreaView>
   );
 }

@@ -3,14 +3,15 @@ import {
   View,
   Text,
   Pressable,
-  SafeAreaView,
-  StatusBar,
+  // StatusBar,
   Platform,
   ActivityIndicator,
   FlatList,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import NavBar from "../../components/NavBar";
+import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "./styles";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../context/AuthContext";
@@ -151,125 +152,128 @@ export default function CentralCuidado() {
 
   return (
     <SafeAreaView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{flex: 1}}
     >
-      <StatusBar barStyle="light-content" backgroundColor="#9B59B6" />
+      <StatusBar translucent backgroundColor="transparent" />
 
       {/* ── BLOCO FIXO — não rola ─────────────────────────────── */}
+       <View style={styles.container}>
 
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Central de Cuidado</Text>
-        <Text style={styles.subtitle}>Gerencie suas sessões e informações</Text>
-      </View>
 
-      <View style={styles.content}>
-        {/* Card Próxima Sessão */}
-        <View style={styles.cardSessao}>
-          <View style={styles.sessaoHeader}>
-            <View style={styles.iconCircle}>
-              <Feather name="video" size={20} color="#76D7C4" />
-            </View>
-            <Text style={styles.sessaoTitle}>Próxima Sessão</Text>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.title}>Central de Cuidado</Text>
+            <Text style={styles.subtitle}>Gerencie suas sessões e informações</Text>
           </View>
 
-          {loadingSessao ? (
-            <ActivityIndicator
-              size="small"
-              color="#76D7C4"
-              style={{ marginVertical: 16 }}
-            />
-          ) : proximaSessao ? (
-            <>
-              <View style={styles.infoDoutora}>
-                <View>
-                  <Text style={styles.labelProfissional}>Profissional</Text>
-                  <Text style={styles.nomeDoutora}>
-                    {getNomePsicologo(proximaSessao)}
-                  </Text>
-                  <Text style={styles.especialidade}>
-                    {proximaSessao.psicologo?.especialidade ?? "Psicólogo(a)"}
-                  </Text>
+          <View style={styles.content}>
+            {/* Card Próxima Sessão */}
+            <View style={styles.cardSessao}>
+              <View style={styles.sessaoHeader}>
+                <View style={styles.iconCircle}>
+                  <Feather name="video" size={20} color="#76D7C4" />
                 </View>
-                <View style={styles.tempoContainer}>
-                  <Text style={styles.labelHoje}>
-                    {formatarData(proximaSessao.data_sessao)}
-                  </Text>
-                  <Text style={styles.horario}>
-                    {formatarHora(proximaSessao.hora_inicio)}
-                  </Text>
-                </View>
+                <Text style={styles.sessaoTitle}>Próxima Sessão</Text>
               </View>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.btnEntrar,
-                  { opacity: pressed ? 0.8 : 1 },
-                ]}
-                onPress={() => console.log("Entrando na sessão...")}
-              >
-                <Text style={styles.btnText}>Entrar na Sessão</Text>
-              </Pressable>
-            </>
-          ) : (
-            <View style={{ alignItems: "center", paddingVertical: 5 }}>
-              <Ionicons name="calendar-outline" size={36} color="#ccc" />
-              <Text style={{ color: "#aaa", fontSize: 14 }}>
-                Nenhuma sessão agendada
-              </Text>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.btnAgendar,
-                  { opacity: pressed ? 0.8 : 1 },
-                ]}
-                onPress={() => navigation.navigate("pesquisa")}
-              >
-                <Text style={styles.btnText}>Agendar Sessão</Text>
-              </Pressable>
+
+              {loadingSessao ? (
+                <ActivityIndicator
+                  size="small"
+                  color="#76D7C4"
+                  style={{ marginVertical: 16 }}
+                />
+              ) : proximaSessao ? (
+                <>
+                  <View style={styles.infoDoutora}>
+                    <View>
+                      <Text style={styles.labelProfissional}>Profissional</Text>
+                      <Text style={styles.nomeDoutora}>
+                        {getNomePsicologo(proximaSessao)}
+                      </Text>
+                      <Text style={styles.especialidade}>
+                        {proximaSessao.psicologo?.especialidade ?? "Psicólogo(a)"}
+                      </Text>
+                    </View>
+                    <View style={styles.tempoContainer}>
+                      <Text style={styles.labelHoje}>
+                        {formatarData(proximaSessao.data_sessao)}
+                      </Text>
+                      <Text style={styles.horario}>
+                        {formatarHora(proximaSessao.hora_inicio)}
+                      </Text>
+                    </View>
+                  </View>
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.btnEntrar,
+                      { opacity: pressed ? 0.8 : 1 },
+                    ]}
+                    onPress={() => console.log("Entrando na sessão...")}
+                  >
+                    <Text style={styles.btnText}>Entrar na Sessão</Text>
+                  </Pressable>
+                </>
+              ) : (
+                <View style={{ alignItems: "center", paddingVertical: 5 }}>
+                  <Ionicons name="calendar-outline" size={36} color="#ccc" />
+                  <Text style={{ color: "#aaa", fontSize: 14 }}>
+                    Nenhuma sessão agendada
+                  </Text>
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.btnAgendar,
+                      { opacity: pressed ? 0.8 : 1 },
+                    ]}
+                    onPress={() => navigation.navigate("pesquisa")}
+                  >
+                    <Text style={styles.btnText}>Agendar Sessão</Text>
+                  </Pressable>
+                </View>
+              )}
             </View>
-          )}
-        </View>
 
-        {/* Grid de Atalhos */}
-        <View style={styles.grid}>
-          <View style={styles.row}>
-            <Pressable
-              style={getPressableStyle}
-              onPress={() => navigation.navigate("minhasSessoes")}
-            >
-              <Ionicons name="time-outline" size={24} color="#5DADE2" />
-              <Text style={styles.miniCardTitle}>Sessões</Text>
-              <Text style={styles.miniCardSub}>Próximas sessões</Text>
-            </Pressable>
-            <Pressable style={getPressableStyle} onPress={() => {}}>
-              <Ionicons name="chatbubble-outline" size={24} color="#A569BD" />
-              <Text style={styles.miniCardTitle}>Chat</Text>
-              <Text style={styles.miniCardSub}>Mensagens</Text>
-            </Pressable>
-          </View>
-          <View style={styles.row}>
-            <Pressable style={getPressableStyle} onPress={() => navigation.navigate("historico")}>
-              <Ionicons
-                name="document-text-outline"
-                size={24}
-                color="#52BE80"
-              />
-              <Text style={styles.miniCardTitle}>Histórico</Text>
-              <Text style={styles.miniCardSub}>Sessões anteriores</Text>
-            </Pressable>
-            <Pressable
-              style={getPressableStyle}
-              onPress={() => navigation.navigate("pagamento")}
-            >
-              <Ionicons name="card-outline" size={24} color="#EB984E" />
-              <Text style={styles.miniCardTitle}>Pagamento</Text>
-              <Text style={styles.miniCardSub}>Faturas</Text>
-            </Pressable>
-          </View>
-        </View>
+            {/* Grid de Atalhos */}
+            <View style={styles.grid}>
+              <View style={styles.row}>
+                <Pressable
+                  style={getPressableStyle}
+                  onPress={() => navigation.navigate("minhasSessoes")}
+                >
+                  <Ionicons name="time-outline" size={24} color="#5DADE2" />
+                  <Text style={styles.miniCardTitle}>Sessões</Text>
+                  <Text style={styles.miniCardSub}>Próximas sessões</Text>
+                </Pressable>
+                <Pressable style={getPressableStyle} onPress={() => {}}>
+                  <Ionicons name="chatbubble-outline" size={24} color="#A569BD" />
+                  <Text style={styles.miniCardTitle}>Chat</Text>
+                  <Text style={styles.miniCardSub}>Mensagens</Text>
+                </Pressable>
+              </View>
+              <View style={styles.row}>
+                <Pressable style={getPressableStyle} onPress={() => navigation.navigate("historico")}>
+                  <Ionicons
+                    name="document-text-outline"
+                    size={24}
+                    color="#52BE80"
+                  />
+                  <Text style={styles.miniCardTitle}>Histórico</Text>
+                  <Text style={styles.miniCardSub}>Sessões anteriores</Text>
+                </Pressable>
+                <Pressable
+                  style={getPressableStyle}
+                  onPress={() => navigation.navigate("pagamento")}
+                >
+                  <Ionicons name="card-outline" size={24} color="#EB984E" />
+                  <Text style={styles.miniCardTitle}>Pagamento</Text>
+                  <Text style={styles.miniCardSub}>Faturas</Text>
+                </Pressable>
+              </View>
+            </View>
 
-      </View>
-      <NavBar tela="central" />
+          </View>
+       </View>
+
+        <NavBar tela="central" />
     </SafeAreaView>
   );
 }

@@ -129,11 +129,23 @@ export default function CadastroFoto({ route }) {
         <View style={styles.containerBotoes2}>
           <Pressable
             onPress={() => navigation.goBack()}
-            style={styles.btnVoltar}
+            style={({ pressed }) => [
+            styles.btnVoltar,
+            {
+              opacity: pressed ? 0.8 : 1,
+              transform: [{ scale: pressed ? 0.95 : 1 }],
+            },
+          ]}
           >
             <Text style={styles.setaVoltar}>{"<"}</Text>
           </Pressable>
-          <Pressable style={styles.btnProximo} onPress={() => enviar()}>
+          <Pressable style={({ pressed }) => [
+                styles.btnProximo,
+                {
+                  opacity: pressed ? 0.8 : 1,
+                  transform: [{ scale: pressed ? 0.95 : 1 }],
+                },
+              ]} onPress={() => enviar()}>
             <Text style={styles.textoProximo}>
               {imagem ? "Próximo" : "Pular"}
             </Text>

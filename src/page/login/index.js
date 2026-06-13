@@ -15,7 +15,8 @@ export default function Login() {
 
   const [login, setLogin] = useState(""); // * Login aqui é o Email!!
   const [senha, setSenha] = useState("");
-  
+  const [erro, setErro] = useState("");
+   
   const [loading, setLoading] = useState(false);
 
   const enviar = (tela) => {
@@ -58,7 +59,11 @@ export default function Login() {
 
       try {
         await signIn(login, senha)
-      } catch (e){}
+        setErro("");
+      } catch (e){
+        setErro("Tente novamente, verifique o email e a senha")
+      }
+      
     }
     setLoading(false)
   };
@@ -86,6 +91,7 @@ export default function Login() {
 
           <View style={styles.contEntradas}>
             <View>
+              
               <Text style={styles.label}>Email</Text>
 
               <View style={styles.Continput}>
@@ -121,23 +127,34 @@ export default function Login() {
               <Pressable onPress={() => enviar("emailRec")}>
                 <Text style={styles.esenha}>Esqueci a minha senha</Text>
               </Pressable>
+              {erro ? <Text style={styles.mensagemErro}>{erro}</Text> : null}
             </View>
           </View>
 
           <View style={styles.contEntra}>
             <View style={styles.botaoEntra}>
-              <Pressable onPress={() => onSubmit()} style={styles.stylesButton}>
+              <Pressable onPress={() => onSubmit()} style={({ pressed }) => [
+                styles.stylesButton,
+                {
+                  opacity: pressed ? 0.8 : 1,
+                  transform: [{ scale: pressed ? 0.95 : 1 }],
+                },
+              ]}>
                 <Text style={styles.entrarText}>Entrar</Text>
-                {loading ? (
-                  <ActivityIndicator color="rgba(163, 131, 251, 1)" size="small" />
-                ) : (
-                  <AntDesign
-                    name="send"
-                    size={24}
-                    color="rgba(163, 131, 251, 1)"
-                    style={styles.iconEnviar}
-                  />
-                )}
+                <View style={styles.iconContainer}>
+                  {loading ? (
+                    <ActivityIndicator
+                      color="rgba(163, 131, 251, 1)"
+                      size="small"
+                    />
+                  ) : (
+                    <AntDesign
+                      name="send"
+                      size={24}
+                      color="rgba(163, 131, 251, 1)"
+                    />
+                  )}
+                </View>
                 
               </Pressable>
             </View>
@@ -145,7 +162,12 @@ export default function Login() {
             <View style={styles.contaNova}>
               <Text style={styles.textCadastre}>É novo por aqui? </Text>
 
-              <Pressable onPress={() => enviar("cadastroPessoal")}>
+              <Pressable onPress={() => enviar("cadastroPessoal")} style={({ pressed }) => [
+                  {
+                    opacity: pressed ? 0.8 : 1,
+                    transform: [{ scale: pressed ? 0.97 : 1 }],
+                  },
+                ]}>
                 <Text style={styles.linkCadastre}>Cadastre-se</Text>
               </Pressable>
             </View>

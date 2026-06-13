@@ -25,7 +25,6 @@ export default function Perfil({ navigation }) {
   const [nickname, setNickname] = useState("");
   const [genero, setGenero] = useState("");
   const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
@@ -160,7 +159,6 @@ export default function Perfil({ navigation }) {
       setEmail(user.email || "");
       setTelefone(user.telefone || "");
       setGenero(user.genero || "");
-      setSenha(user.senha || "123456"); // Não deixa a senha aqui
       setCpf(user.cpf || "");
       setDataNascimento(user.data_nascimento || "");
     }
@@ -195,7 +193,7 @@ export default function Perfil({ navigation }) {
             <View style={styles.fotoPerfil}>
               {user?.foto_perfil ? (
                 <Image
-                  source={{ uri: `http://localhost:8000/storage/${user.foto_perfil}` }}
+                  source={{ uri: `${FOTO}${user.foto_perfil}` }}
                   style={styles.imagem} // mesmo estilo que usou no CadastroFoto
                   resizeMode="cover"
                 />

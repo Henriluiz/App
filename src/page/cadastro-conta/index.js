@@ -215,7 +215,14 @@ export default function CadastroConta() {
             <View style={styles.containerBotoes}>
               <Pressable
                 onPress={() => navigation.goBack()}
-                style={styles.btnVoltar}
+                style={({ pressed }) => [
+                styles.btnVoltar,
+                (!aceitoTermos || carregando) && styles.botaoDesativado,
+                {
+                  opacity: pressed ? 0.8 : 1,
+                  transform: [{ scale: pressed ? 0.95 : 1 }],
+                },
+              ]}
               >
                 <Text style={styles.setaVoltar}>{"<"}</Text>
               </Pressable>
@@ -223,9 +230,13 @@ export default function CadastroConta() {
               <Pressable
                 onPress={enviar}
                 disabled={!aceitoTermos || carregando}
-                style={[
+                style={({ pressed }) => [
                   styles.btnProximo,
                   (!aceitoTermos || carregando) && styles.botaoDesativado,
+                  {
+                    opacity: pressed ? 0.8 : 1,
+                    transform: [{ scale: pressed ? 0.95 : 1 }],
+                  },
                 ]}
               >
                 <Text style={styles.textoProximo}>

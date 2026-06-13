@@ -344,12 +344,24 @@ export default function CadastroPessoal({ navigation, route }) {
             <View style={styles.containerBotoes}>
               <Pressable
                 onPress={() => navigation.goBack()}
-                style={styles.btnVoltar}
+                style={({ pressed }) => [
+                  styles.btnVoltar,
+                  {
+                    opacity: pressed ? 0.8 : 1,
+                    transform: [{ scale: pressed ? 0.95 : 1 }],
+                  },
+                ]}
               >
                 <Text style={styles.setaVoltar}>{"<"}</Text>
               </Pressable>
 
-              <Pressable onPress={enviar} style={styles.btnProximo}>
+              <Pressable onPress={enviar} style={({ pressed }) => [
+                  styles.btnProximo,
+                  {
+                    opacity: pressed ? 0.8 : 1,
+                    transform: [{ scale: pressed ? 0.95 : 1 }],
+                  },
+                ]}>
                 <Text style={styles.textoProximo}>Próximo</Text>
 
                 <View style={styles.circuloSeta}>
