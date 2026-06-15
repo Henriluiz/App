@@ -25,6 +25,7 @@ import {
 } from "../services/authStogare";
 import { authEvents } from "../services/authEvents";
 import { errorMonitor } from "events";
+import { registerForPushNotifications } from '../services/pushNotifications';
 
 const AuthContext = createContext({});
 
@@ -41,6 +42,15 @@ export function AuthProvider({ children }) {
     
     const token = data.access_token;
     const user = data.user;
+    const expoToken = await registerForPushNotifications();
+
+    if (expoToken) {
+      await api.post(
+        '/save-push-token',
+        { expo_token: expoToken },
+        { headers: { Authorization: `Bearer ${response.data.token}` } }
+      );
+    }
 
     await saveSession(token, user);
 
@@ -237,6 +247,19 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!user) return; // só executa quando há usuário logado
+  
+    async function registerPush() {
+      const expoToken = await registerForPushNotifications();
+      if (expoToken) {
+        await api.post('/save-push-token', { expo_token: expoToken });
+      }
+    }
+  
+    registerPush();
+  }, [user]); // roda toda vez que o user muda de null → objeto
 
   useEffect(() => {
     bootstrap();
