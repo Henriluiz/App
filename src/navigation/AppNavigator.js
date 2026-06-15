@@ -16,6 +16,7 @@ import ReagendarConsulta from "../page/reagendarCons";
 import Cancelamento from "../page/cancelamento";
 import Pagamento from "../page/pagamento";
 import Historico from "../page/historico";
+import Chat from "../page/chat";
 
 const Stack = createNativeStackNavigator();
 
@@ -159,6 +160,10 @@ export default function AppNavigator() {
           },
           headerTintColor: "#A383FB",
         }}
+      />
+      <Stack.Screen
+        name="chat"
+        component={Chat}
       />
     </Stack.Navigator>
   );
