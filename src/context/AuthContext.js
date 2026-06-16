@@ -26,6 +26,7 @@ import {
 import { authEvents } from "../services/authEvents";
 import { errorMonitor } from "events";
 import { registerForPushNotifications } from '../services/pushNotifications';
+import * as Notifications from "expo-notifications";
 
 const AuthContext = createContext({});
 
@@ -48,7 +49,7 @@ export function AuthProvider({ children }) {
       await api.post(
         '/save-push-token',
         { expo_token: expoToken },
-        { headers: { Authorization: `Bearer ${response.data.token}` } }
+        { headers: { Authorization: `Bearer ${data.access_token}` } }
       );
     }
 
@@ -177,8 +178,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // ! Não testado - Apenas criado para poupar tempo
-
   async function SolCancelamentoCons(id_sessao, motivo) {
     try {
       const resposta = await solicitarCancelamento(id_sessao, motivo);
@@ -263,6 +262,24 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     bootstrap();
+  }, []);
+
+  useEffect(() => {
+    const notificationListener =
+      Notifications.addNotificationReceivedListener(
+        (notification) => {
+
+          console.log(
+            "🔔 Notificação recebida:",
+            notification
+          );
+
+        }
+      );
+
+    return () => {
+      notificationListener.remove();
+    };
   }, []);
 
   useEffect(() => {
