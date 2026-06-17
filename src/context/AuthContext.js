@@ -27,6 +27,7 @@ import { authEvents } from "../services/authEvents";
 import { errorMonitor } from "events";
 import { registerForPushNotifications } from '../services/pushNotifications';
 import * as Notifications from "expo-notifications";
+import api from "../services/api";
 
 const AuthContext = createContext({});
 
@@ -35,26 +36,19 @@ const AuthContext = createContext({});
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState("");
 
   const FOTO = "http://192.168.18.99:8000/storage/";
 
   async function signIn(loginInput, senha) {
     const data = await login(loginInput, senha);
     
-    const token = data.access_token;
+    const token_ = data.access_token;
     const user = data.user;
-    const expoToken = await registerForPushNotifications();
-
-    if (expoToken) {
-      await api.post(
-        '/save-push-token',
-        { expo_token: expoToken },
-        { headers: { Authorization: `Bearer ${data.access_token}` } }
-      );
-    }
-
-    await saveSession(token, user);
-
+    
+    await saveSession(token_, user);
+    
+    setToken(token_)
     setUser(user);
   }
 
@@ -223,19 +217,21 @@ export function AuthProvider({ children }) {
       const resposta = await pacienteHistorico();
       return resposta;
     } catch (e) {
-      console.error("Erro completo (mSessoes):", e.response?.data);
+      console.error("Erro completo (historico):", e.response?.data);
       return null;
     }
   }
 
   const bootstrap = async () => {
     try {
-      const token = await getToken();
+      const token_ = await getToken();
 
-      if (!token) {
+      if (!token_) {
         setUser(null);
         return;
       }
+
+      setToken(token_);
 
       const user = await getUser();
       setUser(user);
@@ -248,18 +244,27 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    if (!user) return; // só executa quando há usuário logado
-  
-    async function registerPush() {
-      const expoToken = await registerForPushNotifications();
-      if (expoToken) {
-        await api.post('/save-push-token', { expo_token: expoToken });
+      if (!user) return;
+    
+      async function registerPush() {
+        console.log('🔔 Iniciando registro de push...');
+        
+        const expoToken = await registerForPushNotifications();
+        
+        console.log('🔔 Token obtido:', expoToken);
+        
+        if (expoToken) {
+          const resposta = await api.post('/save-push-token', { token: expoToken });
+          console.log('🔔 Resposta do servidor:', resposta.data);
+        } else {
+          console.log('🔔 Token nulo — permissão negada ou não é device físico');
+        }
       }
-    }
-  
-    registerPush();
-  }, [user]); // roda toda vez que o user muda de null → objeto
+    
+      registerPush();
+  }, [user]);
 
+  
   useEffect(() => {
     bootstrap();
   }, []);

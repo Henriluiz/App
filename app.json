@@ -32,6 +32,12 @@
       "expo-font",
       "expo-notifications",
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "97996283-234e-43e9-b659-c0a172305110"
+      }
+    },
+    "owner": "luizhpzin"
   }
 }
