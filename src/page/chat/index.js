@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
+  Modal,
   Platform,
+  Pressable,
   ScrollView,
   View,
   Text,
@@ -45,16 +48,38 @@ const messages = [
   {
     id: 6,
     sender: "user",
-    text: "Sim! Já estou ansiosa, queria confirmar: 4 quarto às 14h, certo?",
+    text: "Sim! Já estou ansiosa, queria confirmar: quarta às 14h, certo?",
     time: "10:39",
+  },
+  {
+    id: 7,
+    sender: "therapist",
+    text: "Sim! está confirmado. Nos vemos na quarta às 14h. Tenha um ótimo dia!",
+    time: "10:40",
   },
 ];
 
-export default function Chat({ navigation }) {
+export default function Chat({ navigation, route }) {
+  const scrollViewRef = useRef(null);
   const [messageText, setMessageText] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [rating, setRating] = useState(0);
+  const doctorName = route?.params?.userName ?? "Dra. Eloísa Almeida";
+  const avatarInitials = route?.params?.userAvatar ?? "EA";
 
   const handleScroll = () => {
     // Scroll tracking if needed for future features
+  };
+
+  const handleSubmitReview = () => {
+    setModalVisible(false);
+    Alert.alert("Avaliação enviada", "Obrigado por avaliar seu psicólogo.");
+  };
+
+  const handleContentSizeChange = (_, contentHeight) => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: false });
+    }
   };
 
   return (
@@ -74,24 +99,89 @@ export default function Chat({ navigation }) {
 
         <View style={styles.profileInfo}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>EA</Text>
+            <Text style={styles.avatarText}>{avatarInitials}</Text>
           </View>
 
           <View style={styles.nameWrapper}>
             <Text style={styles.name} numberOfLines={1}>
-              Dra. Eloísa Almeida
+              {doctorName}
             </Text>
             <Text style={styles.subtitle}>Psicóloga clínica</Text>
           </View>
         </View>
+
+        <TouchableOpacity
+          style={styles.menuButton}
+          activeOpacity={0.7}
+          onPress={() => setModalVisible(true)}
+        >
+          <Ionicons name="ellipsis-vertical" size={22} color="#ffffff" />
+        </TouchableOpacity>
       </View>
+
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setModalVisible(false)}
+        />
+        <View style={styles.modalContainer}>
+          <View style={styles.modalCloseRow}>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Ionicons name="close" size={24} color="#1F2640" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.modalAvatarCircle}>
+            <Text style={styles.modalAvatarText}>EA</Text>
+          </View>
+          <Text style={styles.modalTitle}>Avalie seu psicólogo</Text>
+          <Text style={styles.modalSubtitle}>
+            Sua opinião é muito importante para melhorarmos sempre.
+          </Text>
+          <Text style={[styles.modalQuestion, styles.modalQuestionCenter]}>
+            Como foi sua experiência?
+          </Text>
+          <View style={styles.starRow}>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <TouchableOpacity
+                key={star}
+                onPress={() => setRating(star)}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name={star <= rating ? "star" : "star-outline"}
+                  size={28}
+                  color="#F7B731"
+                  style={styles.starIcon}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+          <TouchableOpacity
+            style={styles.modalSubmitButton}
+            onPress={handleSubmitReview}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.modalSubmitText}>Enviar avaliação</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
 
       <View style={styles.chatCard}>
         <ScrollView
+          ref={scrollViewRef}
           contentContainerStyle={styles.messageList}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
           scrollEventThrottle={16}
+          onContentSizeChange={handleContentSizeChange}
         >
           <View style={styles.tagContainer}>
             <Text style={styles.tagText}>Hoje</Text>

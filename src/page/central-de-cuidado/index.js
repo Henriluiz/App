@@ -243,7 +243,7 @@ export default function CentralCuidado() {
                   <Text style={styles.miniCardTitle}>Sessões</Text>
                   <Text style={styles.miniCardSub}>Próximas sessões</Text>
                 </Pressable>
-                <Pressable style={getPressableStyle} onPress={() => {}}>
+                <Pressable style={getPressableStyle} onPress={() => navigation.navigate("inicioChat") }>
                   <Ionicons name="chatbubble-outline" size={24} color="#A569BD" />
                   <Text style={styles.miniCardTitle}>Chat</Text>
                   <Text style={styles.miniCardSub}>Mensagens</Text>

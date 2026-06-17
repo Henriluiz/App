@@ -17,13 +17,15 @@ import Cancelamento from "../page/cancelamento";
 import Pagamento from "../page/pagamento";
 import Historico from "../page/historico";
 import Chat from "../page/chat";
+import InicioChat from "../page/inicioChat";
+
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName="menu"
+      initialRouteName="inicioChat"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="menu" component={Menu} />
@@ -165,6 +167,11 @@ export default function AppNavigator() {
         name="chat"
         component={Chat}
       />
+      <Stack.Screen
+        name="inicioChat"
+        component={InicioChat}
+      />
+
     </Stack.Navigator>
   );
 }

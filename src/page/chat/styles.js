@@ -31,6 +31,131 @@ export default StyleSheet.create({
     marginRight: 12,
   },
 
+  menuButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: "#00000050",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+
+  modalContainer: {
+    position: "absolute",
+    top: "18%",
+    left: 20,
+    right: 20,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 24,
+    padding: 22,
+    shadowColor: "#000",
+    shadowOpacity: 0.16,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 12 },
+    elevation: 12,
+  },
+
+  modalCloseRow: {
+    alignItems: "flex-end",
+  },
+
+  modalCloseButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#F4F4F6",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  modalAvatarCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "#D8E7F7",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: 8,
+    marginBottom: 16,
+  },
+
+  modalAvatarText: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#5D46FF",
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1F2640",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+
+  modalSubtitle: {
+    fontSize: 14,
+    color: "#667085",
+    textAlign: "center",
+    marginBottom: 18,
+  },
+
+  modalQuestion: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#1F2640",
+    marginBottom: 14,
+  },
+
+  modalQuestionCenter: {
+    textAlign: "center",
+  },
+
+  starRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 18,
+  },
+
+  starIcon: {
+    marginHorizontal: 4,
+  },
+
+  modalInput: {
+    minHeight: 90,
+    borderRadius: 16,
+    backgroundColor: "#F7F7FA",
+    padding: 14,
+    fontSize: 14,
+    color: "#1F2640",
+    textAlignVertical: "top",
+    marginBottom: 18,
+  },
+
+  modalSubmitButton: {
+    backgroundColor: "#5D46FF",
+    paddingVertical: 14,
+    borderRadius: 16,
+    alignItems: "center",
+  },
+
+  modalSubmitText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+
   profileInfo: {
     flex: 1,
     flexDirection: "row",
@@ -76,7 +201,7 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: "#66E4D5",
     paddingHorizontal: 16,
-    paddingBottom: 14,
+    paddingBottom: 2,
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowRadius: 22,
@@ -98,10 +223,6 @@ export default StyleSheet.create({
     color: "#0000009a",
     fontSize: 12,
     fontWeight: "700",
-  },
-
-  messageList: {
-    paddingBottom: 24,
   },
 
   messageBubble: {
