@@ -24,7 +24,7 @@ export default function NavBar({ tela }) {
     {
       key: "chat",
       icon: tela === "chat" ? "chatbubble" : "chatbubble-outline",
-      route: "chat",
+      route: "inicioChat",
     },
     {
       key: "perfil",
