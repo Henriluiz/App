@@ -11,6 +11,7 @@ import VerificationCode from "../page/verificationCode"
 import EsquecerSenha from "../page/esquecerSenha";
 import VerificarEmail from "../page/verificarEmail";
 
+
 const Stack = createNativeStackNavigator();
 
 export default function AuthNavigator() {

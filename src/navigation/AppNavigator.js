@@ -18,7 +18,7 @@ import Pagamento from "../page/pagamento";
 import Historico from "../page/historico";
 import Chat from "../page/chat";
 import InicioChat from "../page/inicioChat";
-
+import Notificacao from "../page/notificacao";
 
 const Stack = createNativeStackNavigator();
 
@@ -171,7 +171,10 @@ export default function AppNavigator() {
         name="inicioChat"
         component={InicioChat}
       />
-
+      <Stack.Screen
+        name="notificacao"
+        component={Notificacao}
+      />
     </Stack.Navigator>
   );
 }

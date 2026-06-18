@@ -5,9 +5,11 @@ import {
   ScrollView,
   ActivityIndicator,
   Pressable,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./styles";
 
@@ -18,6 +20,7 @@ export default function Pagamento() {
   const [agendando, setAgendando] = useState(false);
   const [proximaSessao, setProximaSessao] = useState(null);
   const [loadingSessao, setLoadingSessao] = useState(true);
+  const [fotoComprovante, setFotoComprovante] = useState(null);
 
   // ── mesma lógica de CentralCuidado ──────────────────────────
   useEffect(() => {
@@ -45,6 +48,20 @@ export default function Pagamento() {
     };
     buscarProximaSessao();
   }, []);
+
+  // ── funcionalidade de selecionar comprovante ──────────────────
+  const selecionarFotoComprovante = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setFotoComprovante(result.assets[0].uri);
+    }
+  };
 
   // ── helpers de formatação ────────────────────────────────────
   const formatarData = (iso) => {
@@ -184,15 +201,28 @@ export default function Pagamento() {
         <View style={styles.uploadContainer}>
           <Text style={styles.uploadLabel}>Anexar comprovante</Text>
 
-          <Pressable style={styles.uploadArea}>
-            <Ionicons name="cloud-upload-outline" size={34} color="#8E7CFF" />
-
-            <Text style={styles.uploadAreaText}>
-              Clique para anexar ou arraste o arquivo aqui
-            </Text>
+          <Pressable
+            style={styles.uploadArea}
+            onPress={selecionarFotoComprovante}
+          >
+            {fotoComprovante ? (
+              <Image
+                source={{ uri: fotoComprovante }}
+                style={styles.uploadAreaImage}
+              />
+            ) : (
+              <>
+                <Ionicons name="cloud-upload-outline" size={34} color="#8E7CFF" />
+                <Text style={styles.uploadAreaText}>
+                  Clique para anexar ou arraste o arquivo aqui
+                </Text>
+              </>
+            )}
           </Pressable>
 
-          <Text style={styles.fileText}>Nenhum comprovante anexado</Text>
+          <Text style={styles.fileText}>
+            {fotoComprovante ? "Comprovante anexado ✓" : "Nenhum comprovante anexado"}
+          </Text>
         </View>
       </ScrollView>
 
