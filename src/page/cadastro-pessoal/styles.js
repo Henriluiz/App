@@ -68,6 +68,7 @@ export default StyleSheet.create({
 
   input: {
     width: "100%",
+    color: '#333',
     height: 50,
     borderColor: "#A383FB",
     borderWidth: 1.5,

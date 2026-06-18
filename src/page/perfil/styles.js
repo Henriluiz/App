@@ -33,7 +33,7 @@ export default StyleSheet.create({
     minWidth: 110,
     minHeight: 110,
     borderRadius: 80,
-    borderWidth: 3,
+    borderWidth: 2,
     borderColor: "#fff",
     backgroundColor: "#6C63FF",
     justifyContent: "center",
@@ -207,7 +207,7 @@ export default StyleSheet.create({
       width: '100%',
       height: '100%',
       resizeMode: 'cover',
-      borderRadius: 57,
+      borderRadius: 80,
     },
 
   iconeEditar: {

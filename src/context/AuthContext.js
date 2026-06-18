@@ -7,6 +7,11 @@ import {
   patchPerfil,
   verificarCPF,
   verificarUsername,
+  enviarEmail,
+  verificarCodSenha,
+  redefinirSenhaC,
+  verificarEmail,
+  verificarEmailConfirmar,
   PerfilPsicologo,
   PesquisaPsicologo,
   horariosDisponiveis,
@@ -25,6 +30,9 @@ import {
 } from "../services/authStogare";
 import { authEvents } from "../services/authEvents";
 import { errorMonitor } from "events";
+import { registerForPushNotifications } from '../services/pushNotifications';
+import * as Notifications from "expo-notifications";
+import api from "../services/api";
 
 const AuthContext = createContext({});
 
@@ -33,17 +41,19 @@ const AuthContext = createContext({});
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState("");
 
   const FOTO = "http://192.168.18.99:8000/storage/";
 
   async function signIn(loginInput, senha) {
     const data = await login(loginInput, senha);
     
-    const token = data.access_token;
+    const token_ = data.access_token;
     const user = data.user;
-
-    await saveSession(token, user);
-
+    
+    await saveSession(token_, user);
+    
+    setToken(token_)
     setUser(user);
   }
 
@@ -167,8 +177,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // ! Não testado - Apenas criado para poupar tempo
-
   async function SolCancelamentoCons(id_sessao, motivo) {
     try {
       const resposta = await solicitarCancelamento(id_sessao, motivo);
@@ -185,6 +193,55 @@ export function AuthProvider({ children }) {
       return resposta;
     } catch (e) {
       console.error("Erro completo (SolReagendarCons):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function EnviarEmailCont(email) {
+    try {
+      const resposta = await enviarEmail(email);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (EnviarEmailCont):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function verificarEmailC(email) {
+    try {
+      const resposta = await verificarEmail(email);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (verificarEmailC):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function verificarCodigoSenha(email, code) {
+    try {
+      const resposta = await verificarCodSenha(email, code);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (verificarCodigoSenha):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function redefinirSenha(email, code, senha, confirmar_senha) {
+    try {
+      const resposta = await redefinirSenhaC(email, code, senha, confirmar_senha);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (redefinirSenha):", e.response?.data);
+      return null;
+    }
+  }
+  async function verificarEmailConfirmarC(email, code) {
+    try {
+      const resposta = await verificarEmailConfirmar(email, code);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (verificarEmailConfirmar):", e.response?.data);
       return null;
     }
   }
@@ -214,19 +271,21 @@ export function AuthProvider({ children }) {
       const resposta = await pacienteHistorico();
       return resposta;
     } catch (e) {
-      console.error("Erro completo (mSessoes):", e.response?.data);
+      console.error("Erro completo (historico):", e.response?.data);
       return null;
     }
   }
 
   const bootstrap = async () => {
     try {
-      const token = await getToken();
+      const token_ = await getToken();
 
-      if (!token) {
+      if (!token_) {
         setUser(null);
         return;
       }
+
+      setToken(token_);
 
       const user = await getUser();
       setUser(user);
@@ -239,7 +298,47 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
+      if (!user) return;
+    
+      async function registerPush() {
+        console.log('🔔 Iniciando registro de push...');
+        
+        const expoToken = await registerForPushNotifications();
+        
+        console.log('🔔 Token obtido:', expoToken);
+        
+        if (expoToken) {
+          const resposta = await api.post('/save-push-token', { token: expoToken });
+          console.log('🔔 Resposta do servidor:', resposta.data);
+        } else {
+          console.log('🔔 Token nulo — permissão negada ou não é device físico');
+        }
+      }
+    
+      registerPush();
+  }, [user]);
+
+  
+  useEffect(() => {
     bootstrap();
+  }, []);
+
+  useEffect(() => {
+    const notificationListener =
+      Notifications.addNotificationReceivedListener(
+        (notification) => {
+
+          console.log(
+            "🔔 Notificação recebida:",
+            notification
+          );
+
+        }
+      );
+
+    return () => {
+      notificationListener.remove();
+    };
   }, []);
 
   useEffect(() => {
@@ -271,6 +370,11 @@ export function AuthProvider({ children }) {
         // Verificar dados antes de salvar no banco (CPF, Nickname - Unique)
         verificarDisponibilidade,
         historico,
+        EnviarEmailCont,
+        verificarCodigoSenha,
+        redefinirSenha,
+        verificarEmailC,
+        verificarEmailConfirmarC,
 
         // Psicologo
         verPsicologo,

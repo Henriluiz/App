@@ -61,6 +61,7 @@ export default function Login() {
         await signIn(login, senha)
         setErro("");
       } catch (e){
+        console.log("ERR0! No login: ", e)
         setErro("Tente novamente, verifique o email e a senha")
       }
       

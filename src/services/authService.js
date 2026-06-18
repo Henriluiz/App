@@ -13,6 +13,7 @@ export async function cadastroPaciente(data) {
   formData.append("senha", data.senha);
   formData.append("data", data.data);
   formData.append("cpf", data.cpf);
+  formData.append("code", data.code);
   formData.append("termos", data.termos ? "1" : "0");
 
 
@@ -89,6 +90,115 @@ export async function verificarCPF(cpf) {
   });
 
   return response.data;
+}
+
+export async function enviarEmail(email) {
+  try {
+    const response = await api.post(
+      `/forgotPassword/`,
+      {
+        email: email,
+      },
+    );
+    console.log("Resposta de Enviar Email: " + response);
+    return response.data;
+  } catch (error) {
+    console.log(
+      "Erro",
+      "Não foi possível enviar o email para redefinir a senha{'\n}",
+      error,
+    );
+
+    return error.response?.data ?? { error: true, message: "Erro de conexão." }
+  }
+}
+
+
+export async function verificarCodSenha(email, code) {
+  try {
+    const response = await api.post(
+      `/verifyResetCode/`,
+      {
+        email: email,
+        code: code,
+      },
+    );
+    console.log("Resposta ao verificar o código de redefinição de Senha: " + response);
+    return response.data;
+  } catch (error) {
+    console.log(
+      "Erro",
+      "Não foi possível verificar o código do email.{'\n}",
+      error,
+    );
+
+    return error.response?.data ?? { error: true, message: "Erro de conexão." }
+  }
+}
+
+export async function redefinirSenhaC(email, code, senha, confirmar_senha) {
+  try {
+    const response = await api.post(
+      `/resetPassword/`,
+      {
+        email: email,
+        code: code,
+        senha: senha,
+        confirmar_senha: confirmar_senha
+      },
+    );
+    console.log("Resposta ao redefinir Senha: " + response);
+    return response.data;
+  } catch (error) {
+    console.log(
+      "Erro",
+      "Não foi possível redefinir senha.{'\n}",
+      error,
+    );
+    return error.response?.data ?? { error: true, message: "Erro de conexão." }
+  }
+}
+
+export async function verificarEmail(email) {
+  try {
+    const response = await api.post(
+      `/sendVerificationEmail/`,
+      {
+        email: email,
+      },
+    );
+    console.log("Resposta de Enviar Email para criar conta: " + response);
+    return response.data;
+  } catch (error) {
+    console.log(
+      "Erro",
+      "Não foi possível enviar o email para criar conta{'\n}",
+      error,
+    );
+
+    return error.response?.data ?? { error: true, message: "Erro de conexão." }
+  }
+}
+export async function verificarEmailConfirmar(email, code) {
+  try {
+    const response = await api.post(
+      `/verificarEmail/`,
+      {
+        email: email,
+        code: code,
+      },
+    );
+    console.log("Resposta de Enviar Email para criar conta: " + response);
+    return response.data;
+  } catch (error) {
+    console.log(
+      "Erro",
+      "Não foi possível enviar o email para criar conta{'\n}",
+      error,
+    );
+
+    return error.response?.data ?? { error: true, message: "Erro de conexão." }
+  }
 }
 
 export async function verificarUsername(username) {

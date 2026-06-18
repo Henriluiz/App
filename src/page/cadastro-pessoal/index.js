@@ -244,6 +244,8 @@ export default function CadastroPessoal({ navigation, route }) {
               <Text style={styles.label}>Nome Completo</Text>
               <TextInput
                 style={styles.input}
+                placeholder="Zenith ©"
+                placeholderTextColor="#999"
                 value={nomeCompleto}
                 onChangeText={setNomeCompleto}
               />
@@ -258,6 +260,8 @@ export default function CadastroPessoal({ navigation, route }) {
 
               <TextInput
                 style={styles.nicknameInput}
+                placeholder="zenith"
+                placeholderTextColor="#999"
                 value={nickname}
                 onChangeText={(text)=> setNickname(formatarNickname(text))
                 }
@@ -273,6 +277,8 @@ export default function CadastroPessoal({ navigation, route }) {
               <Text style={styles.label}>Telefone</Text>
               <TextInput
                 style={styles.input}
+                placeholder="(11) 4002-8922"
+                placeholderTextColor="#999"
                 keyboardType="phone-pad"
                 value={telefone}
                 onChangeText={(text) =>
@@ -308,6 +314,9 @@ export default function CadastroPessoal({ navigation, route }) {
                   <View style={styles.pickerContainer}>
                     <Picker
                       selectedValue={genero}
+                      style={{ color: '#333' }}          // Android: cor do valor selecionado
+                      itemStyle={{ color: '#333' }}       // iOS: cor dos itens na roda
+                      dropdownIconColor="#A383FB"         // Android: cor da setinha
                       onValueChange={(itemValue) =>
                         setGenero(itemValue)
                       }
@@ -328,6 +337,8 @@ export default function CadastroPessoal({ navigation, route }) {
               <Text style={styles.label}>CPF</Text>
               <MaskedTextInput
                 mask="999.999.999-99"
+                placeholder="999.999.999-99"
+                placeholderTextColor="#999"
                 value={numcpf}
                 onChangeText={(text) => setNumCpf(text)}
                 keyboardType="numeric"
