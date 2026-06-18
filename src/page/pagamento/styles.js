@@ -434,4 +434,25 @@ export default StyleSheet.create({
     fontSize: 11,
     color: "#999",
   },
+
+  // Modal de Sucesso, check
+  successOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  
+  successContainer: {
+    width: '100%',
+    maxWidth: 340,
+    paddingVertical: 36,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+  },
+  
+  successIconContainer: {
+    marginBottom: 20,
+  },
 });

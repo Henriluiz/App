@@ -1,85 +1,135 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
   ScrollView,
   Pressable,
   SafeAreaView,
+  ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 import styles from "./styles";
+import { useAuth } from "../../context/AuthContext";
 
-const NOTIFICACOES = [
-  {
-    id: 1,
-    tipo: "confirmado",
-    titulo: "Pedido de consulta confirmado",
-    descricao: "Sua consulta com Dr. Gustavo foi confirmada para 15/05 às 14:00.",
-    hora: "14:30",
-    lido: false,
-    icon: "calendar",
-  },
-  {
-    id: 2,
-    tipo: "realizado",
-    titulo: "Consulta realizada",
-    descricao: "Sua consulta com Dra. Maria foi finalizada. Deseja avaliar a sessão?",
-    hora: "12:45",
-    lido: false,
-    icon: "checkmark-circle",
-  },
-  {
-    id: 3,
-    tipo: "reagendamento",
-    titulo: "Solicitação de reagendamento",
-    descricao: "Dr. Gustavo solicitou remarcar sua consulta para 16/05 às 15:30.",
-    hora: "10:15",
-    lido: false,
-    icon: "reload",
-  },
-  {
-    id: 4,
-    tipo: "cancelado",
-    titulo: "Pedido de consulta cancelada",
-    descricao: "Sua consulta com Dr. Pedro foi cancelada. Gostaria de agendar outra?",
-    hora: "09:00",
-    lido: false,
-    icon: "close-circle",
-  },
-  {
-    id: 5,
-    tipo: "confirmado",
-    titulo: "Pedido de consulta confirmado",
-    descricao: "Sua consulta com Dra. Ana foi confirmada para 20/05 às 10:00.",
-    hora: "08:30",
-    lido: true,
-    icon: "calendar",
-  },
-  {
-    id: 6,
-    tipo: "realizado",
-    titulo: "Consulta realizada",
-    descricao: "Sua consulta com Dr. Carlos foi finalizada com sucesso.",
-    hora: "12/05",
-    lido: true,
-    icon: "checkmark-circle",
-  },
+// Formata ISO string em data/hora legível
+function formatarData(isoString) {
+  if (!isoString) return "";
+  const data = new Date(isoString);
+  const hoje = new Date();
+  const ontem = new Date();
+  ontem.setDate(hoje.getDate() - 1);
+
+  const mesmodia = (a, b) =>
+    a.getDate() === b.getDate() &&
+    a.getMonth() === b.getMonth() &&
+    a.getFullYear() === b.getFullYear();
+
+  const hora = data.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  if (mesmodia(data, hoje)) return hora;
+  if (mesmodia(data, ontem)) return "Ontem";
+
+  return data.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+}
+
+// Detecta ícone e tipo pelo título/body da notificação
+function detectarTipo(title = "", body = "") {
+  const texto = (title + " " + body).toLowerCase();
+
+  if (texto.includes("aprovad")) {
+    return {
+      tipo: "aprovacao",
+      icon: "checkmark-circle",
+    };
+  }
+
+  if (texto.includes("solicitad")) {
+    return {
+      tipo: "solicitacao",
+      icon: "time",
+    };
+  }
+
+  if (texto.includes("recus")) {
+    return {
+      tipo: "recusada",
+      icon: "close-circle",
+    };
+  }
+
+  return {
+    tipo: "outro",
+    icon: "notifications",
+  };
+}
+
+const ABAS = [
+  "Todos",
+  "Aprovações",
+  "Solicitações",
+  "Recusadas",
 ];
-
-const ABAS = ["Todos", "Confirmado", "Cancelada", "Reagendamento", "Finalizada"];
 
 export default function Notificacao() {
   const navigation = useNavigation();
   const [abaAtiva, setAbaAtiva] = useState("Todos");
+  const [notificacoes, setNotificacoes] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+  const [atualizando, setAtualizando] = useState(false);
+  const [erro, setErro] = useState(null);
 
-  const notificacoesFiltradas = NOTIFICACOES.filter((notif) => {
-    if (abaAtiva === "Todos") return true;
-    if (abaAtiva === "Confirmado") return notif.tipo === "confirmado";
-    if (abaAtiva === "Cancelada") return notif.tipo === "cancelado";
-    if (abaAtiva === "Reagendamento") return notif.tipo === "reagendamento";
-    if (abaAtiva === "Finalizada") return notif.tipo === "realizado";
-    return true;
+  const { centralNotificacao } = useAuth();
+
+  const buscarNotificacoes = useCallback(async (isRefresh = false) => {
+    if (isRefresh) setAtualizando(true);
+    else setCarregando(true);
+    setErro(null);
+
+    try {
+      const response = await centralNotificacao();
+
+      const mapeadas = response.map((n) => ({
+        id: n.id,
+        titulo: n.title,
+        descricao: n.body,
+        hora: formatarData(n.sent_at),
+        lido: true, // sem campo lido no backend ainda; adapte se implementar
+        ...detectarTipo(n.title, n.body),
+      }));
+
+      setNotificacoes(mapeadas);
+    } catch (e) {
+      setErro("Não foi possível carregar as notificações.");
+    } finally {
+      setCarregando(false);
+      setAtualizando(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    buscarNotificacoes();
+  }, [buscarNotificacoes]);
+
+  const notificacoesFiltradas = notificacoes.filter((notif) => {
+    switch (abaAtiva) {
+      case "Aprovações":
+        return notif.tipo === "aprovacao";
+
+      case "Solicitações":
+        return notif.tipo === "solicitacao";
+
+      case "Recusadas":
+        return notif.tipo === "recusada";
+
+      default:
+        return true;
+    }
   });
 
   return (
@@ -107,17 +157,11 @@ export default function Notificacao() {
           {ABAS.map((aba) => (
             <Pressable
               key={aba}
-              style={[
-                styles.tab,
-                abaAtiva === aba && styles.tabAtiva,
-              ]}
+              style={[styles.tab, abaAtiva === aba && styles.tabAtiva]}
               onPress={() => setAbaAtiva(aba)}
             >
               <Text
-                style={[
-                  styles.tabText,
-                  abaAtiva === aba && styles.tabTextAtiva,
-                ]}
+                style={[styles.tabText, abaAtiva === aba && styles.tabTextAtiva]}
               >
                 {aba}
               </Text>
@@ -126,38 +170,60 @@ export default function Notificacao() {
         </ScrollView>
       </View>
 
-      {/* LISTA DE NOTIFICAÇÕES */}
-      <ScrollView
-        style={styles.notificacoesList}
-        showsVerticalScrollIndicator={false}
-      >
-        {notificacoesFiltradas.map((notif) => (
-          <Pressable key={notif.id} style={styles.notificacaoCard}>
-            {/* ÍCONE */}
-            <View style={styles.iconContainer}>
-              <Ionicons
-                name={notif.icon}
-                size={28}
-                color="#8E7CFF"
-              />
-            </View>
-
-            {/* CONTEÚDO */}
-            <View style={styles.notificacaoContent}>
-              <Text style={styles.notificacaoTitulo}>{notif.titulo}</Text>
-              <Text style={styles.notificacaoDescricao}>
-                {notif.descricao}
-              </Text>
-            </View>
-
-            {/* HORA + INDICADOR LIDO */}
-            <View style={styles.notificacaoRight}>
-              <Text style={styles.notificacaoHora}>{notif.hora}</Text>
-              {!notif.lido && <View style={styles.indicadorNaoLido} />}
-            </View>
+      {/* ESTADOS: carregando / erro / vazio / lista */}
+      {carregando ? (
+        <View style={styles.centroFeedback}>
+          <ActivityIndicator size="large" color="#8E7CFF" />
+        </View>
+      ) : erro ? (
+        <View style={styles.centroFeedback}>
+          <Ionicons name="cloud-offline-outline" size={48} color="#8E7CFF" />
+          <Text style={styles.feedbackTexto}>{erro}</Text>
+          <Pressable style={styles.tentarNovamente} onPress={() => buscarNotificacoes()}>
+            <Text style={styles.tentarNovamenteTexto}>Tentar novamente</Text>
           </Pressable>
-        ))}
-      </ScrollView>
+        </View>
+      ) : (
+        <ScrollView
+          style={styles.notificacoesList}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={atualizando}
+              onRefresh={() => buscarNotificacoes(true)}
+              tintColor="#8E7CFF"
+            />
+          }
+        >
+          {notificacoesFiltradas.length === 0 ? (
+            <View style={styles.centroFeedback}>
+              <Ionicons name="notifications-off-outline" size={48} color="#8E7CFF" />
+              <Text style={styles.feedbackTexto}>Nenhuma notificação aqui.</Text>
+            </View>
+          ) : (
+            notificacoesFiltradas.map((notif) => (
+              <Pressable key={notif.id} style={styles.notificacaoCard}>
+                {/* ÍCONE */}
+                <View style={styles.iconContainer}>
+                  <Ionicons name={notif.icon} size={28} color="#8E7CFF" />
+                </View>
+
+                {/* CONTEÚDO */}
+                <View style={styles.notificacaoContent}>
+                  <Text style={styles.notificacaoTitulo}>{notif.titulo}</Text>
+                  <Text style={styles.notificacaoDescricao}>{notif.descricao}</Text>
+                </View>
+
+                {/* HORA + INDICADOR LIDO */}
+                <View style={styles.notificacaoRight}>
+                  <Text style={styles.notificacaoHora}>{notif.hora}</Text>
+                  {!notif.lido && <View style={styles.indicadorNaoLido} />}
+                </View>
+              </Pressable>
+            ))
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

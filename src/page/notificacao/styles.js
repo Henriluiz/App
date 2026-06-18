@@ -6,9 +6,9 @@ export default StyleSheet.create({
     backgroundColor: "#EDE9FF",
   },
 
-  // HEADER
   header: {
     backgroundColor: "#8E7CFF",
+    paddingTop: 45,
     paddingHorizontal: 20,
     paddingVertical: 16,
     flexDirection: "row",
@@ -134,5 +134,34 @@ export default StyleSheet.create({
     height: 10,
     borderRadius: 5,
     backgroundColor: "#8E7CFF",
+  },
+
+  centroFeedback: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+    gap: 12,
+  },
+
+  feedbackTexto: {
+    color: "#9CA3AF",
+    fontSize: 15,
+    textAlign: "center",
+    paddingHorizontal: 32,
+  },
+
+  tentarNovamente: {
+    marginTop: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: "#8E7CFF",
+  },
+
+  tentarNovamenteTexto: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

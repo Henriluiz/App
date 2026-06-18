@@ -3,8 +3,7 @@ import { getToken, clearSession } from "./authStogare";
 import { reset } from "./navigationService";
 import { Platform } from "react-native";
 
-const BASE_URL =
-  Platform.OS === "web" ? "http://localhost:8000" : "http://192.168.18.99:8000";
+const BASE_URL = "http://192.168.18.99:8000";
 
 export { BASE_URL };
 

@@ -1,5 +1,6 @@
 import api from "./api";
 import { Platform } from "react-native";
+import { getToken } from "./authStogare";
 import { BASE_URL } from "./api";
 
 export async function cadastroPaciente(data) {
@@ -201,6 +202,52 @@ export async function verificarEmailConfirmar(email, code) {
   }
 }
 
+  // Busca o pagamento pendente (com id_pagamento)
+  export async function mPagamentoPendente() {
+      const resposta = await api.get('/pagamento/pendente');
+      console.log("Status:", resposta.status);
+      console.log("Data:", JSON.stringify(resposta.data));
+      return resposta.data;
+  };
+
+  
+  // Envia o comprovante com o id_pagamento correto
+  export async function mAnexarComprovante(id_pagamento, fotoUri) {
+    const formData = new FormData();
+    formData.append('comprovante', {
+        uri: fotoUri,
+        name: 'comprovante.jpg',
+        type: 'image/jpeg',
+    });
+
+    // ✅ fetch nativo em vez de Axios para upload de arquivo
+    const token = await getToken(); // importe do authStorage
+    const resposta = await fetch(`${BASE_URL}/api/anexarComprovante/${id_pagamento}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+            // ✅ NÃO setar Content-Type — o fetch define o boundary sozinho
+        },
+        body: formData,
+    });
+
+    const json = await resposta.json();
+
+    if (!resposta.ok) {
+        throw { response: { data: json, status: resposta.status } };
+    }
+
+    return json;
+}
+
+export async function notificacao() {
+    const resposta = await api.get('/notifications');
+    console.log("Status:", resposta.status);
+    console.log("Data:", JSON.stringify(resposta.data));
+    return resposta.data;
+};
+
 export async function verificarUsername(username) {
   const response = await api.post("/verificarUsername", {
     username,
@@ -218,41 +265,6 @@ export async function patchPerfil(data) {
 export async function deleteConta() {
   const response = await api.delete("/delete");
   return response.data;
-}
-
-export async function solicitarCodigo(email) {
-  try {
-    const response = await api.post("/recuperacao/enviar", { email: email });
-
-    const data = response.data;
-    console.log("Sucesso", data.message);
-    return true;
-  } catch (error) {
-    console.log("Error", error);
-    return false;
-  }
-}
-
-export async function verificarCodigo(email, codigo) {
-  try {
-    const response = await api.post("/recuperacao/verificar", {
-      email,
-      codigo,
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log("Sucesso", data.message);
-      return true;
-      // navegue para a tela de nova senha
-    } else {
-      console.log("Erro", data.message);
-      return false;
-    }
-  } catch (error) {
-    console.log("Erro", "Não foi possível verificar o código.");
-  }
 }
 
 export async function PerfilPsicologo(id) {

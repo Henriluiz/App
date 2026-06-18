@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Pressable,
   Image,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -15,45 +16,40 @@ import styles from "./styles";
 
 export default function Pagamento() {
   const navigation = useNavigation();
-  const { mSessoes } = useAuth();
+  const { AnexarComprovante, PagamentoPendente } = useAuth(); // ✅ apenas o que é usado
 
   const [agendando, setAgendando] = useState(false);
+  const [pagamento, setPagamento] = useState(null);           // ✅ estado declarado
   const [proximaSessao, setProximaSessao] = useState(null);
   const [loadingSessao, setLoadingSessao] = useState(true);
   const [fotoComprovante, setFotoComprovante] = useState(null);
+  const [modalSucesso, setModalSucesso] = useState(false)
+  const [erro, setErro] = useState('')
 
-  // ── mesma lógica de CentralCuidado ──────────────────────────
   useEffect(() => {
-    const buscarProximaSessao = async () => {
-      try {
-        const resposta = await mSessoes();
-        const lista = resposta?.sessoes ?? [];
-        const hoje = new Date().toISOString().split("T")[0];
-        const futura =
-          lista
-            .filter(
-              (s) => s.data_sessao >= hoje && s.status_sessao === "agendada",
-            )
-            .sort((a, b) => {
-              if (a.data_sessao !== b.data_sessao)
-                return a.data_sessao.localeCompare(b.data_sessao);
-              return a.hora_inicio.localeCompare(b.hora_inicio);
-            })[0] ?? null;
-        setProximaSessao(futura);
-      } catch (error) {
-        console.error("Erro ao buscar próxima sessão:", error);
-      } finally {
-        setLoadingSessao(false);
-      }
-    };
-    buscarProximaSessao();
-  }, []);
+  const buscar = async () => {
+    try {
+      const resposta = await PagamentoPendente();
+      const p = resposta?.pagamento ?? null;
+      setPagamento(p);
 
-  // ── funcionalidade de selecionar comprovante ──────────────────
+      if (p?.sessao) {
+        setProximaSessao(p.sessao);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar pagamento pendente:", error?.message); // ✅ usa error
+      setPagamento(null);
+    } finally {
+      setLoadingSessao(false);
+    }
+  };
+  buscar();
+}, []);
+
   const selecionarFotoComprovante = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
-      allowsEditing: true,
+      allowsEditing: false,
       aspect: [1, 1],
       quality: 0.8,
     });
@@ -63,7 +59,6 @@ export default function Pagamento() {
     }
   };
 
-  // ── helpers de formatação ────────────────────────────────────
   const formatarData = (iso) => {
     if (!iso) return "";
     const [ano, mes, dia] = iso.split("-");
@@ -89,34 +84,63 @@ export default function Pagamento() {
     });
   };
 
-  // ── dados derivados da sessão ────────────────────────────────
   const psicologo = proximaSessao?.psicologo?.usuario?.nome ?? "Profissional";
-  const especialidade =
-    proximaSessao?.psicologo?.especialidade ?? "Psicólogo(a)";
+  const especialidade = proximaSessao?.psicologo?.especialidade ?? "Psicólogo(a)";
   const data = formatarData(proximaSessao?.data_sessao);
-  const horario = formatarHorario(
-    proximaSessao?.hora_inicio,
-    proximaSessao?.hora_fim,
-  );
+  const horario = formatarHorario(proximaSessao?.hora_inicio, proximaSessao?.hora_fim);
   const valor = formatarValor(proximaSessao?.valor);
 
-  // ────────────────────────────────────────────────────────────
-  const handleConfirmarPagamento = () => {
+  const handleConfirmarPagamento = async () => {
+    console.log("🟡 handleConfirmarPagamento chamado");
+    if (!fotoComprovante) {
+      Alert.alert("Atenção", "Anexe o comprovante antes de finalizar.");
+      return;
+    }
+
+    if (!pagamento?.id_pagamento) {
+      Alert.alert("Erro", "Nenhum pagamento pendente encontrado.");
+      return;
+    }
+    console.log("fotoComprovante:", fotoComprovante);
+    console.log("pagamento:", pagamento?.id_pagamento);
     setAgendando(true);
-    setTimeout(() => {
+    try {
+      const response = await AnexarComprovante(pagamento.id_pagamento, fotoComprovante); // ✅ chama a API
+      
+      if (response?.error) {
+        setErro(response.message)
+        return;
+      } else {
+        setErro("")
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setModalSucesso(true);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      setModalSucesso(false);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      navigation.navigate("central");
+    } catch (error) {
+      console.log("ERR0: Não foi possível enviar o comprovante.");
+    } finally {
       setAgendando(false);
-      navigation.navigate("minhasSessoes");
-    }, 900);
+    }
   };
+
+  if (!pagamento && !loadingSessao) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center", padding: 32 }]}>
+        <Ionicons name="checkmark-circle-outline" size={64} color="#8E7CFF" />
+        <Text style={{ fontSize: 18, fontWeight: "600", color: "#333", marginTop: 16, textAlign: "center" }}>
+          Não há sessões para serem pagas.
+        </Text>
+      </View>
+    );
+  }
 
   if (loadingSessao) {
     return (
-      <View
-        style={[
-          styles.container,
-          { justifyContent: "center", alignItems: "center" },
-        ]}
-      >
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
         <ActivityIndicator size="large" color="#8E7CFF" />
       </View>
     );
@@ -182,12 +206,7 @@ export default function Pagamento() {
                 </Text>
 
                 <View style={styles.alertBox}>
-                  <Ionicons
-                    name="information-circle"
-                    size={16}
-                    color="#8E7CFF"
-                  />
-
+                  <Ionicons name="information-circle" size={16} color="#8E7CFF" />
                   <Text style={styles.alertText}>
                     O pagamento é processado pelo banco e o comprovante deverá
                     ser anexado.
@@ -206,10 +225,7 @@ export default function Pagamento() {
             onPress={selecionarFotoComprovante}
           >
             {fotoComprovante ? (
-              <Image
-                source={{ uri: fotoComprovante }}
-                style={styles.uploadAreaImage}
-              />
+              <Image source={{ uri: fotoComprovante }} style={styles.uploadAreaImage} />
             ) : (
               <>
                 <Ionicons name="cloud-upload-outline" size={34} color="#8E7CFF" />
@@ -243,6 +259,29 @@ export default function Pagamento() {
         </Pressable>
         <Text style={styles.footerNote}>Pagamento seguro e criptografado</Text>
       </View>
+
+      <Modal
+        visible={modalSucesso}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalSucesso(false)}
+      >
+        <View style={styles.successOverlay}>
+          <View style={styles.successContainer}>
+
+            {/* Ícone */}
+            <View style={styles.successIconContainer}>
+              <Ionicons
+                name="checkmark-circle"
+                size={300}
+                color="#22C55E"
+              />
+            </View>
+
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }

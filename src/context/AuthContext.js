@@ -12,7 +12,10 @@ import {
   redefinirSenhaC,
   verificarEmail,
   verificarEmailConfirmar,
+  mPagamentoPendente,
+  mAnexarComprovante,
   PerfilPsicologo,
+  notificacao,
   PesquisaPsicologo,
   horariosDisponiveis,
   agendarSessao,
@@ -105,7 +108,7 @@ export function AuthProvider({ children }) {
         cpfDisponivel: verificacaoCPF.cpf_disponivel,
       };
     } catch (e) {
-      console.error(
+      console.log(
         "ERRO COMPLETO (verificarDisponibilidade):",
         e.response?.data,
       );
@@ -127,7 +130,7 @@ export function AuthProvider({ children }) {
         psicologo: perfil.psicologo,
       };
     } catch (e) {
-      console.error("ERRO COMPLETO (verPsicólogo):", e.response?.data);
+      console.log("ERRO COMPLETO (verPsicólogo):", e.response?.data);
 
       return {
         user: false,
@@ -144,7 +147,7 @@ export function AuthProvider({ children }) {
         psicologos: perfil.psicologos,
       };
     } catch (e) {
-      console.error("ERRO COMPLETO (listarPsicologos):", e.response?.data);
+      console.log("ERRO COMPLETO (listarPsicologos):", e.response?.data);
 
       return {
         user: false,
@@ -159,7 +162,7 @@ export function AuthProvider({ children }) {
       console.log(dados);
       return dados;
     } catch (e) {
-      console.error(
+      console.log(
         "ERRO COMPLETO: (verHorariosDisponiveis)",
         e.response?.data,
       );
@@ -172,7 +175,7 @@ export function AuthProvider({ children }) {
       const resposta = await agendarSessao(dados);
       return { sucesso: true, dados: resposta };
     } catch (e) {
-      console.error("Erro completo (agendarSessao):", e.response?.data || e.message);
+      console.log("Erro completo (agendarSessao):", e.response?.data || e.message);
       return { sucesso: false, erro: e.response?.data?.message || "Erro desconhecido" };
     }
   }
@@ -182,7 +185,7 @@ export function AuthProvider({ children }) {
       const resposta = await solicitarCancelamento(id_sessao, motivo);
       return resposta;
     } catch (e) {
-      console.error("Erro completo (SolCancelamentoCons):", e.response?.data);
+      console.log("Erro completo (SolCancelamentoCons):", e.response?.data);
       return null;
     }
   }
@@ -192,7 +195,40 @@ export function AuthProvider({ children }) {
       const resposta = await solicitarReagendamento(id_sessao, dados);
       return resposta;
     } catch (e) {
-      console.error("Erro completo (SolReagendarCons):", e.response?.data);
+      console.log("Erro completo (SolReagendarCons):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function centralNotificacao() {
+    try {
+      const resposta = await notificacao();
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (centralNotificacao):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function PagamentoPendente() {
+    try {
+      const resposta = await mPagamentoPendente();
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (PagamentoPendente):", e.response?.data);
+      return null;
+    }
+  }
+  async function AnexarComprovante(id_pagamento, fotoUri) {
+    console.log("🟡 mAnexarComprovante chamada:", id_pagamento, fotoUri); // ← adicione isso
+    try {
+      const resposta = await mAnexarComprovante(id_pagamento, fotoUri);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (AnexarComprovante):", e.response?.data);
+      console.log("Status:", e.response?.status);
+      console.log("Message:", e.message);        // ← qual erro de rede
+      console.log("Code:", e.code);    
       return null;
     }
   }
@@ -251,7 +287,7 @@ export function AuthProvider({ children }) {
       const resposta = await detalhesConsulta(id_sessao);
       return resposta;
     } catch (e) {
-      console.error("Erro completo (detalhesCons):", e.response?.data);
+      console.log("Erro completo (detalhesCons):", e.response?.data);
       return null;
     }
   }
@@ -261,7 +297,7 @@ export function AuthProvider({ children }) {
       const resposta = await minhasSessoes();
       return resposta;
     } catch (e) {
-      console.error("Erro completo (mSessoes):", e.response?.data);
+      console.log("Erro completo (mSessoes):", e.response?.data);
       return null;
     }
   }
@@ -271,7 +307,7 @@ export function AuthProvider({ children }) {
       const resposta = await pacienteHistorico();
       return resposta;
     } catch (e) {
-      console.error("Erro completo (historico):", e.response?.data);
+      console.log("Erro completo (historico):", e.response?.data);
       return null;
     }
   }
@@ -375,6 +411,10 @@ export function AuthProvider({ children }) {
         redefinirSenha,
         verificarEmailC,
         verificarEmailConfirmarC,
+        PagamentoPendente,
+        AnexarComprovante,
+        centralNotificacao,
+
 
         // Psicologo
         verPsicologo,
