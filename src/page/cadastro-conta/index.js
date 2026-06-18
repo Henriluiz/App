@@ -13,6 +13,7 @@ import styles from "./styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { cadastroPaciente } from "../../services/authService";
 import ModalApp from "../../components/modalApp";
+import { useAuth } from "../../context/AuthContext";
 
 export default function CadastroConta() {
   const [email, setEmail] = useState("");
@@ -24,6 +25,8 @@ export default function CadastroConta() {
 
   const navigation = useNavigation();
   const route = useRoute();
+  
+  const {verificarEmailC} = useAuth();
   
   // Receber dados de telas anteriores
   const { nome, nickname, telefone, dataNasc, genero, cpf, imagem } = route.params;
@@ -90,31 +93,34 @@ export default function CadastroConta() {
     setCarregando(true);
 
     try {
-      
-
-    const data = {
-        nome,
-        username: nickname,
-        email,
-        telefone,
-        genero,
-        senha,
-        data: convData(dataNasc),
-        cpf: limparCpf(cpf),
-        termos: aceitoTermos,
-        foto_perfil: imagem
-      };  
+      const data = {
+          nome,
+          username: nickname,
+          email,
+          telefone,
+          genero,
+          senha,
+          data: convData(dataNasc),
+          cpf: limparCpf(cpf),
+          termos: aceitoTermos,
+          foto_perfil: imagem
+        };  
 
 
-    const response = await cadastroPaciente(data);
+      const response = await verificarEmailC(email);
 
-    navigation.navigate("cadastroFin");
+      if (response?.error) {
+        setErro(response.message ?? "Erro ao verificar o email")
+      } else {
+        navigation.navigate("verificarEmail", data);
+      }
+
 
     } catch (error) {
       console.log("❌ Erro:", error);
       console.log("Resposta do servidor:", error.response?.data);
       
-      const mensagemErro = error.response?.data?.message || "Erro ao cadastrar";
+      const mensagemErro = error.response?.data?.message || "Erro ao verificar o email";
       <ModalApp
         titulo="Erro"
         mensagem={mensagemErro}
@@ -166,7 +172,8 @@ export default function CadastroConta() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder="Digite seu email"
+                placeholder="zenith@gmail.com"
+                placeholderTextColor="#999"
               />
 
               <Text style={styles.label}>Crie uma senha</Text>
@@ -176,6 +183,9 @@ export default function CadastroConta() {
                 onChangeText={setSenha}
                 secureTextEntry
                 placeholder="Digite sua senha"
+                placeholderTextColor="#999"
+                autoComplete="off"               // <- desativa autofill no Android
+                textContentType="none"           // <- desativa autofill no iOS
               />
 
               <Text style={styles.label}>Confirme a senha</Text>
@@ -185,6 +195,9 @@ export default function CadastroConta() {
                 onChangeText={setConfirmarSenha}
                 secureTextEntry
                 placeholder="Confirme sua senha"
+                placeholderTextColor="#999"
+                autoComplete="off"               // <- desativa autofill no Android
+                textContentType="none"           // <- desativa autofill no iOS
               />
 
               <Pressable
@@ -240,7 +253,7 @@ export default function CadastroConta() {
                 ]}
               >
                 <Text style={styles.textoProximo}>
-                  {carregando ? "Cadastrando..." : "Cadastrar"}
+                  {carregando ? "Enviando..." : "Confirmar"}
                 </Text>
                 <View style={styles.circuloSeta}>
                   <Text style={styles.setaProximo}>{">"}</Text>

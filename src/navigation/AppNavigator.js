@@ -25,7 +25,7 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName="inicioChat"
+      initialRouteName="menu"
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="menu" component={Menu} />

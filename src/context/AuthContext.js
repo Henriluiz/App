@@ -7,6 +7,11 @@ import {
   patchPerfil,
   verificarCPF,
   verificarUsername,
+  enviarEmail,
+  verificarCodSenha,
+  redefinirSenhaC,
+  verificarEmail,
+  verificarEmailConfirmar,
   PerfilPsicologo,
   PesquisaPsicologo,
   horariosDisponiveis,
@@ -192,6 +197,55 @@ export function AuthProvider({ children }) {
     }
   }
 
+  async function EnviarEmailCont(email) {
+    try {
+      const resposta = await enviarEmail(email);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (EnviarEmailCont):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function verificarEmailC(email) {
+    try {
+      const resposta = await verificarEmail(email);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (verificarEmailC):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function verificarCodigoSenha(email, code) {
+    try {
+      const resposta = await verificarCodSenha(email, code);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (verificarCodigoSenha):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function redefinirSenha(email, code, senha, confirmar_senha) {
+    try {
+      const resposta = await redefinirSenhaC(email, code, senha, confirmar_senha);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (redefinirSenha):", e.response?.data);
+      return null;
+    }
+  }
+  async function verificarEmailConfirmarC(email, code) {
+    try {
+      const resposta = await verificarEmailConfirmar(email, code);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (verificarEmailConfirmar):", e.response?.data);
+      return null;
+    }
+  }
+
   async function detalhesCons(id_sessao) {
     try {
       const resposta = await detalhesConsulta(id_sessao);
@@ -316,6 +370,11 @@ export function AuthProvider({ children }) {
         // Verificar dados antes de salvar no banco (CPF, Nickname - Unique)
         verificarDisponibilidade,
         historico,
+        EnviarEmailCont,
+        verificarCodigoSenha,
+        redefinirSenha,
+        verificarEmailC,
+        verificarEmailConfirmarC,
 
         // Psicologo
         verPsicologo,

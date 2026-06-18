@@ -1,29 +1,32 @@
 import { StyleSheet } from "react-native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#A88BFA', 
+    backgroundColor: '#A88BFA',
   },
   header: {
-    height: '38%',
-    justifyContent: 'flex-end',
+    height: hp("30%"),
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 12,
   },
   logoImage: {
     width: 540,
     height: 440,
-    marginBottom: -100,
   },
-
   formContainer: {
-    flex: 1,
+    flexGrow: 1,
+    minHeight: hp("70%"),       // garante que chegue ao fundo da tela
     backgroundColor: 'white',
     borderTopLeftRadius: 60,
     borderTopRightRadius: 60,
     paddingHorizontal: 30,
     paddingTop: 50,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 22,
@@ -55,6 +58,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 16,
     color: '#333',
+  },
+  mensagemErro: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 5,
+    fontSize: 14,
+    marginBottom: -20,
   },
   buttonRow: {
     flexDirection: 'row',

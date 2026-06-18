@@ -140,7 +140,6 @@ export default function Pesquisa({ route }) {
 
           <View style={{ flex: 1 }}>
             <Text style={styles.nome}>{item.nome}</Text>
-            <Text style={styles.especialidade}>{item.especialidade}</Text>
             <Text style={styles.area}>{item.area}</Text>
           </View>
 

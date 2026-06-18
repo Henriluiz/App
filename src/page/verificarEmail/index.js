@@ -16,8 +16,10 @@ import styles from "./styles";
 import { useNavigation } from "@react-navigation/native";
 import { verificarCodigo } from "../../services/authService";
 import { useAuth } from "../../context/AuthContext";
+import { cadastroPaciente } from "../../services/authService";
+import ModalApp from "../../components/modalApp";
 
-export default function VerificationCode({ route }) {
+export default function VerificarEmail({ route }) {
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
@@ -25,9 +27,18 @@ export default function VerificationCode({ route }) {
 
   const navigation = useNavigation();
 
-  const {verificarCodigoSenha} = useAuth();
+  const {verificarEmailConfirmarC} = useAuth();
 
-  const { email } = route.params;
+  const { nome,
+        username,
+        email,
+        telefone,
+        genero,
+        senha,
+        data,
+        cpf,
+        termos,
+        foto_perfil} = route.params;
 
   const handleCodeChange = (text, index) => {
     const newCode = [...code];
@@ -43,18 +54,60 @@ export default function VerificationCode({ route }) {
     setLoading(true);
     setErro("")
     const codeLiso = code.join('');
-    console.log(codeLiso)
-    const response = await verificarCodigoSenha(email, codeLiso);
+    console.log(email, codeLiso)
+    const response = await verificarEmailConfirmarC(email, codeLiso);
     console.log(response);
 
-    setLoading(false);
     if (response?.error) {
-      setErro(response.message)
+      setErro(response.message ?? "Erro ao verificar o código")
     } else {
       setErro("")
-      navigation.navigate("esquecerSenha", { email, codeLiso });
+      enviar()
     }
   }
+
+  const enviar = async () => {
+    setLoading(true);
+    const codeLiso = code.join('');
+    try {
+    
+
+        const payload  = {
+            nome,
+            username,
+            email,
+            telefone,
+            genero,
+            senha,
+            data,
+            cpf,
+            termos,
+            foto_perfil,
+            code: codeLiso,
+        };  
+
+
+        const response = await cadastroPaciente(payload);
+
+        navigation.navigate("cadastroFin");
+
+        } catch (error) {
+        console.log("❌ Erro:", error);
+        console.log("Resposta do servidor:", error.response?.data);
+        
+        const mensagemErro = error.response?.data?.message || "Erro ao cadastrar";
+        <ModalApp
+            titulo="Erro"
+            mensagem={mensagemErro}
+            tipo="erro"
+            onCancelar={() => setModal(false)}
+            />
+        
+        setErro(mensagemErro);
+    } finally {
+        setLoading(false);
+    }
+};
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>

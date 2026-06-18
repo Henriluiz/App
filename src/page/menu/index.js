@@ -153,7 +153,7 @@ export default function Menu({ navigation }) {
               <Feather name="clock" size={22} color="#6A37E5" />
             </View>
             <Text style={styles.actionTitle}>Sessões</Text>
-            <Text style={styles.actionSubtitle}>Ver histórico</Text>
+            <Text style={styles.actionSubtitle}>Próximas sessões</Text>
           </Pressable>
         </View>
 
@@ -174,7 +174,7 @@ export default function Menu({ navigation }) {
           </View>
 
           <View style={styles.promoIllustration}>
-            <Ionicons name="heart-circle-outline" size={56} color="#fff" />
+            <Image source={require("./img/iconeHome.png")} style={{width: 80, height: 80}}/>
           </View>
         </View>
 

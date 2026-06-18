@@ -11,7 +11,6 @@ export { BASE_URL };
 const api = axios.create({
   baseURL: "http://192.168.18.99:8000/api",
   // php artisan serve --host=0.0.0.0 --port=8000
-  // http://192.168.18.99:8000/api
   timeout: 70000,
   headers: {
     "Content-Type": "application/json",
