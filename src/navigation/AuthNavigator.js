@@ -10,6 +10,7 @@ import EmailRec from "../page/emailRec"
 import VerificationCode from "../page/verificationCode"
 import EsquecerSenha from "../page/esquecerSenha";
 
+
 const Stack = createNativeStackNavigator();
 
 export default function AuthNavigator() {

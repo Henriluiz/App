@@ -423,6 +423,12 @@ export default StyleSheet.create({
     textAlign: "center",
   },
 
+  uploadAreaImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 12,
+  },
+
   fileText: {
     marginTop: 8,
     fontSize: 11,

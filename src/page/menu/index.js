@@ -111,12 +111,13 @@ export default function Menu({ navigation }) {
                 size={22}
                 color="#fff"
               />
-              <Ionicons
-                name="notifications-outline"
-                size={22}
-                color="#fff"
-                style={{ marginLeft: 14 }}
-              />
+              <Pressable onPress={() => navigation.navigate("notificacao")} style={{ marginLeft: 14 }}>
+                <Ionicons
+                  name="notifications-outline"
+                  size={22}
+                  color="#fff"
+                />
+              </Pressable>
             </View>
           </View>
           <Pressable
