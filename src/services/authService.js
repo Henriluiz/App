@@ -248,10 +248,29 @@ export async function notificacao() {
     return resposta.data;
 };
 
+export async function detalhesConsultaC(id_sessao) {
+    const resposta = await api.get(`/detalhesConsulta/${id_sessao}`);
+    console.log("Status:", resposta.status);
+    console.log("Data (detalhesConsulta):", JSON.stringify(resposta.data));
+    return resposta.data;
+};
+
 export async function verificarUsername(username) {
   const response = await api.post("/verificarUsername", {
     username,
   });
+
+  return response.data;
+}
+
+export async function aprovarSessaoC(id_sessao) {
+  const response = await api.post(`/aprovarSessao/${id_sessao}`);
+
+  return response.data;
+}
+
+export async function recusarSessaoC(id_sessao, motivo) {
+  const response = await api.post(`/recusarSessao/{id_sessao}`, { motivo });
 
   return response.data;
 }

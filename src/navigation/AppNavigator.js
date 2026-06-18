@@ -19,6 +19,7 @@ import Historico from "../page/historico";
 import Chat from "../page/chat";
 import InicioChat from "../page/inicioChat";
 import Notificacao from "../page/notificacao";
+import AprovacaoSol from "../page/aprovarSolicitacao";
 
 const Stack = createNativeStackNavigator();
 
@@ -175,6 +176,12 @@ export default function AppNavigator() {
         name="notificacao"
         component={Notificacao}
       />
+      <Stack.Screen
+        name="aprovacaoSol"
+        component={AprovacaoSol}
+      />
+
+      
     </Stack.Navigator>
   );
 }

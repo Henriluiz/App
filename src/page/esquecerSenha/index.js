@@ -116,7 +116,7 @@ export default function EsquecerSenha({ navigation, route }) {
                 style={styles.input}
                 value={senha}
                 onChangeText={setSenha}
-                secureTextEntry
+                // secureTextEntry
                 placeholder="Digite sua senha"
                 placeholderTextColor="#C4C4C4"   // <- placeholder visível
                 autoComplete="off"               // <- desativa autofill no Android
@@ -130,7 +130,7 @@ export default function EsquecerSenha({ navigation, route }) {
                 style={styles.input}
                 value={confirmarSenha}
                 onChangeText={setConfirmarSenha}
-                secureTextEntry
+                // secureTextEntry
                 placeholder="Confirme sua senha"
                 placeholderTextColor="#C4C4C4"   // <- placeholder visível
                 autoComplete="off"               // <- desativa autofill no Android

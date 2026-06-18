@@ -16,6 +16,9 @@ import {
   mAnexarComprovante,
   PerfilPsicologo,
   notificacao,
+  detalhesConsultaC,
+  aprovarSessaoC,
+  recusarSessaoC,
   PesquisaPsicologo,
   horariosDisponiveis,
   agendarSessao,
@@ -46,7 +49,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState("");
 
-  const FOTO = "http://192.168.18.99:8000/storage/";
+  const FOTO = "http://10.100.175.116:8000/storage/";
 
   async function signIn(loginInput, senha) {
     const data = await login(loginInput, senha);
@@ -180,6 +183,16 @@ export function AuthProvider({ children }) {
     }
   }
 
+  async function detalhesConsulta(id_sessao) {
+    try {
+      const resposta = await detalhesConsultaC(id_sessao);
+      return { sucesso: true, dados: resposta };
+    } catch (e) {
+      console.log("Erro completo (detalhesConsulta):", e.response?.data || e.message);
+      return { sucesso: false, erro: e.response?.data?.message || "Erro desconhecido" };
+    }
+  }
+
   async function SolCancelamentoCons(id_sessao, motivo) {
     try {
       const resposta = await solicitarCancelamento(id_sessao, motivo);
@@ -259,6 +272,26 @@ export function AuthProvider({ children }) {
       return resposta;
     } catch (e) {
       console.log("Erro completo (verificarCodigoSenha):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function aprovarSessao(id_sessao) {
+    try {
+      const resposta = await aprovarSessaoC(id_sessao);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (aprovarSessao):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function recusarSessao(id_sessao, motivo) {
+    try {
+      const resposta = await recusarSessaoC(id_sessao, motivo);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (recusarSessao):", e.response?.data);
       return null;
     }
   }
@@ -414,6 +447,10 @@ export function AuthProvider({ children }) {
         PagamentoPendente,
         AnexarComprovante,
         centralNotificacao,
+        detalhesConsulta,
+
+        aprovarSessao,
+        recusarSessao,
 
 
         // Psicologo

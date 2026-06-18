@@ -120,7 +120,7 @@ export default function Login() {
                   style={styles.input}
                   onChangeText={setSenha}
                   value={senha}
-                  secureTextEntry
+                  // secureTextEntry
                   maxLength={20}
                 />
               </View>

@@ -181,7 +181,7 @@ export default function CadastroConta() {
                 style={styles.input}
                 value={senha}
                 onChangeText={setSenha}
-                secureTextEntry
+                // secureTextEntry
                 placeholder="Digite sua senha"
                 placeholderTextColor="#999"
                 autoComplete="off"               // <- desativa autofill no Android
@@ -193,7 +193,7 @@ export default function CadastroConta() {
                 style={styles.input}
                 value={confirmarSenha}
                 onChangeText={setConfirmarSenha}
-                secureTextEntry
+                // secureTextEntry
                 placeholder="Confirme sua senha"
                 placeholderTextColor="#999"
                 autoComplete="off"               // <- desativa autofill no Android
