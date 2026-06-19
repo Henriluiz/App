@@ -179,7 +179,7 @@ export default function Menu({ navigation }) {
           </View>
         </View>
 
-        <View style={styles.sessionCard}>
+        {/* <View style={styles.sessionCard}>
           <View style={styles.sessionInfo}>
             <Text style={styles.sessionDate}>Quinta-feira, 23 de maio</Text>
             <Text style={styles.sessionTime}>14:00</Text>
@@ -187,10 +187,10 @@ export default function Menu({ navigation }) {
           <Pressable
             style={styles.sessionButton}
             onPress={() => navigation.navigate("minhaSessao")}
-          >
+          >View
             <Text style={styles.sessionButtonText}>Entrar na sessão</Text>
           </Pressable>
-        </View>
+        </View> */}
       </ScrollView>
 
       <View style={{backgroundColor: "black" }}>

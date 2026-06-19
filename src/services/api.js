@@ -3,12 +3,12 @@ import { getToken, clearSession } from "./authStogare";
 import { reset } from "./navigationService";
 import { Platform } from "react-native";
 
-const BASE_URL = "http://10.100.175.116:8000";
+const BASE_URL = "http://192.168.18.99:8000";
 
 export { BASE_URL };
 
 const api = axios.create({
-  baseURL: "http://10.100.175.116:8000/api",
+  baseURL: `${BASE_URL}/api`,
   // php artisan serve --host=0.0.0.0 --port=8000
   timeout: 70000,
   headers: {

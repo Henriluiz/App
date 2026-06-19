@@ -17,6 +17,10 @@ import {
   PerfilPsicologo,
   notificacao,
   detalhesConsultaC,
+  iniciarChat,
+  enviarMensagem,
+  historicoChat,
+  visualizarChat,
   aprovarSessaoC,
   recusarSessaoC,
   PesquisaPsicologo,
@@ -27,6 +31,7 @@ import {
   detalhesConsulta,
   minhasSessoes,
   pacienteHistorico,
+  listarMeusPsicologos
 } from "../services/authService";
 import {
   saveSession,
@@ -49,9 +54,11 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState("");
 
-  const FOTO = "http://10.100.175.116:8000/storage/";
+  const FOTO = "http://192.168.18.99:8000/storage/";
 
-  async function signIn(loginInput, senha) {
+  async function signIn(loginInput, senha) { 
+    const token = await getToken();
+    console.log("🔑 Token atual:", token); // ← deve aparecer um token JWT, não null
     const data = await login(loginInput, senha);
     
     const token_ = data.access_token;
@@ -345,6 +352,67 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // ─── CHAT ────────────────────────────────────────────────────────────────────
+
+  // Inicia ou recupera um chat com um psicólogo
+  // dados: { psicologo_id: number }
+  async function iniciarChatCont(dados) {
+    try {
+      const resposta = await iniciarChat(dados);
+      return { sucesso: true, dados: resposta };
+    } catch (e) {
+      console.log("Erro completo (iniciarChatCont):", e.response?.data || e.message);
+      return { sucesso: false, erro: e.response?.data?.message || "Erro desconhecido" };
+    }
+  }
+
+  // Envia uma mensagem em um chat
+  // dados: { chat_id: number, mensagem: string }
+  async function enviarMensagemCont(dados) {
+    try {
+      const resposta = await enviarMensagem(dados);
+      return { sucesso: true, dados: resposta };
+    } catch (e) {
+      console.log("Erro completo (enviarMensagemCont):", e.response?.data || e.message);
+      return { sucesso: false, erro: e.response?.data?.message || "Erro desconhecido" };
+    }
+  }
+
+  // Busca o histórico de mensagens de um chat
+  // id: number (id do chat)
+  async function historicoChatCont(id) {
+    try {
+      const resposta = await historicoChat(id);
+      return { sucesso: true, dados: resposta };
+    } catch (e) {
+      console.log("Erro completo (historicoChatCont):", e.response?.data || e.message);
+      return { sucesso: false, erro: e.response?.data?.message || "Erro desconhecido" };
+    }
+  }
+
+  // Marca as mensagens de um chat como visualizadas
+  // id_chat: number
+  async function visualizarChatCont(id_chat) {
+    try {
+      const resposta = await visualizarChat(id_chat);
+      return { sucesso: true, dados: resposta };
+    } catch (e) {
+      console.log("Erro completo (visualizarChatCont):", e.response?.data || e.message);
+      return { sucesso: false, erro: e.response?.data?.message || "Erro desconhecido" };
+    }
+  }
+
+  // Lista os psicólogos que já atenderam o paciente
+  async function listarMeusPsicologosCont() {
+    try {
+      const resposta = await listarMeusPsicologos();
+      return { sucesso: true, dados: resposta };
+    } catch (e) {
+      console.log("Erro completo (listarMeusPsicologosCont):", e.response?.data || e.message);
+      return { sucesso: false, erro: e.response?.data?.message || "Erro desconhecido" };
+    }
+  }
+
   const bootstrap = async () => {
     try {
       const token_ = await getToken();
@@ -464,6 +532,13 @@ export function AuthProvider({ children }) {
         detalhesCons,
         SolReagendarCons,
         mSessoes,
+
+        // Chat
+        listarMeusPsicologosCont,
+        iniciarChatCont,
+        enviarMensagemCont,
+        historicoChatCont,
+        visualizarChatCont,
       }}
     >
       {children}

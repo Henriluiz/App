@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Modal,
@@ -12,82 +13,250 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../../context/AuthContext"; // ajuste o path conforme o projeto
 import styles from "./styles";
 
-const messages = [
-  {
-    id: 1,
-    sender: "therapist",
-    text: "Olá! Tudo bem com você?",
-    time: "10:30",
-  },
-  {
-    id: 2,
-    sender: "user",
-    text: "Oi Dra. Eloísa! Estou bem, obrigada!",
-    time: "10:32",
-  },
-  {
-    id: 3,
-    sender: "therapist",
-    text: "Que bom! Como tem sido sua semana?",
-    time: "10:33",
-  },
-  {
-    id: 4,
-    sender: "user",
-    text: "Bem melhor que a anterior. Consegui aplicar as técnicas que vimos hoje conversarmos.",
-    time: "10:35",
-  },
-  {
-    id: 5,
-    sender: "therapist",
-    text: "Excelente! Fico muito feliz em saber. Vamos conversar mais sobre isso na nossa próxima sessão, combinado?",
-    time: "10:37",
-  },
-  {
-    id: 6,
-    sender: "user",
-    text: "Sim! Já estou ansiosa, queria confirmar: quarta às 14h, certo?",
-    time: "10:39",
-  },
-  {
-    id: 7,
-    sender: "therapist",
-    text: "Sim! está confirmado. Nos vemos na quarta às 14h. Tenha um ótimo dia!",
-    time: "10:40",
-  },
-];
+// ─────────────────────────────────────────
+// Intervalo de polling para novas mensagens
+// ─────────────────────────────────────────
+const POLLING_INTERVAL_MS = 5000;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Normaliza a mensagem vinda da API para o formato interno da tela.
+// Ajuste os campos (conteudo, remetente_id) conforme o retorno real do backend.
+// ─────────────────────────────────────────────────────────────────────────────
+function normalizeMessage(msg, userId) {
+  const horaFormatada = msg.created_at
+    ? new Date(msg.created_at).toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "";
+
+  return {
+    id: msg.id,
+    sender: msg.remetente_id === userId ? "user" : "therapist",
+    text: msg.conteudo ?? msg.mensagem ?? "",
+    time: horaFormatada,
+    created_at: msg.created_at,
+    lida: msg.lida ?? false,
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Componente principal
+//
+// Parâmetros esperados em route.params:
+//   chatId      → ID do chat já existente (opcional se psicologoId for passado)
+//   psicologoId → ID do psicólogo, usado quando o chat ainda não existe
+//   userName    → Nome do psicólogo exibido no header
+//   userAvatar  → Iniciais exibidas no avatar
+// ─────────────────────────────────────────────────────────────────────────────
 export default function Chat({ navigation, route }) {
   const scrollViewRef = useRef(null);
-  const [messageText, setMessageText] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
-  const [rating, setRating] = useState(0);
-  const doctorName = route?.params?.userName ?? "Dra. Eloísa Almeida";
-  const avatarInitials = route?.params?.userAvatar ?? "EA";
+  const pollingRef    = useRef(null);
+  const activeChatId  = useRef(route?.params?.chatId ?? null); // ref para ser acessada no polling
 
-  const handleScroll = () => {
-    // Scroll tracking if needed for future features
+  const [messages,      setMessages]      = useState([]);
+  const [messageText,   setMessageText]   = useState("");
+  const [modalVisible,  setModalVisible]  = useState(false);
+  const [rating,        setRating]        = useState(0);
+  const [loading,       setLoading]       = useState(true);
+  const [sending,       setSending]       = useState(false);
+  const [erro,          setErro]          = useState(null);
+
+  const {
+    user,
+    iniciarChatCont,
+    enviarMensagemCont,
+    historicoChatCont,
+    visualizarChatCont,
+  } = useAuth();
+
+  const psicologoId    = route?.params?.psicologoId;
+  const doctorName     = route?.params?.userName    ?? "Psicólogo";
+  const avatarInitials = route?.params?.userAvatar  ?? "PS";
+
+  // ─── Carrega o histórico de mensagens ───────────────────────────────────────
+  const carregarHistorico = useCallback(
+    async (chatId, silencioso = false) => {
+      if (!chatId) return;
+      if (!silencioso) setLoading(true);
+
+      const resultado = await historicoChatCont(chatId);
+
+      if (resultado.sucesso) {
+        // O backend pode retornar { mensagens: [...] } ou o array direto
+        const lista = resultado.dados?.mensagens ?? resultado.dados ?? [];
+        const normalizadas = lista.map((m) => normalizeMessage(m, user?.id));
+        setMessages(normalizadas);
+        setErro(null);
+      } else if (!silencioso) {
+        setErro("Não foi possível carregar as mensagens.");
+      }
+
+      if (!silencioso) setLoading(false);
+    },
+    [historicoChatCont, user?.id]
+  );
+
+  // ─── Inicia o polling de novas mensagens ────────────────────────────────────
+  const iniciarPolling = useCallback(
+    (chatId) => {
+      stopPolling();
+      pollingRef.current = setInterval(() => {
+        carregarHistorico(chatId, true); // silencioso = não altera o loading
+      }, POLLING_INTERVAL_MS);
+    },
+    [carregarHistorico]
+  );
+
+  function stopPolling() {
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
+    }
+  }
+
+  // ─── Bootstrap: inicia ou recupera o chat ───────────────────────────────────
+  useEffect(() => {
+    async function bootstrap() {
+      setLoading(true);
+
+      let chatId = activeChatId.current;
+
+      // Se não veio chatId nos params, cria/recupera via API
+      if (!chatId && psicologoId) {
+        const resultado = await iniciarChatCont({ psicologo_id: psicologoId });
+
+        if (resultado.sucesso) {
+          chatId = resultado.dados?.chat?.id ?? resultado.dados?.id;
+          activeChatId.current = chatId;
+        } else {
+          Alert.alert("Erro", "Não foi possível iniciar o chat.");
+          navigation.goBack();
+          return;
+        }
+      }
+
+      if (!chatId) {
+        setErro("Chat não encontrado.");
+        setLoading(false);
+        return;
+      }
+
+      await carregarHistorico(chatId);
+      await visualizarChatCont(chatId); // marca como lido ao entrar
+      iniciarPolling(chatId);
+    }
+
+    bootstrap();
+
+    return () => stopPolling(); // limpa o polling ao sair da tela
+  }, []);
+
+  // ─── Scroll automático ao chegarem novas mensagens ──────────────────────────
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 80);
+    }
+  }, [messages.length]);
+
+  // ─── Envio de mensagem ───────────────────────────────────────────────────────
+  const handleSend = async () => {
+    const texto    = messageText.trim();
+    const chatId   = activeChatId.current;
+
+    if (!texto || sending || !chatId) return;
+
+    // Feedback visual imediato (mensagem otimista)
+    const tempId  = `temp_${Date.now()}`;
+    const tempMsg = {
+      id:     tempId,
+      sender: "user",
+      text:   texto,
+      time:   new Date().toLocaleTimeString("pt-BR", {
+        hour:   "2-digit",
+        minute: "2-digit",
+      }),
+      sending: true,
+    };
+
+    setMessages((prev) => [...prev, tempMsg]);
+    setMessageText("");
+    setSending(true);
+
+    const resultado = await enviarMensagemCont({
+      chat_id:  chatId,
+      mensagem: texto,
+    });
+
+    setSending(false);
+
+    if (resultado.sucesso) {
+      // Substitui a mensagem temporária pela real vinda da API
+      const msgReal = normalizeMessage(
+        resultado.dados?.mensagem ?? resultado.dados,
+        user?.id
+      );
+      setMessages((prev) =>
+        prev.map((m) => (m.id === tempId ? msgReal : m))
+      );
+    } else {
+      // Remove a mensagem temporária e devolve o texto ao input
+      setMessages((prev) => prev.filter((m) => m.id !== tempId));
+      setMessageText(texto);
+      Alert.alert("Erro", "Não foi possível enviar a mensagem. Tente novamente.");
+    }
   };
 
+  // ─── Avaliação ───────────────────────────────────────────────────────────────
   const handleSubmitReview = () => {
     setModalVisible(false);
     Alert.alert("Avaliação enviada", "Obrigado por avaliar seu psicólogo.");
   };
 
-  const handleContentSizeChange = (_, contentHeight) => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd({ animated: false });
-    }
+  const handleContentSizeChange = () => {
+    scrollViewRef.current?.scrollToEnd({ animated: false });
   };
 
+  // ─── Loading inicial ─────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <ActivityIndicator size="large" color="#1F2640" />
+      </View>
+    );
+  }
+
+  // ─── Estado de erro ──────────────────────────────────────────────────────────
+  if (erro && messages.length === 0) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center", paddingHorizontal: 24 }]}>
+        <Ionicons name="cloud-offline-outline" size={48} color="#A9B3C1" />
+        <Text style={{ color: "#A9B3C1", fontSize: 15, marginTop: 12, textAlign: "center" }}>
+          {erro}
+        </Text>
+        <TouchableOpacity
+          onPress={() => carregarHistorico(activeChatId.current)}
+          style={{ marginTop: 16, paddingVertical: 10, paddingHorizontal: 24, backgroundColor: "#1F2640", borderRadius: 8 }}
+        >
+          <Text style={{ color: "#fff", fontSize: 14 }}>Tentar novamente</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // ─── Render principal ────────────────────────────────────────────────────────
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
     >
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -119,6 +288,7 @@ export default function Chat({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
+      {/* ── Modal de avaliação ──────────────────────────────────────────────── */}
       <Modal
         visible={modalVisible}
         transparent
@@ -139,7 +309,7 @@ export default function Chat({ navigation, route }) {
             </TouchableOpacity>
           </View>
           <View style={styles.modalAvatarCircle}>
-            <Text style={styles.modalAvatarText}>EA</Text>
+            <Text style={styles.modalAvatarText}>{avatarInitials}</Text>
           </View>
           <Text style={styles.modalTitle}>Avalie seu psicólogo</Text>
           <Text style={styles.modalSubtitle}>
@@ -174,18 +344,27 @@ export default function Chat({ navigation, route }) {
         </View>
       </Modal>
 
+      {/* ── Lista de mensagens ──────────────────────────────────────────────── */}
       <View style={styles.chatCard}>
         <ScrollView
           ref={scrollViewRef}
           contentContainerStyle={styles.messageList}
           showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
           scrollEventThrottle={16}
           onContentSizeChange={handleContentSizeChange}
         >
           <View style={styles.tagContainer}>
             <Text style={styles.tagText}>Hoje</Text>
           </View>
+
+          {messages.length === 0 && (
+            <View style={{ alignItems: "center", marginTop: 40 }}>
+              <Ionicons name="chatbubble-ellipses-outline" size={40} color="#A9B3C1" />
+              <Text style={{ color: "#A9B3C1", fontSize: 14, marginTop: 8 }}>
+                Nenhuma mensagem ainda. Diga olá! 👋
+              </Text>
+            </View>
+          )}
 
           {messages.map((message) => (
             <View
@@ -195,6 +374,7 @@ export default function Chat({ navigation, route }) {
                 message.sender === "user"
                   ? styles.userBubble
                   : styles.therapistBubble,
+                message.sending && { opacity: 0.55 }, // feedback visual de envio pendente
               ]}
             >
               <Text
@@ -206,12 +386,16 @@ export default function Chat({ navigation, route }) {
                 {message.text}
               </Text>
 
-              <Text style={styles.messageTime}>{message.time}</Text>
+              <Text style={styles.messageTime}>
+                {message.time}
+                {message.sending ? "  ⏳" : ""}
+              </Text>
             </View>
           ))}
         </ScrollView>
       </View>
 
+      {/* ── Rodapé / Input ──────────────────────────────────────────────────── */}
       <View style={styles.footer}>
         <View style={styles.inputContainer}>
           <Ionicons
@@ -230,11 +414,25 @@ export default function Chat({ navigation, route }) {
             autoFocus={false}
             returnKeyType="send"
             blurOnSubmit={false}
+            onSubmitEditing={handleSend}
+            multiline
           />
         </View>
 
-        <TouchableOpacity style={styles.sendButton} activeOpacity={0.8}>
-          <Ionicons name="send" size={20} color="#FFFFFF" />
+        <TouchableOpacity
+          style={[
+            styles.sendButton,
+            (!messageText.trim() || sending) && { opacity: 0.45 },
+          ]}
+          activeOpacity={0.8}
+          onPress={handleSend}
+          disabled={!messageText.trim() || sending}
+        >
+          {sending ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Ionicons name="send" size={20} color="#FFFFFF" />
+          )}
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

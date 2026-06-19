@@ -423,5 +423,35 @@ export async function pacienteHistorico(id_sessao) {
 
     // 👇 FORÇA quem chama a tratar erro
     throw error;
-  }
+}}
+// ─── CHAT ────────────────────────────────────────────────────────────────────
+
+// Cria ou recupera um chat existente com o psicólogo
+export async function iniciarChat(dados) {
+  const response = await api.post("/chat/iniciar", dados);
+  return response.data;
+}
+
+// Envia uma mensagem dentro de um chat
+export async function enviarMensagem(dados) {
+  const response = await api.post("/chat/enviar", dados);
+  return response.data;
+}
+
+// Busca o histórico de mensagens de um chat pelo ID
+export async function historicoChat(id) {
+  const response = await api.get(`/chat/historico/${id}`);
+  return response.data;
+}
+
+// Marca as mensagens de um chat como visualizadas
+export async function visualizarChat(id_chat) {
+  const response = await api.patch(`/chat/visualizar/${id_chat}`);
+  return response.data;
+}
+
+// Lista psicólogos do paciente
+export async function listarMeusPsicologos() {
+  const response = await api.get("/meusPsicologos"); // ajuste a rota conforme seu routes/api.php
+  return response.data;
 }
