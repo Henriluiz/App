@@ -13,6 +13,8 @@ import styles from "./styles";
 import { useAuth } from "../../context/AuthContext";
 import { clearSession, saveSession, getToken } from "../../services/authStogare";
 
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import NavBar from "../../components/NavBar";
 
 export default function Perfil({ navigation }) {
@@ -23,7 +25,6 @@ export default function Perfil({ navigation }) {
   const [nickname, setNickname] = useState("");
   const [genero, setGenero] = useState("");
   const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
@@ -36,7 +37,8 @@ export default function Perfil({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState(false);
 
-  const { user, removeAccount, signOut, updateUser} = useAuth();
+
+  const { user, removeAccount, signOut, updateUser, FOTO} = useAuth();
 
   function formatarNickname(text) {
     return text
@@ -157,14 +159,16 @@ export default function Perfil({ navigation }) {
       setEmail(user.email || "");
       setTelefone(user.telefone || "");
       setGenero(user.genero || "");
-      setSenha(user.senha || "123456"); // Não deixa a senha aqui
       setCpf(user.cpf || "");
       setDataNascimento(user.data_nascimento || "");
     }
   }, [user]);
 
+  console.log("FOTO:", user?.foto_perfil)
+  console.log("URL FINAL:", `${FOTO}${user?.foto_perfil}`)
+
   return (
-    <KeyboardAvoidingView
+    <SafeAreaView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
@@ -186,17 +190,24 @@ export default function Perfil({ navigation }) {
 
           <View style={styles.card}>
             <View style={styles.fotoContainer}>
-              <View style={styles.fotoPerfil}>
-                <Ionicons name="person-outline" size={50} color="white"  style={styles.fotoPerfil2}/>
-              </View>
-
-              {editando && (
-                <View style={styles.iconeEditar}>
-                  <Ionicons name="camera" size={16} color="#fff" />
-                </View>
+            <View style={styles.fotoPerfil}>
+              {user?.foto_perfil ? (
+                <Image
+                  source={{ uri: `${FOTO}${user.foto_perfil}` }}
+                  style={styles.imagem} // mesmo estilo que usou no CadastroFoto
+                  resizeMode="cover"
+                />
+              ) : (
+                <Ionicons name="person-outline" size={50} color="white" style={styles.fotoPerfil2} />
               )}
-
             </View>
+
+            {editando && (
+              <View style={styles.iconeEditar}>
+                <Ionicons name="camera" size={16} color="#fff" />
+              </View>
+            )}
+          </View>
 
             <View>
               <Text style={styles.nomePessoa}>{user.nome}</Text>
@@ -224,41 +235,30 @@ export default function Perfil({ navigation }) {
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Nome</Text>
 
-                  <TextInput
-                    style={[
-                      {marginTop: -5},
-                      editando && styles.inputEditando
-                    ]}
-                    value={nome}
-                    onChangeText={(text) => setNome(text)}              // sem capitalize
-                    onBlur={() => setNome(capitalize(nome))}  
-                    editable={editando}
-                  />
+                  {editando ? (
+                    <TextInput
+                      style={[
+                        styles.input,
+                        editando && styles.inputEditando
+                      ]}
+                      value={nome}
+                      onChangeText={(text) => setNome(text)}              // sem capitalize
+                      onBlur={() => setNome(capitalize(nome))}  
+                      editable={editando}
+                    />
+                  ) : (
+                    <View style={styles.fieldValue}>
+                      <Text style={styles.fieldValueText}>{nome}</Text>
+                    </View>
+                  )}
                 </View>
                   
                 <View style={styles.colunaFlex}>
-                  <Text style={styles.label}>Nickname</Text>
+                  <Text style={styles.label}>Nome de Usuário</Text>
 
-                  <View style={[
-                    styles.nicknameContainer,
-                    // editando && styles.nicknameEditando
-                  ]}>
-
-                    
-                    <Text style={[styles.arroba, {marginTop: 2}]}>@</Text>
-                    <Text style={{marginTop: 5}}>{user.username}</Text>
-
-                    {/* <TextInput
-                      style={styles.nicknameInput}
-                      value={nickname}
-                      editable={editando}
-                      onChangeText={(text) =>
-                        setNickname(formatarNickname(text))
-                      }
-                      autoCapitalize="none"
-                      maxLength={30}
-                    /> */}
-
+                  <View style={styles.nicknameContainer}>
+                    <Text style={styles.arroba}>@</Text>
+                    <Text style={styles.fieldValueText}>{user.username}</Text>
                   </View>
                 </View>
 
@@ -271,14 +271,18 @@ export default function Perfil({ navigation }) {
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>CPF</Text>
 
-                  <Text style={{marginTop: 5}}>{formatCPF(user.cpf)}</Text>
+                  <View style={styles.fieldValue}>
+                    <Text style={styles.fieldValueText}>{formatCPF(user.cpf)}</Text>
+                  </View>
                 </View>
 
 
                 <View style={styles.colunaFlex}>
                   <Text style={styles.label}>Gênero</Text>
 
-                  <Text style={{marginTop: 5, textAlign:"left"}}>{capitalize(user.genero)}</Text>
+                  <View style={styles.fieldValue}>
+                    <Text style={styles.fieldValueText}>{capitalize(user.genero)}</Text>
+                  </View>
                 </View>
 
               </View>
@@ -287,72 +291,72 @@ export default function Perfil({ navigation }) {
               
 
 
-              {/* SENHA E TELEFONE */}
-              <View style={styles.rowWrap}>
+              {/* EMAIL */}
+              <View style={styles.colunaFlex}>
+                <Text style={styles.label}>Email</Text>
 
-                <View style={styles.colunaEsquerda}>
-                  {/* EMAIL */}
-                  <Text style={styles.label}>Email</Text>
-
-                  {editando ? <TextInput
-                    onChangeText={setEmail}
-                    value={email}
-                    style={[
-                      styles.dadoEmail,
-                      editando && styles.inputEditando
-                    ]}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    editable={editando}
-                  /> : <Text 
-                    numberOfLines={1} 
-                    ellipsizeMode="tail"  // 'tail' coloca ... no final
-                    style={styles.dadoEmail}
-                  >
-                    {email}
-                  </Text>}
-                </View>
-
-
-                <View style={styles.colunaDireita}>
-                  <Text style={styles.label}>Telefone</Text>
-
-                  <TextInput
-                    style={[{marginTop: -5},
-                      editando && styles.inputEditando
-                    ]}
-                    keyboardType="phone-pad"
-                    value={formatarTelefone(telefone)}
-                    editable={editando}
-                    onChangeText={(text) =>
-                    setTelefone(formatarTelefone(text))
-                    }
-                  />
-                </View>
-
+                <TextInput
+                  onChangeText={setEmail}
+                  value={email}
+                  style={[
+                    styles.input,
+                    editando && styles.inputEditando
+                  ]}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  editable={editando}
+                />
               </View>
 
-
-              {/* CPF E DATA */}
+              {/* TELEFONE E DATA */}
               <View style={styles.rowWrap}>
-                <View style={styles.colunaFlex}>
-                  <Text style={styles.label}>Data de Nascimento</Text>
+                <View style={styles.colunaEsquerda}>
+                  <Text style={styles.label}>Telefone</Text>
 
-                  <TextInput
-                    style={[
-                      styles.input
-                    ]}
-                    keyboardType="numeric"
-                    maxLength={10}
-                    editable={editando}
-                    value={formatarData(dataNascimento)}
-                    onChangeText={(text) =>
-                      setDataNascimento(formatarData(text))
-                    }
-                  />
+                  {editando ? (
+                    <TextInput
+                      style={[
+                        styles.input,
+                        editando && styles.inputEditando
+                      ]}
+                      keyboardType="phone-pad"
+                      value={formatarTelefone(telefone)}
+                      editable={editando}
+                      onChangeText={(text) =>
+                        setTelefone(formatarTelefone(text))
+                      }
+                    />
+                  ) : (
+                    <View style={styles.fieldValue}>
+                      <Text style={styles.fieldValueText}>{formatarTelefone(telefone)}</Text>
+                    </View>
+                  )}
                 </View>
 
+                <View style={styles.colunaDireita}>
+                  <Text style={styles.label}>Data de Nascimento</Text>
+
+                  {editando ? (
+                    <TextInput
+                      style={[
+                        styles.input,
+                        editando && styles.inputEditando
+                      ]}
+                      keyboardType="numeric"
+                      maxLength={10}
+                      editable={editando}
+                      value={formatarData(dataNascimento)}
+                      onChangeText={(text) =>
+                        setDataNascimento(formatarData(text))
+                      }
+                    />
+                  ) : (
+                    <View style={styles.fieldValue}>
+                      <Text style={styles.fieldValueText}>{formatarData(dataNascimento)}</Text>
+                    </View>
+                  )}
+                </View>
               </View>
 
             </View>
@@ -381,18 +385,33 @@ export default function Perfil({ navigation }) {
               <Ionicons name="close" size={30} color="#000" />
             </Pressable>
 
-            <Text style={styles.modalTitulo}>Menu</Text>
-            
+            <Text style={styles.modalTitulo}>Opções do perfil</Text>
+            <Text style={styles.modalSubtitulo}>Aqui você pode editar seus dados ou sair da conta.</Text>
+
             <Pressable
               style={styles.opcao}
-              onPress={() => [setEditando(!editando), setMenuAberto(false)]}
+              onPress={() => {
+                setMenuAberto(false);
+                navigation.navigate('editarPerfil');
+              }}
             >
-              <Text>Editar Perfil</Text>
+              <View style={styles.opcaoConteudo}>
+                <Ionicons name="create-outline" size={24} color="#6C63FF" />
+                <View style={styles.opcaoTextoContainer}>
+                  <Text style={styles.opcaoTexto}>Editar Perfil</Text>
+                  <Text style={styles.opcaoLegenda}>Atualize seus dados pessoais</Text>
+                </View>
+              </View>
             </Pressable>
-            
-            
-            <Pressable style={styles.opcao} onPress={() => signOut()}>
-              <Text style={styles.textoBotao}>Sair</Text>
+
+            <Pressable style={[styles.opcao, styles.opcaoSaida]} onPress={() => signOut()}>
+              <View style={styles.opcaoConteudo}>
+                <Ionicons name="log-out-outline" size={24} color="#FF4B4B" />
+                <View style={styles.opcaoTextoContainer}>
+                  <Text style={[styles.opcaoTexto, styles.textoBotao]}>Sair</Text>
+                  <Text style={styles.opcaoLegenda}>Finalizar sessão atual</Text>
+                </View>
+              </View>
             </Pressable>
 
             <Pressable style={styles.botaoExcluir} onPress={() => setModalDel(true)}>
@@ -402,7 +421,7 @@ export default function Perfil({ navigation }) {
           </View>
         </Modal>
 
-        {/* Teste! */}
+        
         <Modal transparent={true} visible={modalDel} animationType='fade' style={{backgroundColor:"rgba (0,0,0,0.5)"}}>
           <View style={styles.overlay}>
             <View style={styles.modalContainer2}>
@@ -437,9 +456,7 @@ export default function Perfil({ navigation }) {
                     onChangeText={setConfirmText}
                   />
 
-                  { erro ? <Text>Digite corretamente!</Text> : <Text></Text>
-
-                  }
+                  { erro ? <Text>Digite corretamente!</Text> : <Text></Text>}
               </View>
 
               <View style={styles.buttonContainer}>
@@ -469,6 +486,6 @@ export default function Perfil({ navigation }) {
 
       </View>
 
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

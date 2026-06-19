@@ -17,14 +17,14 @@ export default function NavBar({ tela }) {
       route: "menu",
     },
     {
-      key: "pesquisa",
-      icon: tela === "pesquisa" ? "search" : "search-outline",
-      route: "pesquisa",
+      key: "central",
+      icon: tela === "central" ? "heart" : "heart-outline",
+      route: "central",
     },
     {
       key: "chat",
       icon: tela === "chat" ? "chatbubble" : "chatbubble-outline",
-      route: "chat", // 🔥 IMPORTANTE: cria essa rota depois
+      route: "inicioChat",
     },
     {
       key: "perfil",
@@ -38,11 +38,18 @@ export default function NavBar({ tela }) {
       {tabs.map((tab) => (
         <Pressable
           key={tab.key}
+          hitSlop={28}
           onPress={() => {
             if (route.name !== tab.route) {
               navigation.navigate(tab.route);
             }
           }}
+          style={({ pressed }) => [
+            {
+              opacity: pressed ? 0.8 : 1,
+              transform: [{ scale: pressed ? 0.75 : 1 }],
+            },
+          ]}
         >
           <Ionicons
             name={tab.icon}

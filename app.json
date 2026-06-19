@@ -22,6 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
+      "googleServicesFile": "./google-services.json",
       "package": "com.anonymous.zenith"
     },
     "web": {
@@ -29,9 +30,14 @@
     },
     "plugins": [
       "expo-font",
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth",
-      "@react-native-firebase/crashlytics"
-    ]
+      "expo-notifications",
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "97996283-234e-43e9-b659-c0a172305110"
+      }
+    },
+    "owner": "luizhpzin"
   }
 }

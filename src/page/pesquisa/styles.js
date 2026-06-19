@@ -156,6 +156,13 @@ export default StyleSheet.create({
     fontSize: 11,
   },
 
+  aviso: {
+    fontSize: 16,
+    color: "red",
+    textAlign: 'center',
+    padding: 15
+  },
+
   preco: {
     fontWeight: "bold",
     fontSize: 16,

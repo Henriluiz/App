@@ -1,15 +1,19 @@
 import React, { useState } from "react";
-import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,} from "react-native";
+import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,ActivityIndicator} from "react-native";
+import { useAuth } from "../../context/AuthContext";
 
 import styles from "./styles";
 
-export default function EsquecerSenha({ navigation }) {
+export default function EsquecerSenha({ navigation, route }) {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [erro, setErro] = useState("");
   const [aceitoTermos, setAceitoTermos] = useState(false);
+  const [loading, setLoading] = useState(false);
 
- 
+  const { email, codeLiso} = route.params;
+  const {redefinirSenha} = useAuth();
+
   /* =========================
      FORÇA DA SENHA
   ========================== */
@@ -34,7 +38,8 @@ export default function EsquecerSenha({ navigation }) {
      ENVIO
   ========================== */
 
-  function enviar() {
+  async function enviar() {
+    setErro("")
     if (!senha || !confirmarSenha) {
       setErro("Preencha todos os campos.");
       return;
@@ -54,10 +59,22 @@ export default function EsquecerSenha({ navigation }) {
       setErro("Você precisa aceitar os termos.");
       return;
     }
-
+    setLoading(true)
     setErro("");
+    
+    try {
+      const response = await redefinirSenha(email, codeLiso, senha, confirmarSenha)
 
-    navigation.navigate("login");
+      if (response?.error) {
+        setErro(response.message ?? "Erro ao redefinir senha.")
+      } else {
+        navigation.navigate("login");
+      }
+    } catch (e) {
+      setErro("Erro inesperado. Tente novamente.")
+    } finally {
+      setLoading(false) // ✅ sempre executa, com sucesso ou erro
+    }
   }
 
   /* =========================
@@ -99,8 +116,11 @@ export default function EsquecerSenha({ navigation }) {
                 style={styles.input}
                 value={senha}
                 onChangeText={setSenha}
-                secureTextEntry
+                // secureTextEntry
                 placeholder="Digite sua senha"
+                placeholderTextColor="#C4C4C4"   // <- placeholder visível
+                autoComplete="off"               // <- desativa autofill no Android
+                textContentType="none"           // <- desativa autofill no iOS
               />
 
               {/* CONFIRMAR SENHA */}
@@ -110,8 +130,11 @@ export default function EsquecerSenha({ navigation }) {
                 style={styles.input}
                 value={confirmarSenha}
                 onChangeText={setConfirmarSenha}
-                secureTextEntry
+                // secureTextEntry
                 placeholder="Confirme sua senha"
+                placeholderTextColor="#C4C4C4"   // <- placeholder visível
+                autoComplete="off"               // <- desativa autofill no Android
+                textContentType="none"           // <- desativa autofill no iOS
               />
 
               {/* CHECKBOX TERMOS */}
@@ -158,8 +181,9 @@ export default function EsquecerSenha({ navigation }) {
                   styles.btnProximo,
                   !aceitoTermos && styles.botaoDesativado,
                 ]}
-              >
-                <Text style={styles.textoProximo}>Próximo</Text>
+              > 
+              {loading ? (<ActivityIndicator color="#FFF" size="small" />) : (
+                <Text style={styles.textoProximo}>Próximo</Text>)}
 
                 <View style={styles.circuloSeta}>
                   <Text style={styles.setaProximo}>{">"}</Text>

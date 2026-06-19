@@ -1,22 +1,16 @@
 import axios from "axios";
 import { getToken, clearSession } from "./authStogare";
+import { reset } from "./navigationService";
 import { Platform } from "react-native";
 
-const getBaseURL = () => {
-  if (Platform.OS === "android") {
-    return "http://10.0.2.2:8000/api";
-  }
+const BASE_URL = "http://10.100.175.116:8000";
 
-  if (Platform.OS === "web") {
-    return "http://127.0.0.1:8000/api"
-  }
-
-  return "http://localhost:8000/api";
-};
+export { BASE_URL };
 
 const api = axios.create({
-  baseURL: getBaseURL(), // ! Seguir a tabela abaixo http://192.168.18.99:8000/api
-  timeout: 10000,
+  baseURL: "http://10.100.175.116:8000/api",
+  // php artisan serve --host=0.0.0.0 --port=8000
+  timeout: 70000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -48,33 +42,34 @@ function processQueue(error, token = null) {
 
 // 1) Adiciona access token em toda requisição
 api.interceptors.request.use(async (config) => {
-
   const token = await getToken();
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
-  return config;
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  }
 
+  return config;
 });
 
 // 2) Intercepta 401 e tenta refresh
 api.interceptors.response.use(
-  response => response,
+  (response) => response,
 
-  async error => {
-
+  async (error) => {
     if (error.response?.status === 401) {
-
       await clearSession();
 
       console.log("Sessão expirada");
 
+      reset("login");
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

@@ -1,38 +1,30 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp} from "react-native-responsive-screen";
 
 const { width, height } = Dimensions.get("window");
 
 export default StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-
-  header: {
-    paddingTop: height * 0.15,
-  },
-
-  topo: {
-    position: "absolute",
-    top: 50,
-    left: 20,
-    right: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    zIndex: 10,
+    backgroundColor: "#EAE0FF",
+    alignItems: "center",
+    paddingTop: 0
   },
 
   card: {
-    flex: 1,
-    backgroundColor: "#5DE2D4",
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    width: "94%",
+    minHeight: 620,
+    marginVertical: 16,
+    paddingBottom: 20,
+    paddingTop: 12,
+    paddingHorizontal: 16,
+    alignSelf: "center",
   },
 
   fotoContainer: {
     alignItems: "center",
-    marginTop: -60,
-    marginBottom: 10,
+    marginVertical: 10,
   },
 
   fotoPerfil: {
@@ -41,61 +33,86 @@ export default StyleSheet.create({
     borderRadius: 70,
     borderWidth: 3,
     borderColor: "#ffffff",
-    backgroundColor: "#6C63FF"
+    backgroundColor: "#8E7CFF",
+    alignItems: "center",
+    justifyContent: "center"
   },
 
   fotoPerfil2: {
-    margin: 40,
+    marginTop: 30,
+  },
+
+  imagem: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    borderRadius: 57,
   },
 
   nomePessoa: {
-    color: "#ffffff",
-    fontSize: 25,
+    color: "#290041",
+    fontSize: 23,
+    fontWeight: "bold",
     marginBottom: 5,
     textAlign: "center",
+    marginInline: 25,
   },
 
   nickname: {
     fontSize: 20,
     marginBottom: 15,
     textAlign: "center",
-    color: "white",
+    color: "black",
     fontWeight: "bold"
   },
 
   container2: {
-    flex: 1,
-    marginTop: height * 0.05,
     paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: "#ffffff",
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     marginHorizontal: height * 0.02,
   },
 
   tituloCard: {
-    fontSize: width * 0.07,
-    color: "#A383FB",
+    color: "#290041",
     marginBottom: 10,
+    fontSize: 20,
+    fontWeight: '600'
   },
 
   rowWrap: {
-    marginTop: 20,
+    marginTop: 5,
+    marginBottom: 12,
+  },
+
+  rowCont: {
+    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  profissao: {
+    textAlign: "center",
+    color: "#A383FB",
+    fontSize: 15,
   },
 
   label: {
-    fontSize: width * 0.04,
+    fontSize: 16,
     color: "#000000",
     marginTop: 10,
     marginBottom: 8,
-    fontWeight: "bold",
   },
 
   texto: {
     fontSize: width * 0.035,
     color: '#666',
-    lineHeight: 22,
+    lineHeight: 20,
+  },
+
+  textoCont: {
+    fontSize: width * 0.035,
+    color: '#666',
   },
 
   /* MODAL MENU */
@@ -140,19 +157,23 @@ export default StyleSheet.create({
   },
 
   infoContainer: {
+    flexDirection: "row",
+    gap: 15,
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 5,
   },
 
   estrelas: {
     flexDirection: "row",
     gap: 3,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   textoAvaliacao: {
-    fontSize: 14,
-    marginTop: 4,
-    color: "#6C63FF",
+    fontSize: 18,
+    color: "#F89034",
   },
 
   linhaInfo: {
@@ -167,97 +188,31 @@ export default StyleSheet.create({
     fontSize: 14,
   },
 
-  /* ==================================== */
-  /* MODAL AGENDAR CONSULTA */
-  /* ==================================== */
-
-  modalBox: {
-    width: "85%",
-    backgroundColor: "#ffffff",
-    borderRadius: 20,
-    padding: 20,
-    alignSelf: "center",
-    marginBottom: height * 0.1,
-  },
-
-  linhaChips: {
+  botao: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: "#8E7CFF",
+    borderRadius: 12,
+    marginTop: 8,
+    width: "100%",
+    height: 48,
+    elevation: 3,
   },
 
-  chip: {
-    backgroundColor: "#F4F6FB",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 25,
-    marginRight: 8,
-    marginBottom: 8,
+  botaoContainer: {
+    justifyContent: "flex-end",
+    paddingHorizontal: 18,
+    marginTop: 18,
+    marginBottom: 12,
   },
-
-  chipTexto: {
-    color: "#6C63FF",
-    fontWeight: "600",
-    fontSize: 14,
-  },
-
-  chipSelecionado: {
-    backgroundColor: "#6C63FF",
-  },
-
-  chipTextoSelecionado: {
-    color: "#ffffff",
-  },
-
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 25,
-  },
-
-  btnCancelar: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "red",
-  },
-
-  btnTextoCancelar: {
-    color: "red",
+  
+  botaoTexto: {
+    color: "#fff",
     fontWeight: "bold",
+    fontSize: 15, 
   },
 
-  btnConfirmar: {
-    backgroundColor: "#6C63FF",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-  },
-
-  btnTextoConfirmar: {
-    color: "#ffffff",
-    fontWeight: "bold",
-  },
-
-  /* Modal agendamento centralizado */
-modalOverlayCenter: {
-  flex: 1,
-  backgroundColor: "rgba(0,0,0,0.5)",
-  justifyContent: "center",
-  alignItems: "center",
-},
-
-modalBoxCenter: {
-  width: "85%",
-  backgroundColor: "#ffffff",
-  borderRadius: 20,
-  padding: 20,
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.25,
-  shadowRadius: 4,
-  elevation: 5,
-}
 
 });

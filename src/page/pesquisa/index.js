@@ -1,5 +1,5 @@
 // 🔹 IMPORTAÇÕES
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   FlatList,
   Pressable,
   Modal,
+  ActivityIndicator,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -14,9 +16,18 @@ import Slider from "@react-native-community/slider";
 
 import styles from "./styles";
 import NavBar from "../../components/NavBar";
+import { useAuth } from "../../context/AuthContext";
 
-// 🔹 COMPONENTE
-export default function Pesquisa() {
+export default function Pesquisa({ route }) {
+  const {
+    listarPsicologos,
+    verHorariosDisponiveis,
+    agendarSessaoCont,
+    FOTO,
+  } = useAuth();
+
+  const { buscaInicial } = route.params ?? {};
+
   const [busca, setBusca] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalFiltro, setModalFiltro] = useState(false);
@@ -27,53 +38,19 @@ export default function Pesquisa() {
 
   const [agendados, setAgendados] = useState({});
 
-  // 🔹 MODAL DE CONFIRMAÇÃO CANCELAR
-  const [modalCancelarVisible, setModalCancelarVisible] = useState(false);
-  const [cancelando, setCancelando] = useState(null);
-
   // 🔥 FILTROS
   const [especialidadeFiltro, setEspecialidadeFiltro] = useState([]);
   const [abordagemFiltro, setAbordagemFiltro] = useState([]);
-  const [precoMax, setPrecoMax] = useState(2000);
+  const [precoMax, setPrecoMax] = useState(200);
+
+  const [psicologos, setPsicologos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [avaliacaoMin, setAvaliacaoMin] = useState(0.1);
 
   const navigation = useNavigation();
 
-  // 🔹 DADOS (AGORA COM ABORDAGEM)
-  const recomendados = [
-    {
-      nome: "Dra. Maria Silva",
-      especialidade: "Psicóloga Clínica",
-      abordagem: "Cognitivo",
-      area: "Ansiedade, Autoestima, Relacionamentos",
-      preco: 80,
-      avaliacao: 4.9,
-      horario: "Hoje, 9:00",
-    },
-  ];
-
-  const disponiveis = [
-    {
-      nome: "Dr. Carlos Oliveira",
-      especialidade: "Psicanalista",
-      abordagem: "Psicanálise",
-      area: "Trauma",
-      preco: 200,
-      avaliacao: 4.8,
-      horario: "Hoje, 9:00",
-    },
-    {
-      nome: "Dra. Beatriz Souza",
-      especialidade: "Psicóloga Comportamental",
-      abordagem: "Cognitivo",
-      area: "Fobias",
-      preco: 180,
-      avaliacao: 4.7,
-      horario: "Hoje, 9:00",
-    },
-  ];
-
   const dias = ["Seg", "Ter", "Qua", "Qui", "Sex"];
-  const horarios = ["09:00", "11:00", "14:00", "16:00"];
+  const [horarios, setHorarios] = useState(null);
 
   const especialidades = ["Ansiedade", "Depressão", "Fobias"];
   const abordagens = ["Humanista", "Cognitivo", "Psicanálise"];
@@ -89,8 +66,8 @@ export default function Pesquisa() {
 
   // 🔥 FILTRO MELHORADO
   const filtrarLista = (lista) => {
+    if (!lista) return [];
     return lista.filter((item) => {
-      // 🔍 BUSCA INTELIGENTE
       if (busca) {
         const texto = busca.toLowerCase();
         const match =
@@ -101,33 +78,43 @@ export default function Pesquisa() {
         if (!match) return false;
       }
 
-      // 🎯 ESPECIALIDADE
       if (
         especialidadeFiltro.length > 0 &&
         !especialidadeFiltro.some((esp) =>
-          item.area.toLowerCase().includes(esp.toLowerCase())
+          item.area.toLowerCase().includes(esp.toLowerCase()),
         )
       )
         return false;
 
-      // 🎯 ABORDAGEM CORRIGIDA
       if (
         abordagemFiltro.length > 0 &&
         !abordagemFiltro.some((ab) =>
-          (item.abordagem || "").toLowerCase().includes(ab.toLowerCase())
+          (item.abordagem || "").toLowerCase().includes(ab.toLowerCase()),
         )
       )
         return false;
 
-      // 💰 PREÇO
-      if (item.preco > precoMax) return false;
+      if (item.preco > 0 && item.preco > precoMax) return false;
+
+      if (item.avaliacao < avaliacaoMin) return false;
 
       return true;
     });
   };
 
-  const recomendadosFiltrados = filtrarLista(recomendados);
-  const disponiveisFiltrados = filtrarLista(disponiveis);
+  const recomendadosFiltrados = filtrarLista(
+    psicologos.filter((p) => p.avaliacao >= 4.5),
+  );
+
+  const disponiveisFiltrados = filtrarLista(
+    psicologos.filter((p) => p.avaliacao < 4.5),
+  );
+
+  const carregarHorarios = async (id, data) => {
+    const dados = await verHorariosDisponiveis(id, data);
+    console.log(dados);
+    setHorarios(dados);
+  };
 
   // 🔹 CARD
   const renderCard = (item) => {
@@ -136,21 +123,28 @@ export default function Pesquisa() {
     return (
       <Pressable
         style={({ pressed }) => [styles.card, pressed && { opacity: 0.7 }]}
-        onPress={() =>
-          navigation.navigate("visualizarPsi", { psicologo: item })
-        }
+        onPress={() => navigation.navigate("visualizarPsi", { id: item.id })}
       >
         <View style={styles.topoCard}>
-          <View style={styles.avatar} />
+          {item.foto_perfil ? (
+            <Image
+              source={{
+                uri: `${FOTO}${item.foto_perfil}`,
+              }}
+              style={styles.avatar}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.avatar} />
+          )}
 
           <View style={{ flex: 1 }}>
             <Text style={styles.nome}>{item.nome}</Text>
-            <Text style={styles.especialidade}>{item.especialidade}</Text>
             <Text style={styles.area}>{item.area}</Text>
           </View>
 
           <View style={styles.rating}>
-            <Text>⭐ {item.avaliacao}</Text>
+            <Text>⭐ {item.avaliacao === 0.1 ? "N/A" : item.avaliacao}</Text>
           </View>
         </View>
 
@@ -165,33 +159,155 @@ export default function Pesquisa() {
               <Text style={styles.preco}>R$ {item.preco}</Text>
             </View>
           </View>
-
-          <Pressable
-            style={[styles.botao, agendado && { backgroundColor: "#ccc" }]}
-            onPress={(e) => {
-              e.stopPropagation();
-
-              if (agendado) {
-                // Abre modal de confirmação para cancelar
-                setCancelando(item);
-                setModalCancelarVisible(true);
-                return;
-              }
-
-              setSelecionado(item);
-              setDiaSelecionado(null);
-              setHoraSelecionada(null);
-              setModalVisible(true);
-            }}
-          >
-            <Text style={[styles.botaoTexto, agendado && { color: "#000" }]}>
-              {agendado ? "✔ Agendado" : "Agendar"}
-            </Text>
-          </Pressable>
         </View>
       </Pressable>
     );
   };
+
+  // 🔹 BUSCA DA API AO MONTAR
+  useEffect(() => {
+    const carregarPsicologos = async () => {
+      try {
+        const resposta = await listarPsicologos();
+        console.log(
+          "=== RESPOSTA COMPLETA ===",
+          JSON.stringify(resposta, null, 2),
+        );
+
+        if (!resposta || !resposta.psicologos) {
+          console.error("❌ Resposta inválida - psicologos não encontrado");
+          setLoading(false);
+          return;
+        }
+
+        console.log("Total de usuários:", resposta.psicologos.length);
+
+        if (resposta.psicologos.length > 0) {
+          const primeiro = resposta.psicologos[0];
+          console.log(
+            "=== PRIMEIRO USUÁRIO BRUTO ===",
+            JSON.stringify(primeiro, null, 2),
+          );
+          console.log("Chaves do usuário:", Object.keys(primeiro));
+          if (primeiro.psicologo) {
+            console.log(
+              "Chaves do psicologo:",
+              Object.keys(primeiro.psicologo),
+            );
+          }
+        }
+
+        const mapeados = (resposta.psicologos || [])
+          .filter((u) => u && u.psicologo)
+          .map((u, idx) => {
+            // 🔍 Tentar encontrar os IDs corretamente
+            const id = u.id_usuario || u.id || u.userId || null;
+            const id_psi =
+              u.psicologo?.id_psicologo ||
+              u.psicologo?.id ||
+              u.psicologo?.idPsicologo ||
+              null;
+
+            if (!id) {
+              console.warn(`⚠️ Usuário ${u.nome} sem ID de usuário`, u);
+            }
+            if (!id_psi) {
+              console.warn(
+                `⚠️ Psicólogo ${u.nome} sem ID de psicólogo`,
+                u.psicologo,
+              );
+            }
+
+            const objeto = {
+              id: id || u.nome, // Fallback para nome se não houver ID
+              id_psi: id_psi || u.nome,
+              nome: u.nome || "Sem nome",
+              especialidade:
+                u.psicologo?.especialidades?.map((e) => e.nome).join(", ") ||
+                "Psicólogo",
+              abordagem:
+                u.psicologo?.abordagens?.map((a) => a.nome).join(", ") || "",
+              area:
+                u.psicologo?.especialidades?.map((e) => e.nome).join(", ") ||
+                "",
+              preco: parseFloat(u.psicologo?.preco_sessao) || 0,
+              avaliacao: parseFloat(u.psicologo?.avaliacao) || 0.1,
+              horario: "A combinar",
+              foto_perfil: u.foto_perfil,
+              atendimento:
+                u.psicologo?.atendimentos
+                  ?.map((a) => a.modalidade)
+                  .join(", ") || "",
+            };
+
+            if (idx === 0) {
+              console.log(
+                "=== OBJETO MAPEADO (Primeiro) ===",
+                JSON.stringify(objeto, null, 2),
+              );
+            }
+
+            return objeto;
+          });
+
+        setPsicologos(mapeados);
+        console.log("=== TOTAL MAPEADOS ===", mapeados.length, mapeados);
+      } catch (error) {
+        console.error("❌ Erro ao carregar psicólogos:", error);
+        alert("Erro ao carregar psicólogos: " + error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    setLoading(true);
+    carregarPsicologos();
+  }, []);
+
+  const gerarDataPorDia = (dia) => {
+    const agora = new Date();
+
+    const offset = agora.getTimezoneOffset() * 60000;
+    const dataLocal = new Date(agora.getTime() - offset);
+
+    const mapa = {
+      Dom: 0,
+      Seg: 1,
+      Ter: 2,
+      Qua: 3,
+      Qui: 4,
+      Sex: 5,
+      Sab: 6,
+    };
+
+    const alvo = mapa[dia];
+    const atual = dataLocal.getDay();
+
+    let diff = alvo - atual;
+    if (diff <= 0) diff += 7;
+
+    const proximaData = new Date(dataLocal);
+    proximaData.setDate(proximaData.getDate() + diff);
+
+    // Formatar como ISO (YYYY-MM-DD)
+    const ano = proximaData.getFullYear();
+    const mes = String(proximaData.getMonth() + 1).padStart(2, "0");
+    const data = String(proximaData.getDate()).padStart(2, "0");
+
+    const dataISO = `${ano}-${mes}-${data}`;
+    console.log(
+      `📅 Data gerada para ${dia}: ${dataISO} (Dia semana: ${proximaData.getDay()})`,
+    );
+
+    return dataISO;
+  };
+
+  if (loading)
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator size="large" color="#2E7D32" />
+      </View>
+    );
 
   // 🔹 RENDER
   return (
@@ -199,7 +315,9 @@ export default function Pesquisa() {
       {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.searchBox}>
-          <Ionicons name="search" size={20} color="#aaa" />
+          <Pressable>
+            <Ionicons name="search" size={20} color="#aaa" />
+          </Pressable>
           <TextInput
             placeholder="Buscar psicólogo, especialidade..."
             placeholderTextColor="#999"
@@ -211,7 +329,10 @@ export default function Pesquisa() {
 
         <View style={styles.filtros}>
           <Pressable
-            style={({ pressed }) => [styles.filtroBtn, pressed && { opacity: 0.6 }]}
+            style={({ pressed }) => [
+              styles.filtroBtn,
+              pressed && { opacity: 0.6 },
+            ]}
             onPress={() => setModalFiltro(true)}
           >
             <Ionicons name="options" size={16} color="#6B5EFF" />
@@ -233,22 +354,15 @@ export default function Pesquisa() {
           </>
         }
         data={disponiveisFiltrados}
-        keyExtractor={(item) => item.nome}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => renderCard(item)}
-        contentContainerStyle={{ padding: 15, paddingBottom: 100 }}
+        contentContainerStyle={{ padding: 15, paddingBottom: 30 }}
+        bounces={false}
       />
-
-      {/* 🔥 SEM RESULTADO */}
-      {disponiveisFiltrados.length === 0 &&
-        recomendadosFiltrados.length === 0 && (
-          <Text style={{ textAlign: "center", marginTop: 20 }}>
-            Nenhum resultado encontrado 😢
-          </Text>
-        )}
 
       {/* MODAL AGENDAR */}
       <Modal visible={modalVisible} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
+        <View style={styles.modalOverlay} importantForAccessibility="yes">
           <View style={styles.modalBox}>
             <Text style={styles.modalTitulo}>Escolha dia e horário</Text>
 
@@ -261,7 +375,14 @@ export default function Pesquisa() {
                     styles.chip,
                     diaSelecionado === dia && { backgroundColor: "#8E7CFF" },
                   ]}
-                  onPress={() => setDiaSelecionado(dia)}
+                  onPress={async () => {
+                    setDiaSelecionado(dia);
+
+                    if (selecionado) {
+                      const data = gerarDataPorDia(dia);
+                      await carregarHorarios(selecionado.id_psi, data);
+                    }
+                  }}
                 >
                   <Text
                     style={[
@@ -277,46 +398,93 @@ export default function Pesquisa() {
 
             <Text style={{ marginTop: 10 }}>Horários:</Text>
             <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              {horarios.map((hora) => (
-                <Pressable
-                  key={hora}
-                  style={[
-                    styles.chip,
-                    horaSelecionada === hora && { backgroundColor: "#8E7CFF" },
-                  ]}
-                  onPress={() => setHoraSelecionada(hora)}
-                >
-                  <Text
+              {horarios === null ? null : Array.isArray(horarios) &&
+                horarios.length > 0 ? (
+                horarios.map((hora) => (
+                  <Pressable
+                    key={hora}
                     style={[
-                      styles.chipTexto,
-                      horaSelecionada === hora && { color: "#fff" },
+                      styles.chip,
+                      horaSelecionada === hora && {
+                        backgroundColor: "#8E7CFF",
+                      },
                     ]}
+                    onPress={() => setHoraSelecionada(hora)}
                   >
-                    {hora}
-                  </Text>
-                </Pressable>
-              ))}
+                    <Text
+                      style={[
+                        styles.chipTexto,
+                        horaSelecionada === hora && { color: "#fff" },
+                      ]}
+                    >
+                      {hora}
+                    </Text>
+                  </Pressable>
+                ))
+              ) : (
+                <Text style={styles.aviso}>
+                  Nenhum horário disponível para este dia
+                </Text>
+              )}
             </View>
 
             <View style={styles.modalButtons}>
-              <Pressable onPress={() => setModalVisible(false)}>
+              <Pressable
+                onPress={() => {
+                  setModalVisible(false);
+                  setHorarios(null);
+                }}
+              >
                 <Text style={{ color: "red" }}>Cancelar</Text>
               </Pressable>
 
               <Pressable
                 style={styles.btnConfirmar}
-                onPress={() => {
-                  if (!diaSelecionado || !horaSelecionada) return;
+                onPress={async () => {
+                  if (!diaSelecionado || !horaSelecionada || !selecionado) {
+                    alert("Selecione dia e horário");
+                    return;
+                  }
 
-                  setAgendados({
-                    ...agendados,
-                    [selecionado.nome]: {
-                      dia: diaSelecionado,
-                      hora: horaSelecionada,
-                    },
+                  console.log("DEBUG AGENDAMENTO:", {
+                    id: selecionado.id,
+                    id_psi: selecionado.id_psi,
+                    nome: selecionado.nome,
                   });
 
-                  setModalVisible(false);
+                  const payload = {
+                    id_psicologo: selecionado.id_psi, // ✅ USAR ID_PSI
+                    id_paciente: selecionado.id, // ✅ USAR ID DO USUÁRIO
+                    data_sessao: gerarDataPorDia(diaSelecionado),
+                    hora_inicio: horaSelecionada,
+                  };
+
+                  console.log("Payload enviado:", payload);
+
+                  try {
+                    await agendarSessaoCont(payload);
+
+                    // ✅ CORRIGIDO: Usar selecionado.nome como chave
+                    setAgendados({
+                      ...agendados,
+                      [selecionado.nome]: {
+                        dia: diaSelecionado,
+                        hora: horaSelecionada,
+                      },
+                    });
+
+                    alert("Sessão agendada com sucesso! ✅");
+                    setModalVisible(false);
+                    setHorarios(null);
+                    setSelecionado(null);
+                  } catch (e) {
+                    console.error("Erro ao agendar:", e);
+                    if (e.response?.status === 400) {
+                      alert("Esse horário já foi ocupado.");
+                    } else {
+                      alert("Erro ao agendar sessão: " + (e.message || e));
+                    }
+                  }
                 }}
               >
                 <Text style={{ color: "#fff" }}>Confirmar</Text>
@@ -328,7 +496,7 @@ export default function Pesquisa() {
 
       {/* MODAL FILTROS */}
       <Modal visible={modalFiltro} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
+        <View style={styles.modalOverlay} importantForAccessibility="yes">
           <View style={styles.modalBox}>
             <Text style={styles.modalTitulo}>Filtros</Text>
 
@@ -344,7 +512,11 @@ export default function Pesquisa() {
                     },
                   ]}
                   onPress={() =>
-                    toggleItem(item, especialidadeFiltro, setEspecialidadeFiltro)
+                    toggleItem(
+                      item,
+                      especialidadeFiltro,
+                      setEspecialidadeFiltro,
+                    )
                   }
                 >
                   <Text
@@ -366,7 +538,9 @@ export default function Pesquisa() {
                   key={item}
                   style={[
                     styles.chip,
-                    abordagemFiltro.includes(item) && { backgroundColor: "#8E7CFF" },
+                    abordagemFiltro.includes(item) && {
+                      backgroundColor: "#8E7CFF",
+                    },
                   ]}
                   onPress={() =>
                     toggleItem(item, abordagemFiltro, setAbordagemFiltro)
@@ -390,19 +564,22 @@ export default function Pesquisa() {
 
             <Slider
               minimumValue={0}
-              maximumValue={2000}
+              maximumValue={200}
               value={precoMax}
               onValueChange={(value) => setPrecoMax(value)}
+              style={{ width: "100%" }}
             />
 
             <Pressable
               onPress={() => {
                 setEspecialidadeFiltro([]);
                 setAbordagemFiltro([]);
-                setPrecoMax(2000);
+                setPrecoMax(200);
               }}
             >
-              <Text style={{ color: "#6B5EFF", marginTop: 10 }}>Limpar filtros</Text>
+              <Text style={{ color: "#6B5EFF", marginTop: 10 }}>
+                Limpar filtros
+              </Text>
             </Pressable>
 
             <View style={styles.modalButtons}>
@@ -415,41 +592,6 @@ export default function Pesquisa() {
                 onPress={() => setModalFiltro(false)}
               >
                 <Text style={{ color: "#fff" }}>Aplicar</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* MODAL CONFIRMAÇÃO CANCELAMENTO */}
-      <Modal visible={modalCancelarVisible} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalTitulo}>
-              Deseja realmente cancelar este agendamento?
-            </Text>
-
-            <View style={styles.modalButtons}>
-              <Pressable
-                onPress={() => setModalCancelarVisible(false)}
-                style={[styles.btnCancelar, { paddingHorizontal: 20 }]}
-              >
-                <Text style={{ color: "red", fontWeight: "bold" }}>Não</Text>
-              </Pressable>
-
-              <Pressable
-                style={styles.btnConfirmar}
-                onPress={() => {
-                  if (cancelando) {
-                    const novo = { ...agendados };
-                    delete novo[cancelando.nome];
-                    setAgendados(novo);
-                  }
-                  setModalCancelarVisible(false);
-                  setCancelando(null);
-                }}
-              >
-                <Text style={{ color: "#fff", fontWeight: "bold" }}>Sim</Text>
               </Pressable>
             </View>
           </View>

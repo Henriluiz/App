@@ -1,128 +1,201 @@
-import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, ScrollView, Pressable, Image } from "react-native";
 
-import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
-import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-
 import NavBar from "../../components/NavBar";
-
 import styles from "./styles";
 
 export default function Menu({ navigation }) {
-
-  const route = useRoute();
+  const { user, mSessoes, historico, FOTO } = useAuth();
+  const [ultimoPsicologo, setUltimoPsicologo] = useState(null);
+  const [ultimoUserPerfil, setUltimoUserPerfil] = useState(null);
 
   const capitalize = (str) => {
-    // Verifica se str existe e é uma string
-    if (!str || typeof str !== 'string') return '';
-    
-    // Remove espaços extras e verifica se não está vazia
+    if (!str || typeof str !== "string") return "";
     const trimmedStr = str.trim();
-    if (trimmedStr.length === 0) return '';
-    
+    if (trimmedStr.length === 0) return "";
     return trimmedStr
       .toLowerCase()
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
 
-  const { user } = useAuth();
   useEffect(() => {
+    const carregarUltimoPsicologo = async () => {
+      try {
+        const [sessoesResp, historicoResp] = await Promise.all([
+          mSessoes(),
+          historico(),
+        ]);
+        const sessoes = sessoesResp?.sessoes ?? [];
+        const realizadas = historicoResp?.realizadas ?? [];
+        const cancelamentos = historicoResp?.cancelamentos ?? [];
 
-    async function load() {
+        const todasSessoes = [...sessoes, ...realizadas, ...cancelamentos]
+          .filter((item) => item?.psicologo)
+          .sort((a, b) => {
+            const dataA = a.data_sessao ?? "";
+            const dataB = b.data_sessao ?? "";
+            if (dataA !== dataB) return dataB.localeCompare(dataA);
+            const horaA = a.hora_inicio ?? "";
+            const horaB = b.hora_inicio ?? "";
+            return horaB.localeCompare(horaA);
+          });
 
-      const data = await getPerfil();
+        const ultima = todasSessoes[0] ?? null;
+        if (ultima) {
+          const psicologo = ultima.psicologo;
+          setUltimoPsicologo(psicologo);
+          setUltimoUserPerfil(
+            psicologo?.usuario ?? {
+              nome: psicologo?.nome ?? "Psicólogo",
+            },
+          );
+        }
+      } catch (err) {
+        console.error("Erro ao buscar último psicólogo:", err);
+      }
+    };
 
-      setUser(data);
-
-    }
-
-    load();
-
+    carregarUltimoPsicologo();
   }, []);
-  // -----------------
+
+  const handleAgendarUltimo = () => {
+    if (ultimoPsicologo) {
+      navigation.navigate("dataHoraConsulta", {
+        psicologo: ultimoPsicologo,
+        userPerfil: ultimoUserPerfil,
+      });
+    } else {
+      navigation.navigate("pesquisa");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        
-        {/* HEADER */}
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <Text style={styles.greeting}>Boa tarde,</Text>
-            <Text style={styles.name}>{capitalize(user?.nome)}</Text>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.topSection}>
+          <View style={styles.headerRow}>
+            <View style={styles.profileSummary}>
+              <Pressable
+                style={styles.avatarWrapper}
+                onPress={() => navigation.navigate("editarPerfil")}
+              >
+                {user?.foto_perfil ? (
+                  <Image
+                    source={{ uri: `${FOTO}${user.foto_perfil}` }}
+                    style={styles.avatarImage}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <Ionicons name="person" size={26} color="#6A37E5" />
+                )}
+              </Pressable>
+              <View style={styles.profileText}>
+                <Text style={styles.welcomeText}>Bem-vindo(a)</Text>
+                <Pressable onPress={() => navigation.navigate("editarPerfil")}>
+                  <Text style={styles.userName}>{capitalize(user?.nome)}</Text>
+                </Pressable>
+              </View>
+            </View>
 
-            <View style={styles.headerIcons}>
-              <Ionicons name="information-circle-outline" size={22} color="#fff" />
-              <Ionicons name="notifications-outline" size={22} color="#fff" style={{ marginLeft: 10 }} />
+            <View style={styles.topIcons}>
+              <Ionicons
+                name="information-circle-outline"
+                size={22}
+                color="#fff"
+              />
+              <Pressable onPress={() => navigation.navigate("notificacao")} style={{ marginLeft: 14 }}>
+                <Ionicons
+                  name="notifications-outline"
+                  size={22}
+                  color="#fff"
+                />
+              </Pressable>
             </View>
           </View>
+          <Pressable
+            style={styles.searchContainer}
+            onPress={() => navigation.navigate("pesquisa")}
+          >
+            <Ionicons name="search" size={20} color="#ffffff" />
+            <Text style={styles.searchLabel}>Buscar psicólogo</Text>
+          </Pressable>
+        </View>
 
-          <View style={styles.sessionCard}>
-            <Text style={styles.sessionTitle}>Próxima sessão</Text>
-            <Text style={styles.sessionDate}>Hoje, às 15hrs</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Ações rápidas</Text>
+        </View>
 
-            <Pressable style={styles.sessionButton}>
-              <Text style={styles.sessionButtonText}>Entrar na sala</Text>
+        <View style={styles.quickActions}>
+          <Pressable style={styles.actionCard} onPress={handleAgendarUltimo}>
+            <View style={styles.actionIcon}>
+              <Feather name="edit" size={22} color="#6A37E5" />
+            </View>
+            <Text style={styles.actionTitle}>Agendar</Text>
+            <Text style={styles.actionSubtitle}>
+              {ultimoPsicologo
+                ? `Último: ${ultimoPsicologo.usuario?.nome ?? ultimoPsicologo.nome}`
+                : "Nova consulta"}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={styles.actionCard}
+            onPress={() => navigation.navigate("minhasSessoes")}
+          >
+            <View style={styles.actionIcon}>
+              <Feather name="clock" size={22} color="#6A37E5" />
+            </View>
+            <Text style={styles.actionTitle}>Sessões</Text>
+            <Text style={styles.actionSubtitle}>Próximas sessões</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.promoCard}>
+          <View style={styles.promoText}>
+            <Text style={styles.promoTitle}>
+              Cuide da sua saúde mental com praticidade
+            </Text>
+            <Text style={styles.promoDescription}>
+              Encontre o psicólogo ideal e agende sua sessão online.
+            </Text>
+            <Pressable
+              style={styles.promoButton}
+              onPress={() => navigation.navigate("pesquisa")}
+            >
+              <Text style={styles.promoButtonText}>Buscar psicólogo</Text>
             </Pressable>
           </View>
-          
-        </View>
 
-        {/* AÇÕES RÁPIDAS */}
-        <Text style={styles.sectionTitle}>Ações rápidas</Text>
-        <View style={styles.quickActions}>
-          <Pressable style={styles.actionCard}>
-            <Feather name="edit" size={24} color="#6C63FF" />
-            <Text style={styles.actionTitle}>Agendar</Text>
-            <Text style={styles.actionSubtitle}>Nova consulta</Text>
-          </Pressable>
-
-          <Pressable style={styles.actionCard}>
-            <Feather name="clock" size={24} color="#6C63FF" />
-            <Text style={styles.actionTitle}>Sessões</Text>
-            <Text style={styles.actionSubtitle}>Ver histórico</Text>
-          </Pressable>
-        </View>
-
-        {/* REGISTRO DE HUMOR */}
-        <Text style={styles.sectionTitle}>Registre seu humor</Text>
-        <View style={styles.moodContainer}>
-          {["sad-outline", "happy-outline", "heart-outline", "sunny-outline", "thumbs-up-outline"].map(
-            (icon, index) => (
-              <Pressable key={index} style={styles.moodButton}>
-                <Ionicons name={icon} size={22} color="#555" />
-              </Pressable>
-            )
-          )}
-        </View>
-
-        {/* PARA VOCÊ */}
-        <Text style={styles.sectionTitle}>Para você</Text>
-        <View style={styles.recommendations}>
-          <View style={styles.recommendCard}>
-            <Text style={styles.recommendText}>Técnicas de respiração</Text>
+          <View style={styles.promoIllustration}>
+            <Image source={require("./img/iconeHome.png")} style={{width: 80, height: 80}}/>
           </View>
+        </View>
 
-          <View style={styles.recommendCard}>
-            <Text style={styles.recommendText}>Entendendo ansiedade</Text>
+        <View style={styles.sessionCard}>
+          <View style={styles.sessionInfo}>
+            <Text style={styles.sessionDate}>Quinta-feira, 23 de maio</Text>
+            <Text style={styles.sessionTime}>14:00</Text>
           </View>
+          <Pressable
+            style={styles.sessionButton}
+            onPress={() => navigation.navigate("minhaSessao")}
+          >
+            <Text style={styles.sessionButtonText}>Entrar na sessão</Text>
+          </Pressable>
         </View>
       </ScrollView>
 
-      <NavBar 
-        tela = "home"
-      />
+      <View style={{backgroundColor: "black" }}>
+        <NavBar tela="home" />
+      </View>
     </SafeAreaView>
   );
 }

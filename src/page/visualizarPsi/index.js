@@ -1,34 +1,157 @@
 import React, { useEffect, useState } from "react";
 import {
-  Text, View, ScrollView, KeyboardAvoidingView,
-  Platform, Pressable, Modal, ActivityIndicator
+  Text,
+  View,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  Modal,
+  ActivityIndicator,
+  Image,
 } from "react-native";
 
-import { useAuth } from "../../context/AuthContext"
+import { useAuth } from "../../context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
-import * as Animatable from 'react-native-animatable';
+import NavBar from "../../components/NavBar";
+import * as Animatable from "react-native-animatable";
+import Feather from "@expo/vector-icons/Feather";
 
-export default function VisualizarPsi({ navigation }) {
+import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+export default function VisualizarPsi({ route }) {
+  const navigation = useNavigation();
 
   const { user } = useAuth();
 
-  const [menuAberto, setMenuAberto] = useState(false);
-  const [userPerfil, setUserPerfil] = useState(null)
-  const [psicologo, setPsicologo] = useState(null)
-  const [loading, setLoading] = useState(true);
-  const [id, setId] = useState(23)
+  const { id } = route.params ?? {};
 
-  const {verPsicologo} = useAuth();
-  
+  const [menuAberto, setMenuAberto] = useState(false);
+  const [userPerfil, setUserPerfil] = useState(null);
+  const [psicologo, setPsicologo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // 🔹 ESTADOS PARA AGENDAMENTO
+  const [modalAgendar, setModalAgendar] = useState(false);
+  const [diaSelecionado, setDiaSelecionado] = useState(null);
+  const [horaSelecionada, setHoraSelecionada] = useState(null);
+  const [horarios, setHorarios] = useState([]);
+  const [agendando, setAgendando] = useState(false);
+
+  const dias = ["Seg", "Ter", "Qua", "Qui", "Sex"];
+
+  const { verPsicologo, verHorariosDisponiveis, agendarSessaoCont, FOTO } =
+    useAuth();
+
+  // 📅 GERAR DATA EM FORMATO ISO CORRETO COM FUSO HORÁRIO DO BRASIL
+  const gerarDataPorDia = (dia) => {
+    // 🌎 Considerar fuso horário de São Paulo (UTC-3)
+    const agora = new Date();
+
+    // Ajustar para horário local do Brasil
+    const offset = agora.getTimezoneOffset() * 60000;
+    const dataLocal = new Date(agora.getTime() - offset);
+
+    const mapa = {
+      Dom: 0,
+      Seg: 1,
+      Ter: 2,
+      Qua: 3,
+      Qui: 4,
+      Sex: 5,
+      Sab: 6,
+    };
+
+    const alvo = mapa[dia];
+    const atual = dataLocal.getDay();
+
+    let diff = alvo - atual;
+    if (diff <= 0) diff += 7;
+
+    const proximaData = new Date(dataLocal);
+    proximaData.setDate(proximaData.getDate() + diff);
+
+    // Formatar como ISO (YYYY-MM-DD)
+    const ano = proximaData.getFullYear();
+    const mes = String(proximaData.getMonth() + 1).padStart(2, "0");
+    const data = String(proximaData.getDate()).padStart(2, "0");
+
+    const dataISO = `${ano}-${mes}-${data}`;
+    console.log(
+      `📅 Data gerada para ${dia}: ${dataISO} (Dia semana: ${proximaData.getDay()})`,
+    );
+
+    return dataISO;
+  };
+
+  // 🔹 CARREGAR HORÁRIOS DO PSICÓLOGO
+  const carregarHorarios = async (id_psicologo) => {
+    try {
+      const dados = await verHorariosDisponiveis(id_psicologo);
+      console.log("📅 Horários disponíveis:", dados);
+      setHorarios(dados || []);
+    } catch (error) {
+      console.error("Erro ao carregar horários:", error);
+      setHorarios([]);
+    }
+  };
+
+  // 🔹 AGENDAR SESSÃO
+  const agendar = async () => {
+    if (!diaSelecionado || !horaSelecionada || !userPerfil || !psicologo) {
+      alert("Selecione dia e horário");
+      return;
+    }
+
+    const dataISO = gerarDataPorDia(diaSelecionado);
+
+    console.log("✅ DEBUG AGENDAMENTO:", {
+      id_usuario: user?.id_usuario,
+      id_psi: psicologo.id_psicologo,
+      nome_psi: userPerfil.nome,
+      data_ISO: dataISO,
+      hora: horaSelecionada,
+    });
+
+    const payload = {
+      id_psicologo: psicologo.id_psicologo,
+      id_paciente: user?.id_usuario,
+      data_sessao: dataISO,
+      hora_inicio: horaSelecionada,
+    };
+
+    console.log("📤 Payload enviado:", JSON.stringify(payload, null, 2));
+
+    try {
+      setAgendando(true);
+      await agendarSessaoCont(payload);
+
+      alert("Sessão agendada com sucesso! ✅");
+      setModalAgendar(false);
+      setHorarios([]);
+      setDiaSelecionado(null);
+      setHoraSelecionada(null);
+    } catch (e) {
+      console.error("❌ Erro ao agendar:", e);
+      if (e.response?.status === 400) {
+        alert("Esse horário já foi ocupado.");
+      } else {
+        alert("Erro ao agendar sessão: " + (e.message || e));
+      }
+    } finally {
+      setAgendando(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchPsicologo() {
       try {
         const response = await verPsicologo(id);
-        setUserPerfil(response.data.user);
-        setPsicologo(response.data.psicologo);
-
+        console.log(response);
+        setUserPerfil(response.user);
+        setPsicologo(response.psicologo);
       } catch (error) {
         console.log("Erro ao buscar psicólogo", error);
       } finally {
@@ -39,235 +162,147 @@ export default function VisualizarPsi({ navigation }) {
     fetchPsicologo();
   }, [id]); // importante
 
-  if (loading) return <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
-    <ActivityIndicator size="large" color="#2E7D32" /></View>;
+  if (loading)
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator size="large" color="#2E7D32" />
+      </View>
+    );
   if (!userPerfil) return <Text>Erro ao carregar dados</Text>;
 
-
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <View style={styles.container}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-
-          {/* TOPO */}
-          <View style={styles.topo}>
-            <Pressable onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={26} color="#000" />
-            </Pressable>
-
-            <Pressable onPress={() => setMenuAberto(true)}>
-              <Ionicons name="ellipsis-vertical" size={26} color="#000" />
-            </Pressable>
-          </View>
-
-          <View style={styles.header} />
-
+    <KeyboardAvoidingView style={{ flex: 1, marginBottom: 20 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: 0, flexGrow: 1 }}
+      >
+        <View style={styles.container}>
           {/* CARD DO PSICÓLOGO */}
           <View style={styles.card}>
             <View style={styles.fotoContainer}>
               <View style={styles.fotoPerfil}>
-                <Ionicons
-                  name="person-outline"
-                  size={50}
-                  color="white"
-                  style={styles.fotoPerfil2}
-                />
+                {userPerfil?.foto_perfil ? (
+                  <Image
+                    source={{
+                      uri: `${FOTO}${userPerfil.foto_perfil}`,
+                    }}
+                    style={styles.imagem}
+                    resizeMode="cover"
+                    onLoad={() => console.log("✅ Imagem carregada")}
+                    onError={(e) => console.log("❌ Erro imagem:", e.nativeEvent)}
+                  />
+                ) : (
+                  <Ionicons
+                    name="person-outline"
+                    size={120}
+                    color="white"
+                    style={styles.fotoPerfil2}
+                  />
+                )}
               </View>
             </View>
 
-            <Text style={styles.nomePessoa}>{userPerfil
-            .nome}</Text>
-            <Text style={styles.nickname}>@{userPerfil.username}</Text>
+            <Text style={styles.nomePessoa}>
+              {userPerfil.genero === "MASCULINO" ? (
+                <Text>Dr. {userPerfil.nome}</Text>
+              ) : (
+                <Text>Dra. {userPerfil.nome}</Text>
+              )}
+            </Text>
+            <Text style={styles.profissao}>Psicóloga Clínica</Text>
 
             <View style={styles.infoContainer}>
               <View style={styles.estrelas}>
-                {[1,2,3,4,5].map((item) => (
-                  <Ionicons key={item} name="star" size={16} color="#FFD700" />
-                ))}
+                <Ionicons name="star" size={18} color="#FFD700" />
+                <Text style={styles.textoAvaliacao}>{psicologo.avaliacao}</Text>
               </View>
-
-              {/* <Text style={styles.textoAvaliacao}>
-                {userPerfil.avaliacao} 
-                <Text style={{ color: "#6C63FF" }}>
-                  {" "}({userPerfil.totalAvaliacoes} avaliações)
-                </Text>
-              </Text> */}
-
-              {/* 🧠 EXPERIÊNCIA
-              <View style={styles.linhaInfo}>
-                <Ionicons name="school-outline" size={18} color="#6C63FF" />
-                <Text style={styles.textoInfo}>{userPerfil.tempoExperiencia} de experiência</Text>
-              </View> */}
-
-              {/* 👥 PACIENTES
-              <View style={styles.linhaInfo}>
-                <Ionicons name="people-outline" size={18} color="#6C63FF" />
-                <Text style={styles.textoInfo}>{userPerfil.pacientes}</Text>
-              </View> */}
-
             </View>
 
             {/* INFORMAÇÕES */}
             <View style={styles.container2}>
-              <Text style={styles.tituloCard}>Informações</Text>
-
               <View style={styles.rowWrap}>
-                <Text style={styles.label}>Sobre</Text>
-                <Text style={styles.texto}>{psicologo.biografia}</Text>
-              </View>
-
-              {/* <View style={styles.rowWrap}>
-                <Text style={styles.label}>Especialidades</Text>
-                <Text style={styles.texto}>{userPerfil.especialidades}</Text>
-              </View>
-
-              <View style={styles.rowWrap}>
-                <Text style={styles.label}>Abordagem</Text>
-                <Text style={styles.texto}>{userPerfil.abordagem}</Text>
-              </View> */}
-
-              {/* <View style={styles.rowWrap}>
-                <Text style={styles.label}>Atende</Text>
-                <Text style={styles.texto}>{userPerfil.atende}</Text>
-              </View> */}
-
-              <View style={styles.rowWrap}>
-                <Text style={styles.label}>Formação</Text>
-                <Text style={styles.texto}>{psicologo.grau_formacao}</Text>
-              </View>
-
-              <View style={styles.rowWrap}>
-                <Text style={styles.label}>CRP</Text>
-                <Text style={styles.texto}>{psicologo.crp}</Text>
-              </View>
-
-              {/* <View style={styles.rowWrap}>
-                <Text style={styles.label}>Experiência</Text>
-                <Text style={styles.texto}>{userPerfil.experiencia}</Text>
-              </View> */}
-
-              {/* <View style={styles.rowWrap}>
-                <Text style={styles.label}>Valor</Text>
-                <Text style={styles.texto}>{psicologo.preco_sessao}</Text>
-              </View> */}
-
-            </View>
-
-          </View>
-        </ScrollView>
-
-        {/* <NavBar tela="visualizarPsi" /> */}
-
-        {/* MODAL ESTILO INSTAGRAM */}
-        <Modal
-          visible={menuAberto}
-          transparent={true}
-        >
-          <View style={styles.modalOverlay}>
-            <Animatable.View animation={"fadeInUp"} duration={800} style={{flex: 1, justifyContent: "flex-end"}}
-            >
-              <View style={styles.bottomSheet}>
-
-                <View style={styles.handle} />
-
-                <Text style={styles.modalTitulo}>Opções</Text>
-
-                <Pressable style={styles.opcao}>
-                  <Text style={styles.textoOpcao}>Ver avaliações</Text>
-                </Pressable>
-
-                <Pressable style={styles.opcao}>
-                  <Text style={styles.textoOpcao}>Agendar consulta</Text>
-                </Pressable>
-
-                <Pressable
-                  style={[styles.opcao, { marginTop: 10 }]}
-                  onPress={() => setMenuAberto(false)}
+                <Text style={styles.tituloCard}>Sobre</Text>
+                <Text
+                  style={styles.texto}
+                  numberOfLines={3}
+                  ellipsizeMode="tail"
                 >
-                  <Text style={[styles.textoOpcao, { color: "red" }]}>
-                    Cancelar
-                  </Text>
-                </Pressable>
-
+                  {psicologo.biografia}
+                </Text>
               </View>
-            </Animatable.View>
-          </View>
-        </Modal>
 
-        {/* MODAL AGENDAR CONSULTA CENTRALIZADO */}
-        <Modal visible={modalAgendar} transparent animationType="fade">
-          <View style={styles.modalOverlayCenter}>
-            <View style={styles.modalBoxCenter}>
-              <Text style={styles.modalTitulo}>Escolha dia e horário</Text>
+              <View style={styles.rowWrap}>
+                <Text style={styles.tituloCard}>Especialidades</Text>
 
-              <Text>Dias:</Text>
-              <View style={styles.linhaChips}>
-                {dias.map((dia) => (
-                  <Pressable
-                    key={dia}
-                    style={[
-                      styles.chip,
-                      diaSelecionado === dia && { backgroundColor: "#8E7CFF" },
-                    ]}
-                    onPress={() => setDiaSelecionado(dia)}
-                  >
-                    <Text
-                      style={[
-                        styles.chipTexto,
-                        diaSelecionado === dia && { color: "#fff" },
-                      ]}
-                    >
-                      {dia}
+                <Text style={styles.texto}>
+                  {(() => {
+                    let especialidades = [];
+
+                    if (Array.isArray(psicologo?.especialidades)) {
+                      especialidades = psicologo.especialidades.map((item) =>
+                        typeof item === "object" ? item.nome : item,
+                      );
+                    } else if (typeof psicologo?.especialidades === "string") {
+                      try {
+                        const parsed = JSON.parse(psicologo.especialidades);
+
+                        especialidades = Array.isArray(parsed)
+                          ? parsed.map((item) =>
+                              typeof item === "object" ? item.nome : item,
+                            )
+                          : [psicologo.especialidades];
+                      } catch {
+                        especialidades = [psicologo.especialidades];
+                      }
+                    }
+
+                    return especialidades.length > 0
+                      ? especialidades.join(", ")
+                      : "Nenhuma especialidade";
+                  })()}
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.tituloCard}>Informações</Text>
+
+                <View style={{ gap: 10, marginTop: 5, marginBottom: 7 }}>
+                  <View style={styles.rowCont}>
+                    <Text style={styles.textoCont}>Duração da Consulta</Text>
+                    <Text style={styles.texto}>50 Minutos</Text>
+                  </View>
+
+                  <View style={styles.rowCont}>
+                    <Text style={styles.textoCont}>Valor</Text>
+                    <Text style={styles.texto}>
+                      R${" "}
+                      {psicologo.preco_sessao ? (
+                        <Text>{psicologo.preco_sessao}</Text>
+                      ) : (
+                        <Text>85,00</Text>
+                      )}
                     </Text>
-                  </Pressable>
-                ))}
-              </View>
-
-              <Text style={{ marginTop: 10 }}>Horários:</Text>
-              <View style={styles.linhaChips}>
-                {horarios.map((hora) => (
-                  <Pressable
-                    key={hora}
-                    style={[
-                      styles.chip,
-                      horaSelecionada === hora && { backgroundColor: "#8E7CFF" },
-                    ]}
-                    onPress={() => setHoraSelecionada(hora)}
-                  >
-                    <Text
-                      style={[
-                        styles.chipTexto,
-                        horaSelecionada === hora && { color: "#fff" },
-                      ]}
-                    >
-                      {hora}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-
-              <View style={styles.modalButtons}>
-                <Pressable
-                  style={styles.btnCancelar}
-                  onPress={() => setModalAgendar(false)}
-                >
-                  <Text style={styles.btnTextoCancelar}>Cancelar</Text>
-                </Pressable>
-
-                <Pressable
-                  style={styles.btnConfirmar}
-                  onPress={agendarConsulta}
-                >
-                  <Text style={styles.btnTextoConfirmar}>Confirmar</Text>
-                </Pressable>
+                  </View>
+                </View>
               </View>
             </View>
+            <View style={styles.botaoContainer}>
+              <Pressable
+                style={styles.botao}
+                onPress={() => {
+                  navigation.navigate("dataHoraConsulta", {
+                    psicologo,
+                    userPerfil,
+                  });
+                }}
+              >
+                <Feather name="calendar" size={24} color="#FFF" />
+                <Text style={styles.botaoTexto}>Ver Horários Disponíveis</Text>
+              </Pressable>
+            </View>
           </View>
-        </Modal>
-      </View>
+        </View>
+      </ScrollView>
+      <NavBar tela="home" />
     </KeyboardAvoidingView>
   );
 }

@@ -70,6 +70,9 @@ export default StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 15,
     fontSize: width * 0.04,
+    paddingInline: 12,
+    color: "#333333",          // <- força cor do texto
+    backgroundColor: "#ffffff", // <- força fundo branco explícito
   },
 
   inputErro: {

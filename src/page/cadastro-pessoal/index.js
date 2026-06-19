@@ -1,4 +1,6 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,}from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { MaskedTextInput } from "react-native-mask-text";
@@ -7,7 +9,7 @@ import styles from "./styles";
 
 import {useAuth} from "../../context/AuthContext"
 
-export default function CadastroPessoal({ navigation }) {
+export default function CadastroPessoal({ navigation, route }) {
   const { verificarDisponibilidade } = useAuth()
 
   const [nomeCompleto, setNomeCompleto] = useState("");
@@ -110,11 +112,39 @@ export default function CadastroPessoal({ navigation }) {
       return false;
     }
     setErroFone("");
-
+    
     if (dataNascimento.length !== 10) {
       setErroData("Digite uma data válida.");
       return false;
     }
+    
+    const [dia, mes, ano] = dataNascimento.split("/");
+    
+    const hoje = new Date();
+
+    if (ano < 1920 || ano >= hoje.getFullYear()) {
+      setErroData("Data indisponível")
+      return false;
+    };
+    
+    let idade = hoje.getFullYear() - Number(ano);
+    
+    const aindaNaoFezAniversario =
+      hoje.getMonth() + 1 < Number(mes) ||
+      (
+        hoje.getMonth() + 1 === Number(mes) &&
+        hoje.getDate() < Number(dia)
+      );
+    
+    if (aindaNaoFezAniversario) {
+      idade--;
+    }
+    
+    if (idade < 18) {
+      setErroData("Idade não permitida.");
+      return false;
+    }
+    
     setErroData("");
 
     if (!genero) {
@@ -126,10 +156,12 @@ export default function CadastroPessoal({ navigation }) {
     if (numcpf.length !== 14) {
       setErroCpf("CPF deve conter 11 dígitos, Sem as pontuanções.");
       return false;
-    } else if (!validarCpf(numcpf)) {
+    } 
+    else if (!validarCpf(numcpf)) {
       setErroCpf("Digite um CPF válido.");
       return false;
     }
+    setErroCpf("");
     
     
     // Um proteção caso houve uma falha e retorne null
@@ -154,7 +186,7 @@ export default function CadastroPessoal({ navigation }) {
     setErroNick("");
 
     if (!cpfDisponivel){
-      setErroCpf("O cpf já é existe!")
+      setErroCpf("O CPF já é existe!")
       return false;
     }
     setErroCpf("");
@@ -212,6 +244,8 @@ export default function CadastroPessoal({ navigation }) {
               <Text style={styles.label}>Nome Completo</Text>
               <TextInput
                 style={styles.input}
+                placeholder="Zenith ©"
+                placeholderTextColor="#999"
                 value={nomeCompleto}
                 onChangeText={setNomeCompleto}
               />
@@ -226,6 +260,8 @@ export default function CadastroPessoal({ navigation }) {
 
               <TextInput
                 style={styles.nicknameInput}
+                placeholder="zenith"
+                placeholderTextColor="#999"
                 value={nickname}
                 onChangeText={(text)=> setNickname(formatarNickname(text))
                 }
@@ -241,6 +277,8 @@ export default function CadastroPessoal({ navigation }) {
               <Text style={styles.label}>Telefone</Text>
               <TextInput
                 style={styles.input}
+                placeholder="(11) 4002-8922"
+                placeholderTextColor="#999"
                 keyboardType="phone-pad"
                 value={telefone}
                 onChangeText={(text) =>
@@ -276,6 +314,9 @@ export default function CadastroPessoal({ navigation }) {
                   <View style={styles.pickerContainer}>
                     <Picker
                       selectedValue={genero}
+                      style={{ color: '#333' }}          // Android: cor do valor selecionado
+                      itemStyle={{ color: '#333' }}       // iOS: cor dos itens na roda
+                      dropdownIconColor="#A383FB"         // Android: cor da setinha
                       onValueChange={(itemValue) =>
                         setGenero(itemValue)
                       }
@@ -296,6 +337,8 @@ export default function CadastroPessoal({ navigation }) {
               <Text style={styles.label}>CPF</Text>
               <MaskedTextInput
                 mask="999.999.999-99"
+                placeholder="999.999.999-99"
+                placeholderTextColor="#999"
                 value={numcpf}
                 onChangeText={(text) => setNumCpf(text)}
                 keyboardType="numeric"
@@ -312,12 +355,24 @@ export default function CadastroPessoal({ navigation }) {
             <View style={styles.containerBotoes}>
               <Pressable
                 onPress={() => navigation.goBack()}
-                style={styles.btnVoltar}
+                style={({ pressed }) => [
+                  styles.btnVoltar,
+                  {
+                    opacity: pressed ? 0.8 : 1,
+                    transform: [{ scale: pressed ? 0.95 : 1 }],
+                  },
+                ]}
               >
                 <Text style={styles.setaVoltar}>{"<"}</Text>
               </Pressable>
 
-              <Pressable onPress={enviar} style={styles.btnProximo}>
+              <Pressable onPress={enviar} style={({ pressed }) => [
+                  styles.btnProximo,
+                  {
+                    opacity: pressed ? 0.8 : 1,
+                    transform: [{ scale: pressed ? 0.95 : 1 }],
+                  },
+                ]}>
                 <Text style={styles.textoProximo}>Próximo</Text>
 
                 <View style={styles.circuloSeta}>

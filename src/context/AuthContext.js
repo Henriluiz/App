@@ -1,13 +1,44 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { login, getPerfil, logout, deleteConta, patchPerfil, getUserCPF, PerfilPsicologo} from "../services/authService";
+import {
+  login,
+  getPerfil,
+  logout,
+  deleteConta,
+  patchPerfil,
+  verificarCPF,
+  verificarUsername,
+  enviarEmail,
+  verificarCodSenha,
+  redefinirSenhaC,
+  verificarEmail,
+  verificarEmailConfirmar,
+  mPagamentoPendente,
+  mAnexarComprovante,
+  PerfilPsicologo,
+  notificacao,
+  detalhesConsultaC,
+  aprovarSessaoC,
+  recusarSessaoC,
+  PesquisaPsicologo,
+  horariosDisponiveis,
+  agendarSessao,
+  solicitarCancelamento,
+  solicitarReagendamento,
+  detalhesConsulta,
+  minhasSessoes,
+  pacienteHistorico,
+} from "../services/authService";
 import {
   saveSession,
   clearSession,
   getToken,
-  getUser, 
+  getUser,
 } from "../services/authStogare";
 import { authEvents } from "../services/authEvents";
 import { errorMonitor } from "events";
+import { registerForPushNotifications } from '../services/pushNotifications';
+import * as Notifications from "expo-notifications";
+import api from "../services/api";
 
 const AuthContext = createContext({});
 
@@ -16,23 +47,24 @@ const AuthContext = createContext({});
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState("");
+
+  const FOTO = "http://10.100.175.116:8000/storage/";
 
   async function signIn(loginInput, senha) {
-
     const data = await login(loginInput, senha);
-
-    const token = data.access_token;
+    
+    const token_ = data.access_token;
     const user = data.user;
-
-    await saveSession(token, user);
-
+    
+    await saveSession(token_, user);
+    
+    setToken(token_)
     setUser(user);
-
   }
 
   // Deslogar
   async function signOut() {
-
     try {
       await logout();
     } catch (e) {}
@@ -40,12 +72,10 @@ export function AuthProvider({ children }) {
     await clearSession();
 
     setUser(null);
-
   }
 
   // Deletar a conta
   async function removeAccount() {
-
     try {
       await deleteConta();
     } catch (e) {
@@ -54,19 +84,16 @@ export function AuthProvider({ children }) {
 
     await clearSession();
     setUser(null);
-
   }
 
   // Atualizar nome, email e telefone do usuário
   async function updateUser(data) {
     try {
-
       const updatedUser = await patchPerfil(data);
-      
+
       setUser(updatedUser);
-      
+
       await saveSession(await getToken(), updatedUser);
-      
     } catch (error) {
       console.log("Erro ao atualizar usuário", error);
       throw error;
@@ -75,23 +102,27 @@ export function AuthProvider({ children }) {
 
   async function verificarDisponibilidade(username, cpf) {
     try {
-      const verificacao = await getUserCPF(username, cpf);
+      const verificacaoUsername = await verificarUsername(username);
+
+      const verificacaoCPF = await verificarCPF(cpf);
 
       return {
-        usernameDisponivel: verificacao.username_disponivel,
-        cpfDisponivel: verificacao.cpf_disponivel,
+        usernameDisponivel: verificacaoUsername.username_disponivel,
+        cpfDisponivel: verificacaoCPF.cpf_disponivel,
       };
-
     } catch (e) {
-      console.error("ERRO COMPLETO (verificarDisponibilidade):", e.response?.data);
+      console.log(
+        "ERRO COMPLETO (verificarDisponibilidade):",
+        e.response?.data,
+      );
 
       return {
         usernameDisponivel: false,
         cpfDisponivel: false,
-        erro: true
+        erro: true,
       };
     }
-  };
+  }
 
   async function verPsicologo(id) {
     try {
@@ -102,44 +133,281 @@ export function AuthProvider({ children }) {
         psicologo: perfil.psicologo,
       };
     } catch (e) {
-      console.error("ERRO COMPLETO (verPsicólogo):", e.response?.data);
+      console.log("ERRO COMPLETO (verPsicólogo):", e.response?.data);
 
       return {
         user: false,
-        psicologo: false
+        psicologo: false,
       };
     }
-  };
+  }
+
+  async function listarPsicologos(id) {
+    try {
+      const perfil = await PesquisaPsicologo();
+
+      return {
+        psicologos: perfil.psicologos,
+      };
+    } catch (e) {
+      console.log("ERRO COMPLETO (listarPsicologos):", e.response?.data);
+
+      return {
+        user: false,
+        psicologos: false,
+      };
+    }
+  }
+
+  async function verHorariosDisponiveis(id, data) {
+    try {
+      const dados = await horariosDisponiveis(id, data);
+      console.log(dados);
+      return dados;
+    } catch (e) {
+      console.log(
+        "ERRO COMPLETO: (verHorariosDisponiveis)",
+        e.response?.data,
+      );
+      return [];
+    }
+  }
+
+  async function agendarSessaoCont(dados) {
+    try {
+      const resposta = await agendarSessao(dados);
+      return { sucesso: true, dados: resposta };
+    } catch (e) {
+      console.log("Erro completo (agendarSessao):", e.response?.data || e.message);
+      return { sucesso: false, erro: e.response?.data?.message || "Erro desconhecido" };
+    }
+  }
+
+  async function detalhesConsulta(id_sessao) {
+    try {
+      const resposta = await detalhesConsultaC(id_sessao);
+      return { sucesso: true, dados: resposta };
+    } catch (e) {
+      console.log("Erro completo (detalhesConsulta):", e.response?.data || e.message);
+      return { sucesso: false, erro: e.response?.data?.message || "Erro desconhecido" };
+    }
+  }
+
+  async function SolCancelamentoCons(id_sessao, motivo) {
+    try {
+      const resposta = await solicitarCancelamento(id_sessao, motivo);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (SolCancelamentoCons):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function SolReagendarCons(id_sessao, dados) {
+    try {
+      const resposta = await solicitarReagendamento(id_sessao, dados);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (SolReagendarCons):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function centralNotificacao() {
+    try {
+      const resposta = await notificacao();
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (centralNotificacao):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function PagamentoPendente() {
+    try {
+      const resposta = await mPagamentoPendente();
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (PagamentoPendente):", e.response?.data);
+      return null;
+    }
+  }
+  async function AnexarComprovante(id_pagamento, fotoUri) {
+    console.log("🟡 mAnexarComprovante chamada:", id_pagamento, fotoUri); // ← adicione isso
+    try {
+      const resposta = await mAnexarComprovante(id_pagamento, fotoUri);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (AnexarComprovante):", e.response?.data);
+      console.log("Status:", e.response?.status);
+      console.log("Message:", e.message);        // ← qual erro de rede
+      console.log("Code:", e.code);    
+      return null;
+    }
+  }
+
+  async function EnviarEmailCont(email) {
+    try {
+      const resposta = await enviarEmail(email);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (EnviarEmailCont):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function verificarEmailC(email) {
+    try {
+      const resposta = await verificarEmail(email);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (verificarEmailC):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function verificarCodigoSenha(email, code) {
+    try {
+      const resposta = await verificarCodSenha(email, code);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (verificarCodigoSenha):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function aprovarSessao(id_sessao) {
+    try {
+      const resposta = await aprovarSessaoC(id_sessao);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (aprovarSessao):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function recusarSessao(id_sessao, motivo) {
+    try {
+      const resposta = await recusarSessaoC(id_sessao, motivo);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (recusarSessao):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function redefinirSenha(email, code, senha, confirmar_senha) {
+    try {
+      const resposta = await redefinirSenhaC(email, code, senha, confirmar_senha);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (redefinirSenha):", e.response?.data);
+      return null;
+    }
+  }
+  async function verificarEmailConfirmarC(email, code) {
+    try {
+      const resposta = await verificarEmailConfirmar(email, code);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (verificarEmailConfirmar):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function detalhesCons(id_sessao) {
+    try {
+      const resposta = await detalhesConsulta(id_sessao);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (detalhesCons):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function mSessoes() {
+    try {
+      const resposta = await minhasSessoes();
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (mSessoes):", e.response?.data);
+      return null;
+    }
+  }
+
+  async function historico() {
+    try {
+      const resposta = await pacienteHistorico();
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (historico):", e.response?.data);
+      return null;
+    }
+  }
 
   const bootstrap = async () => {
-
     try {
+      const token_ = await getToken();
 
-      const token = await getToken();
-
-      if (!token) {
+      if (!token_) {
         setUser(null);
         return;
       }
 
+      setToken(token_);
+
       const user = await getUser();
       setUser(user);
-
     } catch (error) {
-
       console.log("Erro no bootstrap", error);
       setUser(null);
-
     } finally {
-
       setLoading(false);
-
     }
-
-  }
+  };
 
   useEffect(() => {
+      if (!user) return;
+    
+      async function registerPush() {
+        console.log('🔔 Iniciando registro de push...');
+        
+        const expoToken = await registerForPushNotifications();
+        
+        console.log('🔔 Token obtido:', expoToken);
+        
+        if (expoToken) {
+          const resposta = await api.post('/save-push-token', { token: expoToken });
+          console.log('🔔 Resposta do servidor:', resposta.data);
+        } else {
+          console.log('🔔 Token nulo — permissão negada ou não é device físico');
+        }
+      }
+    
+      registerPush();
+  }, [user]);
+
+  
+  useEffect(() => {
     bootstrap();
+  }, []);
+
+  useEffect(() => {
+    const notificationListener =
+      Notifications.addNotificationReceivedListener(
+        (notification) => {
+
+          console.log(
+            "🔔 Notificação recebida:",
+            notification
+          );
+
+        }
+      );
+
+    return () => {
+      notificationListener.remove();
+    };
   }, []);
 
   useEffect(() => {
@@ -160,12 +428,42 @@ export function AuthProvider({ children }) {
       value={{
         user,
         loading,
+        FOTO,
+
+        // CRUD
         signIn,
         signOut,
         removeAccount,
         updateUser,
+
+        // Verificar dados antes de salvar no banco (CPF, Nickname - Unique)
         verificarDisponibilidade,
-        verPsicologo
+        historico,
+        EnviarEmailCont,
+        verificarCodigoSenha,
+        redefinirSenha,
+        verificarEmailC,
+        verificarEmailConfirmarC,
+        PagamentoPendente,
+        AnexarComprovante,
+        centralNotificacao,
+        detalhesConsulta,
+
+        aprovarSessao,
+        recusarSessao,
+
+
+        // Psicologo
+        verPsicologo,
+        listarPsicologos,
+        verHorariosDisponiveis,
+        agendarSessaoCont,
+
+        // Agenda
+        SolCancelamentoCons,
+        detalhesCons,
+        SolReagendarCons,
+        mSessoes,
       }}
     >
       {children}
