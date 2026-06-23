@@ -10,11 +10,13 @@ import {
   View,
   Text,
   TextInput,
+  Image,
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext"; // ajuste o path conforme o projeto
 import styles from "./styles";
+import ModalApp from "../../components/modalApp";
 
 // ─────────────────────────────────────────
 // Intervalo de polling para novas mensagens
@@ -23,39 +25,66 @@ const POLLING_INTERVAL_MS = 5000;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Normaliza a mensagem vinda da API para o formato interno da tela.
-// Ajuste os campos (conteudo, remetente_id) conforme o retorno real do backend.
 // ─────────────────────────────────────────────────────────────────────────────
 function normalizeMessage(msg, userId) {
-  const horaFormatada = msg.created_at
-    ? new Date(msg.created_at).toLocaleTimeString("pt-BR", {
+  const horaFormatada = msg.data_envio
+    ? new Date(msg.data_envio).toLocaleTimeString("pt-BR", {
         hour: "2-digit",
         minute: "2-digit",
       })
     : "";
 
   return {
-    id: msg.id,
-    sender: msg.remetente_id === userId ? "user" : "therapist",
-    text: msg.conteudo ?? msg.mensagem ?? "",
+    id: msg.id_mensagem,
+    sender: msg.id_remetente === userId ? "user" : "therapist",
+    text: msg.conteudo ?? "",
     time: horaFormatada,
-    created_at: msg.created_at,
-    lida: msg.lida ?? false,
+    created_at: msg.data_envio,
+    lida: msg.status_mensagem === "lida",
   };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Componente de ticks estilo WhatsApp para mensagens do usuário
+// ─────────────────────────────────────────────────────────────────────────────
+function MessageTicks({ sending, lida }) {
+  if (sending) {
+    // Relógio enquanto está enviando
+    return (
+      <Ionicons
+        name="time-outline"
+        size={13}
+        color="#667781"
+        style={styles.tickIcon}
+      />
+    );
+  }
+
+  // Duas marcas: azul = lida, cinza = entregue/enviada
+  const tickColor = lida ? "#53BDEB" : "#667781";
+
+  return (
+    <View style={{ flexDirection: "row", marginLeft: 3 }}>
+      {/* Primeiro tick */}
+      <Ionicons name="checkmark" size={13} color={tickColor} />
+      {/* Segundo tick sobreposto levemente para imitar o ✓✓ do WhatsApp */}
+      <Ionicons
+        name="checkmark"
+        size={13}
+        color={tickColor}
+        style={{ marginLeft: -6 }}
+      />
+    </View>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Componente principal
-//
-// Parâmetros esperados em route.params:
-//   chatId      → ID do chat já existente (opcional se psicologoId for passado)
-//   psicologoId → ID do psicólogo, usado quando o chat ainda não existe
-//   userName    → Nome do psicólogo exibido no header
-//   userAvatar  → Iniciais exibidas no avatar
 // ─────────────────────────────────────────────────────────────────────────────
 export default function Chat({ navigation, route }) {
   const scrollViewRef = useRef(null);
   const pollingRef    = useRef(null);
-  const activeChatId  = useRef(route?.params?.chatId ?? null); // ref para ser acessada no polling
+  const activeChatId  = useRef(route?.params?.chatId ?? null);
 
   const [messages,      setMessages]      = useState([]);
   const [messageText,   setMessageText]   = useState("");
@@ -64,6 +93,11 @@ export default function Chat({ navigation, route }) {
   const [loading,       setLoading]       = useState(true);
   const [sending,       setSending]       = useState(false);
   const [erro,          setErro]          = useState(null);
+  const [tituloModal,   setTituloModal]   = useState("ERR0");
+  const [tipoModal,     setTipoModal]     = useState("erro");
+  const [modalErro,     setModalErro]     = useState(false);
+  const [mensagemErro,  setMensagemErro]  = useState("");
+  const userPhoto = route?.params?.userPhoto ?? null;
 
   const {
     user,
@@ -71,6 +105,7 @@ export default function Chat({ navigation, route }) {
     enviarMensagemCont,
     historicoChatCont,
     visualizarChatCont,
+    avaliarC,
   } = useAuth();
 
   const psicologoId    = route?.params?.psicologoId;
@@ -86,9 +121,8 @@ export default function Chat({ navigation, route }) {
       const resultado = await historicoChatCont(chatId);
 
       if (resultado.sucesso) {
-        // O backend pode retornar { mensagens: [...] } ou o array direto
         const lista = resultado.dados?.mensagens ?? resultado.dados ?? [];
-        const normalizadas = lista.map((m) => normalizeMessage(m, user?.id));
+        const normalizadas = lista.map((m) => normalizeMessage(m, user?.id_usuario));
         setMessages(normalizadas);
         setErro(null);
       } else if (!silencioso) {
@@ -105,7 +139,7 @@ export default function Chat({ navigation, route }) {
     (chatId) => {
       stopPolling();
       pollingRef.current = setInterval(() => {
-        carregarHistorico(chatId, true); // silencioso = não altera o loading
+        carregarHistorico(chatId, true);
       }, POLLING_INTERVAL_MS);
     },
     [carregarHistorico]
@@ -125,7 +159,6 @@ export default function Chat({ navigation, route }) {
 
       let chatId = activeChatId.current;
 
-      // Se não veio chatId nos params, cria/recupera via API
       if (!chatId && psicologoId) {
         const resultado = await iniciarChatCont({ psicologo_id: psicologoId });
 
@@ -146,13 +179,13 @@ export default function Chat({ navigation, route }) {
       }
 
       await carregarHistorico(chatId);
-      await visualizarChatCont(chatId); // marca como lido ao entrar
+      await visualizarChatCont(chatId);
       iniciarPolling(chatId);
     }
 
     bootstrap();
 
-    return () => stopPolling(); // limpa o polling ao sair da tela
+    return () => stopPolling();
   }, []);
 
   // ─── Scroll automático ao chegarem novas mensagens ──────────────────────────
@@ -166,21 +199,21 @@ export default function Chat({ navigation, route }) {
 
   // ─── Envio de mensagem ───────────────────────────────────────────────────────
   const handleSend = async () => {
-    const texto    = messageText.trim();
-    const chatId   = activeChatId.current;
+    const texto  = messageText.trim();
+    const chatId = activeChatId.current;
 
     if (!texto || sending || !chatId) return;
 
-    // Feedback visual imediato (mensagem otimista)
     const tempId  = `temp_${Date.now()}`;
     const tempMsg = {
-      id:     tempId,
-      sender: "user",
-      text:   texto,
-      time:   new Date().toLocaleTimeString("pt-BR", {
+      id:      tempId,
+      sender:  "user",
+      text:    texto,
+      time:    new Date().toLocaleTimeString("pt-BR", {
         hour:   "2-digit",
         minute: "2-digit",
       }),
+      lida:    false,
       sending: true,
     };
 
@@ -189,23 +222,21 @@ export default function Chat({ navigation, route }) {
     setSending(true);
 
     const resultado = await enviarMensagemCont({
-      chat_id:  chatId,
-      mensagem: texto,
+      id_chat:  chatId,
+      conteudo: texto,
     });
 
     setSending(false);
 
     if (resultado.sucesso) {
-      // Substitui a mensagem temporária pela real vinda da API
       const msgReal = normalizeMessage(
         resultado.dados?.mensagem ?? resultado.dados,
-        user?.id
+        user?.id_usuario
       );
       setMessages((prev) =>
         prev.map((m) => (m.id === tempId ? msgReal : m))
       );
     } else {
-      // Remove a mensagem temporária e devolve o texto ao input
       setMessages((prev) => prev.filter((m) => m.id !== tempId));
       setMessageText(texto);
       Alert.alert("Erro", "Não foi possível enviar a mensagem. Tente novamente.");
@@ -213,9 +244,41 @@ export default function Chat({ navigation, route }) {
   };
 
   // ─── Avaliação ───────────────────────────────────────────────────────────────
-  const handleSubmitReview = () => {
-    setModalVisible(false);
-    Alert.alert("Avaliação enviada", "Obrigado por avaliar seu psicólogo.");
+  const handleSubmitReview = async () => {
+    if (rating === 0) {
+      setMensagemErro("Selecione uma nota de 1 a 5 estrelas.");
+      setModalErro(true);
+      return;
+    }
+
+    try {
+      const resultado = await avaliarC(psicologoId, Number(rating));
+
+      if (resultado?.error) {
+        setMensagemErro("Não foi possível enviar sua avaliação.");
+        setModalErro(true);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        setModalErro(false);
+        return;
+      }
+
+      setModalVisible(false);
+      setRating(0);
+
+      setTituloModal("Avaliação enviada");
+      setMensagemErro("Obrigado por avaliar seu psicólogo.");
+      setTipoModal("sucesso");
+      setModalErro(true);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setModalErro(false);
+      setTipoModal("erro");
+    } catch (error) {
+      console.log(error);
+      setMensagemErro("Ocorreu um erro ao enviar sua avaliação.");
+      setModalErro(true);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setModalErro(false);
+    }
   };
 
   const handleContentSizeChange = () => {
@@ -239,12 +302,12 @@ export default function Chat({ navigation, route }) {
         <Text style={{ color: "#A9B3C1", fontSize: 15, marginTop: 12, textAlign: "center" }}>
           {erro}
         </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={() => carregarHistorico(activeChatId.current)}
           style={{ marginTop: 16, paddingVertical: 10, paddingHorizontal: 24, backgroundColor: "#1F2640", borderRadius: 8 }}
         >
           <Text style={{ color: "#fff", fontSize: 14 }}>Tentar novamente</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -258,34 +321,38 @@ export default function Chat({ navigation, route }) {
     >
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <View style={styles.header}>
-        <TouchableOpacity
+        <Pressable
           style={styles.backButton}
           activeOpacity={0.7}
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
-        </TouchableOpacity>
+        </Pressable>
 
         <View style={styles.profileInfo}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{avatarInitials}</Text>
-          </View>
+          {userPhoto ? (
+            <Image source={{ uri: userPhoto }} style={styles.avatar} />
+          ) : (
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>{avatarInitials}</Text>
+            </View>
+          )}
 
           <View style={styles.nameWrapper}>
             <Text style={styles.name} numberOfLines={1}>
               {doctorName}
             </Text>
-            <Text style={styles.subtitle}>Psicóloga clínica</Text>
+            <Text style={styles.subtitle}>Psicólogo(a)</Text>
           </View>
         </View>
 
-        <TouchableOpacity
+        <Pressable
           style={styles.menuButton}
           activeOpacity={0.7}
           onPress={() => setModalVisible(true)}
         >
           <Ionicons name="ellipsis-vertical" size={22} color="#ffffff" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* ── Modal de avaliação ──────────────────────────────────────────────── */}
@@ -301,15 +368,23 @@ export default function Chat({ navigation, route }) {
         />
         <View style={styles.modalContainer}>
           <View style={styles.modalCloseRow}>
-            <TouchableOpacity
+            <Pressable
               style={styles.modalCloseButton}
               onPress={() => setModalVisible(false)}
             >
               <Ionicons name="close" size={24} color="#1F2640" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
           <View style={styles.modalAvatarCircle}>
-            <Text style={styles.modalAvatarText}>{avatarInitials}</Text>
+            {userPhoto ? (
+              <Image source={{ uri: userPhoto }} style={styles.avatarModal} />
+            ) : (
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>{avatarInitials}</Text>
+            </View>
+          )}
+
+
           </View>
           <Text style={styles.modalTitle}>Avalie seu psicólogo</Text>
           <Text style={styles.modalSubtitle}>
@@ -320,7 +395,7 @@ export default function Chat({ navigation, route }) {
           </Text>
           <View style={styles.starRow}>
             {[1, 2, 3, 4, 5].map((star) => (
-              <TouchableOpacity
+              <Pressable
                 key={star}
                 onPress={() => setRating(star)}
                 activeOpacity={0.7}
@@ -331,16 +406,16 @@ export default function Chat({ navigation, route }) {
                   color="#F7B731"
                   style={styles.starIcon}
                 />
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
-          <TouchableOpacity
+          <Pressable
             style={styles.modalSubmitButton}
             onPress={handleSubmitReview}
             activeOpacity={0.8}
           >
             <Text style={styles.modalSubmitText}>Enviar avaliação</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </Modal>
 
@@ -359,8 +434,8 @@ export default function Chat({ navigation, route }) {
 
           {messages.length === 0 && (
             <View style={{ alignItems: "center", marginTop: 40 }}>
-              <Ionicons name="chatbubble-ellipses-outline" size={40} color="#A9B3C1" />
-              <Text style={{ color: "#A9B3C1", fontSize: 14, marginTop: 8 }}>
+              <Ionicons name="chatbubble-ellipses-outline" size={40} color="#3211d969" />
+              <Text style={{ color: "#3211d969", fontSize: 14, marginTop: 8 }}>
                 Nenhuma mensagem ainda. Diga olá! 👋
               </Text>
             </View>
@@ -374,7 +449,7 @@ export default function Chat({ navigation, route }) {
                 message.sender === "user"
                   ? styles.userBubble
                   : styles.therapistBubble,
-                message.sending && { opacity: 0.55 }, // feedback visual de envio pendente
+                message.sending && { opacity: 0.55 },
               ]}
             >
               <Text
@@ -386,10 +461,17 @@ export default function Chat({ navigation, route }) {
                 {message.text}
               </Text>
 
-              <Text style={styles.messageTime}>
-                {message.time}
-                {message.sending ? "  ⏳" : ""}
-              </Text>
+              {/* ── Rodapé: hora + ticks (só nas mensagens do usuário) ── */}
+              <View style={styles.messageFooter}>
+                <Text style={styles.messageTime}>{message.time}</Text>
+
+                {message.sender === "user" && (
+                  <MessageTicks
+                    sending={!!message.sending}
+                    lida={!!message.lida}
+                  />
+                )}
+              </View>
             </View>
           ))}
         </ScrollView>
@@ -419,7 +501,7 @@ export default function Chat({ navigation, route }) {
           />
         </View>
 
-        <TouchableOpacity
+        <Pressable
           style={[
             styles.sendButton,
             (!messageText.trim() || sending) && { opacity: 0.45 },
@@ -433,8 +515,16 @@ export default function Chat({ navigation, route }) {
           ) : (
             <Ionicons name="send" size={20} color="#FFFFFF" />
           )}
-        </TouchableOpacity>
+        </Pressable>
       </View>
+
+      <ModalApp
+        visible={modalErro}
+        titulo={tituloModal}
+        mensagem={mensagemErro}
+        tipo={tipoModal}
+        semBotao
+      />
     </KeyboardAvoidingView>
   );
 }

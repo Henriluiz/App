@@ -177,6 +177,15 @@ export default StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  avatarModal: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    // marginRight: 12,
+    backgroundColor: "#D8E7F7",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
   avatarText: {
     color: "#5D46FF",
@@ -225,43 +234,72 @@ export default StyleSheet.create({
     fontWeight: "700",
   },
 
+  // ─── Bubbles estilo WhatsApp ───────────────────────────────────────────────
+
   messageBubble: {
-    maxWidth: "85%",
-    padding: 14,
-    borderRadius: 22,
-    marginBottom: 12,
+    maxWidth: "78%",
+    paddingHorizontal: 10,
+    paddingTop: 6,
+    paddingBottom: 4,
+    borderRadius: 8,
+    marginBottom: 4,
   },
 
   therapistBubble: {
-    backgroundColor: "#F5F8FF",
+    backgroundColor: "#FFFFFF",
     alignSelf: "flex-start",
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 22,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
 
   userBubble: {
     backgroundColor: "#949BF1",
     alignSelf: "flex-end",
-    borderTopRightRadius: 8,
-    borderTopLeftRadius: 22,
+    borderTopRightRadius: 0,
+    borderTopLeftRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
 
   messageText: {
-    fontSize: 14,
+    fontSize: 14.5,
     lineHeight: 20,
-    color: "#000000",
+    color: "#111B21",
   },
 
   userMessageText: {
-    color: "#000000",
+    color: "#111B21",
+  },
+
+  // ─── Rodapé da mensagem (hora + ticks) ────────────────────────────────────
+
+  messageFooter: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    marginTop: 2,
+    marginLeft: 8,
   },
 
   messageTime: {
     fontSize: 11,
-    color: "#9EA7C4",
-    marginTop: 8,
-    alignSelf: "flex-end",
+    color: "#667781",
+    fontWeight: "500",
   },
+
+  tickIcon: {
+    marginLeft: 3,
+  },
+
+  // ──────────────────────────────────────────────────────────────────────────
 
   footer: {
     flexDirection: "row",

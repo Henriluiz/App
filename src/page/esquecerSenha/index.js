@@ -1,7 +1,16 @@
 import React, { useState } from "react";
-import {Text,View,TextInput,Pressable,ScrollView,KeyboardAvoidingView,Platform,ActivityIndicator} from "react-native";
+import {
+  Text,
+  View,
+  TextInput,
+  Pressable,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
 import { useAuth } from "../../context/AuthContext";
-
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import styles from "./styles";
 
 export default function EsquecerSenha({ navigation, route }) {
@@ -10,9 +19,11 @@ export default function EsquecerSenha({ navigation, route }) {
   const [erro, setErro] = useState("");
   const [aceitoTermos, setAceitoTermos] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [verSenha, setVerSenha] = useState(false);
+  const [verSenhaConf, setVerSenhaConf] = useState(false);
 
-  const { email, codeLiso} = route.params;
-  const {redefinirSenha} = useAuth();
+  const { email, codeLiso } = route.params;
+  const { redefinirSenha } = useAuth();
 
   /* =========================
      FORÇA DA SENHA
@@ -22,13 +33,9 @@ export default function EsquecerSenha({ navigation, route }) {
     let i = 0;
 
     if (password.length > 6) i++;
-
     if (password.length >= 10) i++;
-
     if (/[A-Z]/.test(password)) i++;
-
     if (/[0-9]/.test(password)) i++;
-
     if (/[!@#$%^&*]/.test(password)) i++;
 
     return i;
@@ -39,7 +46,7 @@ export default function EsquecerSenha({ navigation, route }) {
   ========================== */
 
   async function enviar() {
-    setErro("")
+    setErro("");
     if (!senha || !confirmarSenha) {
       setErro("Preencha todos os campos.");
       return;
@@ -59,21 +66,22 @@ export default function EsquecerSenha({ navigation, route }) {
       setErro("Você precisa aceitar os termos.");
       return;
     }
-    setLoading(true)
+
+    setLoading(true);
     setErro("");
-    
+
     try {
-      const response = await redefinirSenha(email, codeLiso, senha, confirmarSenha)
+      const response = await redefinirSenha(email, codeLiso, senha, confirmarSenha);
 
       if (response?.error) {
-        setErro(response.message ?? "Erro ao redefinir senha.")
+        setErro(response.message ?? "Erro ao redefinir senha.");
       } else {
         navigation.navigate("login");
       }
     } catch (e) {
-      setErro("Erro inesperado. Tente novamente.")
+      setErro("Erro inesperado. Tente novamente.");
     } finally {
-      setLoading(false) // ✅ sempre executa, com sucesso ou erro
+      setLoading(false);
     }
   }
 
@@ -112,30 +120,48 @@ export default function EsquecerSenha({ navigation, route }) {
               {/* SENHA */}
               <Text style={styles.label}>Crie uma senha</Text>
 
-              <TextInput
-                style={styles.input}
-                value={senha}
-                onChangeText={setSenha}
-                // secureTextEntry
-                placeholder="Digite sua senha"
-                placeholderTextColor="#C4C4C4"   // <- placeholder visível
-                autoComplete="off"               // <- desativa autofill no Android
-                textContentType="none"           // <- desativa autofill no iOS
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.inputSenhaWithIcon}
+                  value={senha}
+                  onChangeText={setSenha}
+                  secureTextEntry={!verSenha}
+                  placeholder="Digite sua senha"
+                  placeholderTextColor="#999"
+                  autoComplete="off"
+                  textContentType="none"
+                />
+                <Pressable onPress={() => setVerSenha(!verSenha)} style={styles.iconEye}>
+                  <MaterialIcons
+                    name={verSenha ? "visibility" : "visibility-off"}
+                    size={25}
+                    color="#A383FB"
+                  />
+                </Pressable>
+              </View>
 
               {/* CONFIRMAR SENHA */}
               <Text style={styles.label}>Confirme a senha</Text>
 
-              <TextInput
-                style={styles.input}
-                value={confirmarSenha}
-                onChangeText={setConfirmarSenha}
-                // secureTextEntry
-                placeholder="Confirme sua senha"
-                placeholderTextColor="#C4C4C4"   // <- placeholder visível
-                autoComplete="off"               // <- desativa autofill no Android
-                textContentType="none"           // <- desativa autofill no iOS
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.inputSenhaWithIcon}
+                  value={confirmarSenha}
+                  onChangeText={setConfirmarSenha}
+                  secureTextEntry={!verSenhaConf}
+                  placeholder="Confirme sua senha"
+                  placeholderTextColor="#999"
+                  autoComplete="off"
+                  textContentType="none"
+                />
+                <Pressable onPress={() => setVerSenhaConf(!verSenhaConf)} style={styles.iconEye}>
+                  <MaterialIcons
+                    name={verSenhaConf ? "visibility" : "visibility-off"}
+                    size={25}
+                    color="#A383FB"
+                  />
+                </Pressable>
+              </View>
 
               {/* CHECKBOX TERMOS */}
               <Pressable
@@ -176,14 +202,17 @@ export default function EsquecerSenha({ navigation, route }) {
 
               <Pressable
                 onPress={enviar}
-                disabled={!aceitoTermos}
+                disabled={!aceitoTermos || loading}
                 style={[
                   styles.btnProximo,
-                  !aceitoTermos && styles.botaoDesativado,
+                  (!aceitoTermos || loading) && styles.botaoDesativado,
                 ]}
-              > 
-              {loading ? (<ActivityIndicator color="#FFF" size="small" />) : (
-                <Text style={styles.textoProximo}>Próximo</Text>)}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#FFF" size="small" />
+                ) : (
+                  <Text style={styles.textoProximo}>Próximo</Text>
+                )}
 
                 <View style={styles.circuloSeta}>
                   <Text style={styles.setaProximo}>{">"}</Text>

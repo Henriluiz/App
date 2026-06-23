@@ -43,31 +43,23 @@ function detectarTipo(title = "", body = "") {
   const texto = (title + " " + body).toLowerCase();
 
   if (texto.includes("aprovad")) {
-    return {
-      tipo: "aprovacao",
-      icon: "checkmark-circle",
-    };
+    return { tipo: "aprovacao", icon: "checkmark-circle" };
   }
-
+  if (texto.includes("solicitad") && texto.includes("cancelamento")) {
+    return { tipo: "cancelamento", icon: "close-circle" };       // ← separado
+  }
+  if (texto.includes("solicitad") && texto.includes("reagendamento")) {
+    return { tipo: "reagendamento", icon: "calendar" };          // ← separado
+  }
   if (texto.includes("solicitad")) {
-    return {
-      tipo: "solicitacao",
-      icon: "time",
-    };
+    return { tipo: "solicitacao", icon: "time" };
   }
-
   if (texto.includes("recus")) {
-    return {
-      tipo: "recusada",
-      icon: "close-circle",
-    };
+    return { tipo: "recusada", icon: "close-circle" };
   }
-
-  return {
-    tipo: "outro",
-    icon: "notifications",
-  };
+  return { tipo: "outro", icon: "notifications" };
 }
+
 
 const ABAS = [
   "Todos",
@@ -93,14 +85,18 @@ export default function Notificacao() {
 
     try {
       const response = await centralNotificacao();
+      console.log(response)
 
       const mapeadas = response.map((n) => ({
         id: n.id,
         titulo: n.title,
         descricao: n.body,
         hora: formatarData(n.sent_at),
-        lido: true, // sem campo lido no backend ainda; adapte se implementar
-        ...detectarTipo(n.title, n.body),
+        lido: true,
+        screen: n.data?.screen ?? null,
+        id_sessao: n.data?.params?.id_sessao ?? null,
+        tipoAcao: n.data?.params?.tipo ?? null,
+        ...detectarTipo(n.title, n.body),  // ← apenas uma vez, no final
       }));
 
       setNotificacoes(mapeadas);
@@ -131,6 +127,17 @@ export default function Notificacao() {
         return true;
     }
   });
+
+  // 3. Handler de navegação
+  const handlePressNotificacao = (notif) => {
+    if (notif.screen === "aprovacaoSol" && notif.id_sessao) {
+      navigation.navigate("aprovacaoSol", {
+        id_sessao: notif.id_sessao,
+        tipo: notif.tipoAcao,  // "cancelamento" | "reagendamento"
+      });
+    }
+    // screen === "notificacao" → só informativa, sem navegação
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -202,7 +209,15 @@ export default function Notificacao() {
             </View>
           ) : (
             notificacoesFiltradas.map((notif) => (
-              <Pressable key={notif.id} style={styles.notificacaoCard}>
+              // 4. Pressable com o handler + feedback visual para não-navegáveis
+              <Pressable
+                key={notif.id}
+                style={({ pressed }) => [
+                  styles.notificacaoCard,
+                  pressed && { opacity: 0.85 },
+                ]}
+                onPress={() => handlePressNotificacao(notif)}
+              >
                 {/* ÍCONE */}
                 <View style={styles.iconContainer}>
                   <Ionicons name={notif.icon} size={28} color="#8E7CFF" />

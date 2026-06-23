@@ -3,9 +3,10 @@ import { StyleSheet, Platform } from "react-native";
 export default StyleSheet.create({
   container: {
     flex: 1,
+    marginBottom: 15,
     backgroundColor: "#F4F8FB",
   },
-
+ 
   header: {
     flexDirection: "row",
     justifyContent: "space-between",

@@ -96,7 +96,12 @@ export default function Pesquisa({ route }) {
 
       if (item.preco > 0 && item.preco > precoMax) return false;
 
-      if (item.avaliacao < avaliacaoMin) return false;
+      if (
+        item.totalAvaliacoes > 0 &&
+        item.avaliacao < avaliacaoMin
+      ) {
+        return false;
+      };
 
       return true;
     });
@@ -107,8 +112,8 @@ export default function Pesquisa({ route }) {
   );
 
   const disponiveisFiltrados = filtrarLista(
-    psicologos.filter((p) => p.avaliacao < 4.5),
-  );
+    psicologos.filter((p) => p.avaliacao < 4.5)
+  ).sort((a, b) => b.avaliacao - a.avaliacao);
 
   const carregarHorarios = async (id, data) => {
     const dados = await verHorariosDisponiveis(id, data);
@@ -144,7 +149,19 @@ export default function Pesquisa({ route }) {
           </View>
 
           <View style={styles.rating}>
-            <Text>⭐ {item.avaliacao === 0.1 ? "N/A" : item.avaliacao}</Text>
+            {[1].map((star) => (
+                <Ionicons
+                  key={star}
+                  name={"star"}
+                  size={18}
+                  color="#F7B731"
+                />
+              ))}
+            <Text>
+              {item.totalAvaliacoes > 0
+                ? `${item.avaliacao.toFixed(1)}/${item.totalAvaliacoes}`
+                : "N/A"}
+            </Text>
           </View>
         </View>
 
@@ -231,7 +248,8 @@ export default function Pesquisa({ route }) {
                 u.psicologo?.especialidades?.map((e) => e.nome).join(", ") ||
                 "",
               preco: parseFloat(u.psicologo?.preco_sessao) || 0,
-              avaliacao: parseFloat(u.psicologo?.avaliacao) || 0.1,
+              avaliacao: parseFloat(u.psicologo?.avaliacao?.media) || 0,
+              totalAvaliacoes: u.psicologo?.avaliacao?.total || 0,
               horario: "A combinar",
               foto_perfil: u.foto_perfil,
               atendimento:

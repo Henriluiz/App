@@ -71,6 +71,18 @@ export default StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: width * 0.04,
   },
+  
+  inputSenha: {
+    width: "100%",
+    height: 50,
+    borderColor: "#A383FB",
+    borderWidth: 1.5,
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    fontSize: width * 0.04,
+  },
+
+  
 
   inputErro: {
     borderColor: "red",
@@ -185,5 +197,29 @@ export default StyleSheet.create({
     marginBottom: 5,
     marginLeft: 3,
     fontWeight: "bold",
+  },
+
+  // Adicione estas novas propriedades ao seu StyleSheet
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: "#A383FB",
+    borderWidth: 1.5,
+    borderRadius: 12,
+    width: "100%",
+    height: 50,
+    paddingHorizontal: 15,
+  },
+
+  inputSenhaWithIcon: {
+    flex: 1,
+    height: 50,
+    fontSize: width * 0.04,
+    paddingRight: 10,
+    color: "#A383FB",
+  },
+
+  iconEye: {
+    paddingHorizontal: 5,
   },
 });

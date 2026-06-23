@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, FontAwesome } from "@expo/vector-icons";
@@ -51,7 +52,7 @@ function AvatarPsicologo({ fotoUrl, initials, style, textStyle }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Componente principal
 // ─────────────────────────────────────────────────────────────────────────────
-export default function InicioChat({ navigation }) {
+export default function InicioChat({ navigation, route }) {
   const [searchText,   setSearchText]   = useState("");
   const [psicologos,   setPsicologos]   = useState([]);
   const [loading,      setLoading]      = useState(true);
@@ -61,6 +62,7 @@ export default function InicioChat({ navigation }) {
     FOTO,
     listarMeusPsicologosCont,
     iniciarChatCont,
+    user
   } = useAuth();
 
   // ─── Busca a lista de psicólogos do paciente ─────────────────────────────
@@ -81,34 +83,29 @@ export default function InicioChat({ navigation }) {
 
   // ─── Abre (ou cria) o chat com o psicólogo selecionado ───────────────────
   const handleOpenChat = async (psicologo) => {
-    setLoadingChat(psicologo.id);
+    const idPsicologo = psicologo.psicologo?.id_psicologo;
+    setLoadingChat(psicologo.id_usuario);
 
-    console.log("🟡 Abrindo chat com psicólogo:", psicologo.id);
-    console.log("🔵 Dados do psicólogo:", JSON.stringify(psicologo));
-    const resultado = await iniciarChatCont({ id_psicologo: psicologo.psicologo?.id_psicologo });
-
-    console.log("🟢 Resultado iniciarChat:", JSON.stringify(resultado));
+    const resultado = await iniciarChatCont({ id_paciente: user.id_paciente, id_psicologo: idPsicologo });
 
     setLoadingChat(null);
 
     if (!resultado.sucesso) {
       console.log("🔴 Falhou ao iniciar chat:", resultado.erro);
+      Alert.alert("Erro", resultado.erro || "Não foi possível iniciar o chat.");
       return;
     }
 
-    const chatId = resultado.dados?.chat?.id ?? resultado.dados?.id;
-
-    console.log("🟢 chatId resolvido:", chatId);
+    const chatId = resultado.dados?.chat?.id_chat;
 
     navigation.navigate("chat", {
       chatId,
-      psicologoId: psicologo.id,
+      psicologoId: idPsicologo,
       userName:    psicologo.nome,
       userAvatar:  getInitials(psicologo.nome),
       userPhoto:   psicologo.foto_perfil ? `${FOTO}${psicologo.foto_perfil}` : null,
     });
   };
-
   // ─── Filtro de pesquisa ──────────────────────────────────────────────────
   const filteredPsicologos = psicologos.filter((p) =>
     p.nome.toLowerCase().includes(searchText.toLowerCase())
@@ -116,7 +113,7 @@ export default function InicioChat({ navigation }) {
 
   // ─── Item da lista ───────────────────────────────────────────────────────
   const renderConversation = ({ item }) => {
-    const isLoading  = loadingChat === item.id;
+    const isLoading = loadingChat === item.id_usuario;
     const fotoUrl = item.foto_perfil ? `${FOTO}${item.foto_perfil}` : null;
     const initials   = getInitials(item.nome);
     const especialidade =
@@ -125,7 +122,7 @@ export default function InicioChat({ navigation }) {
       "Psicólogo(a)";
 
     return (
-      <TouchableOpacity
+      <Pressable
         style={styles.conversationItem}
         onPress={() => handleOpenChat(item)}
         activeOpacity={0.7}
@@ -162,7 +159,7 @@ export default function InicioChat({ navigation }) {
         ) : (
           <Feather name="chevron-right" size={20} color="#D0D5DD" />
         )}
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
@@ -172,9 +169,9 @@ export default function InicioChat({ navigation }) {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Conversas</Text>
-        <TouchableOpacity activeOpacity={0.7} onPress={carregarPsicologos}>
+        <Pressable activeOpacity={0.7} onPress={carregarPsicologos}>
           <Feather name="refresh-cw" size={20} color="#A383FB" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* Barra de pesquisa */}
@@ -188,9 +185,9 @@ export default function InicioChat({ navigation }) {
           onChangeText={setSearchText}
         />
         {searchText !== "" && (
-          <TouchableOpacity onPress={() => setSearchText("")} activeOpacity={0.7}>
+          <Pressable onPress={() => setSearchText("")} activeOpacity={0.7}>
             <Feather name="x" size={18} color="#999" />
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
 
@@ -203,10 +200,7 @@ export default function InicioChat({ navigation }) {
         <FlatList
           data={filteredPsicologos}
           renderItem={renderConversation}
-          keyExtractor={(item, index) => {
-            // console.log("ITEM:", item);
-            return String(item?.id ?? index);
-          }}
+          keyExtractor={(item, index) => String(item?.id_usuario ?? index)}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
           onRefresh={carregarPsicologos}

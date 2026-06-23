@@ -15,6 +15,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "./styles";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../context/AuthContext";
+import { LinkService } from '../../components/abrirLinkExterno'; // ← adicione 
+import ModalApp from '../../components/modalApp'; // ← adicione
 
 function CardHistorico({ item }) {
   const isCancelada = item.status_sessao === "cancelada";
@@ -76,12 +78,16 @@ function CardHistorico({ item }) {
 
 export default function CentralCuidado() {
   const navigation = useNavigation();
-  const { mSessoes, historico } = useAuth();
+  const { mSessoes, historico, linkSessãoEntrar } = useAuth();
 
   const [proximaSessao, setProximaSessao] = useState(null);
   const [loadingSessao, setLoadingSessao] = useState(true);
   const [listaHistorico, setListaHistorico] = useState([]);
   const [loadingHistorico, setLoadingHistorico] = useState(true);
+
+  const [modalPagamento, setModalPagamento] = useState(false);
+  const [modalConfirmacao, setModalConfirmacao] = useState(false);
+  const [loadingLink, setLoadingLink] = useState(false);
 
   useEffect(() => {
     const buscarProximaSessao = async () => {
@@ -129,6 +135,29 @@ export default function CentralCuidado() {
     };
     buscarHistorico();
   }, []);
+
+  const handleEntrarSessao = async (id_sessao) => {
+  setLoadingLink(true);
+    try {
+      const resposta = await linkSessãoEntrar(id_sessao);
+
+      if (!resposta || resposta.error) {
+        // Diferencia o tipo de erro pelo code
+        if (resposta?.code === 'AGUARDANDO_CONFIRMACAO') {
+          setModalConfirmacao(true);
+        } else {
+          setModalPagamento(true);
+        }
+        return;
+      }
+
+      await LinkService.open(resposta.link);
+    } catch (e) {
+      setModalPagamento(true);
+    } finally {
+      setLoadingLink(false);
+    }
+  };
 
   const getPressableStyle = ({ pressed }) => [
     styles.pressableBase,
@@ -183,7 +212,7 @@ export default function CentralCuidado() {
                   style={{ marginVertical: 16 }}
                 />
               ) : proximaSessao ? (
-                <>
+                <View>
                   <View style={styles.infoDoutora}>
                     <View>
                       <Text style={styles.labelProfissional}>Profissional</Text>
@@ -204,15 +233,17 @@ export default function CentralCuidado() {
                     </View>
                   </View>
                   <Pressable
-                    style={({ pressed }) => [
-                      styles.btnEntrar,
-                      { opacity: pressed ? 0.8 : 1 },
-                    ]}
-                    onPress={() => console.log("Entrando na sessão...")}
-                  >
-                    <Text style={styles.btnText}>Entrar na Sessão</Text>
+                  style={({ pressed }) => [
+                    styles.btnEntrar,
+                    { opacity: pressed || loadingLink ? 0.8 : 1 },
+                  ]}
+                  onPress={() => handleEntrarSessao(proximaSessao.id_sessao)}
+                  disabled={loadingLink}> 
+                  {loadingLink ? 
+                  <ActivityIndicator size="small" color="#fff" />
+                   : <Text style={styles.btnText}>Entrar na Sessão</Text> } 
                   </Pressable>
-                </>
+                </View>
               ) : (
                 <View style={{ alignItems: "center", paddingVertical: 5 }}>
                   <Ionicons name="calendar-outline" size={36} color="#ccc" />
@@ -272,6 +303,9 @@ export default function CentralCuidado() {
 
           </View>
        </View>
+       <ModalApp visible={modalPagamento} tipo="aviso" titulo="Pagamento pendente" mensagem="Você precisa efetuar o pagamento desta sessão antes de entrar. Acesse a aba Pagamento para regularizar." duplo confirmarTexto="Ir para Pagamento" onConfirmar={() => { setModalPagamento(false); navigation.navigate("pagamento"); }} cancelarTexto="Agora não" onCancelar={() => setModalPagamento(false)} />
+
+        <ModalApp visible={modalConfirmacao} tipo="info" titulo="Aguardando confirmação" mensagem="Seu comprovante foi recebido! Assim que o profissional confirmar o pagamento, você poderá entrar na sessão." okTexto="Entendi" onOk={() => setModalConfirmacao(false)} />
 
         <NavBar tela="central" />
     </SafeAreaView>

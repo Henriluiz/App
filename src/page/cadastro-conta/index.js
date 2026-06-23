@@ -14,6 +14,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { cadastroPaciente } from "../../services/authService";
 import ModalApp from "../../components/modalApp";
 import { useAuth } from "../../context/AuthContext";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function CadastroConta() {
   const [email, setEmail] = useState("");
@@ -22,6 +23,10 @@ export default function CadastroConta() {
   const [erro, setErro] = useState("");
   const [aceitoTermos, setAceitoTermos] = useState(false);
   const [carregando, setCarregando] = useState(false);
+  const [verSenha, setVerSenha] = useState(false);
+  const [verSenhaConf, setVerSenhaConf] = useState(false);
+
+
 
   const navigation = useNavigation();
   const route = useRoute();
@@ -177,28 +182,49 @@ export default function CadastroConta() {
               />
 
               <Text style={styles.label}>Crie uma senha</Text>
-              <TextInput
-                style={styles.input}
-                value={senha}
-                onChangeText={setSenha}
-                // secureTextEntry
-                placeholder="Digite sua senha"
-                placeholderTextColor="#999"
-                autoComplete="off"               // <- desativa autofill no Android
-                textContentType="none"           // <- desativa autofill no iOS
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.inputSenhaWithIcon}
+                  value={senha}
+                  onChangeText={setSenha}
+                  secureTextEntry={!verSenha}
+                  placeholder="Digite sua senha"
+                  placeholderTextColor="#999"
+                  autoComplete="off"
+                  textContentType="none"
+                />
+                <Pressable onPress={() => setVerSenha(!verSenha)} style={styles.iconEye}>
+                  <MaterialIcons
+                    name={verSenha ? "visibility" : "visibility-off"}
+                    size={25}
+                    color="#A383FB"
+                  />
+                </Pressable>
+              </View>
+
 
               <Text style={styles.label}>Confirme a senha</Text>
-              <TextInput
-                style={styles.input}
-                value={confirmarSenha}
-                onChangeText={setConfirmarSenha}
-                // secureTextEntry
-                placeholder="Confirme sua senha"
-                placeholderTextColor="#999"
-                autoComplete="off"               // <- desativa autofill no Android
-                textContentType="none"           // <- desativa autofill no iOS
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.inputSenhaWithIcon}
+                  value={confirmarSenha}
+                  onChangeText={setConfirmarSenha}
+                  secureTextEntry={!verSenhaConf}
+                  placeholder="Confirme sua senha"
+                  placeholderTextColor="#999"
+                  autoComplete="off"
+                  textContentType="none"
+                />
+                <Pressable onPress={() => setVerSenhaConf(!verSenhaConf)} style={styles.iconEye}>
+                  <MaterialIcons
+                    name={verSenhaConf ? "visibility" : "visibility-off"}
+                    size={25}
+                    color="#A383FB"
+                  />
+                </Pressable>
+              </View>
+
+
 
               <Pressable
                 style={styles.containerCheckbox}

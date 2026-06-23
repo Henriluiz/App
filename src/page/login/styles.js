@@ -55,11 +55,12 @@ export default StyleSheet.create ({
         marginTop: hp("1%"),
     },
 
-    Continput: { // Um container simulando um inputText, apenas para colocar a imagem.
+    Continput: {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         paddingLeft: 20,
+        paddingRight: 15,
         borderRadius: 15,
         height: hp("6%"),
         backgroundColor: "rgba(255, 255, 255, 0.8)"
@@ -68,6 +69,11 @@ export default StyleSheet.create ({
     input: { // O InputText em si
         paddingLeft: 15,
         width: wp("75%"),
+    },
+    inputSenha: { // O InputText em si
+        paddingLeft: 15,
+        width: wp("70%"),
+        color: "#A383FB",
     },
 
     mensagemErro: {

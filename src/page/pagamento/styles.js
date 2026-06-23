@@ -455,4 +455,138 @@ export default StyleSheet.create({
   successIconContainer: {
     marginBottom: 20,
   },
+
+  // Modal Pix
+  pixModalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-end",
+  },
+
+  pixModalContainer: {
+    backgroundColor: "#FFFFFF",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    paddingBottom: 40,
+  },
+
+  pixModalAlca: {
+    width: 40,
+    height: 4,
+    backgroundColor: "#E0E0E0",
+    borderRadius: 2,
+    alignSelf: "center",
+    marginBottom: 20,
+  },
+
+  pixModalTitulo: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1A1A2E",
+    marginBottom: 4,
+  },
+
+  pixModalSubtitulo: {
+    fontSize: 13,
+    color: "#888",
+    marginBottom: 24,
+  },
+
+  pixModalCard: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 10,
+  },
+
+  pixModalCardDestinatario: {
+    backgroundColor: "#F5F3FF",
+  },
+
+  pixModalCardChave: {
+    backgroundColor: "#F8F8F8",
+    borderWidth: 1,
+    borderColor: "#EFEFEF",
+  },
+
+  pixModalCardValor: {
+    backgroundColor: "#F0FBF9",
+  },
+
+  pixModalCardLabel: {
+    fontSize: 10,
+    fontWeight: "700",
+    marginBottom: 4,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+
+  pixModalLabelDestinatario: {
+    color: "#8E7CFF",
+  },
+
+  pixModalLabelChave: {
+    color: "#888",
+  },
+
+  pixModalLabelValor: {
+    color: "#0F6E56",
+  },
+
+  pixModalNomeRecebedor: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#3C3489",
+  },
+
+  pixModalCidade: {
+    fontSize: 13,
+    color: "#534AB7",
+    marginTop: 2,
+  },
+
+  pixModalChaveTexto: {
+    fontSize: 14,
+    color: "#1A1A2E",
+    fontFamily: "monospace",
+  },
+
+  pixModalValorTexto: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#085041",
+  },
+
+  pixModalBotao: {
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 14,
+  },
+
+  pixModalBotaoPadrao: {
+    backgroundColor: "#8E7CFF",
+  },
+
+  pixModalBotaoCopiado: {
+    backgroundColor: "#22C55E",
+  },
+
+  pixModalBotaoTexto: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: 15,
+  },
+
+  pixModalErroContainer: {
+    alignItems: "center",
+    paddingVertical: 32,
+  },
+
+  pixModalErroTexto: {
+    marginTop: 12,
+    fontSize: 16,
+    color: "#333",
+    textAlign: "center",
+  },
 });

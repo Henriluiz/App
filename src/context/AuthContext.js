@@ -25,6 +25,9 @@ import {
   recusarSessaoC,
   PesquisaPsicologo,
   horariosDisponiveis,
+  avaliar,
+  linkSessão,
+  pixchave,
   agendarSessao,
   solicitarCancelamento,
   solicitarReagendamento,
@@ -148,6 +151,19 @@ export function AuthProvider({ children }) {
       };
     }
   }
+  async function avaliarC(id_psicologo, nota) {
+    try {
+      const response = await avaliar(id_psicologo, nota);
+      console.log(response.data)
+      return response.data;
+    } catch (e) {
+      console.log("ERRO COMPLETO (avaliarC):", e.response?.data);
+
+      return {
+        error: true,
+      };
+    }
+  }
 
   async function listarPsicologos(id) {
     try {
@@ -262,6 +278,26 @@ export function AuthProvider({ children }) {
       return null;
     }
   }
+  
+  async function linkSessãoEntrar(id_sessao) {
+    try {
+      const resposta = await linkSessão(id_sessao);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (linkSessãoEntrar):", e.response?.data);
+      return e?.response?.data ?? { error: true, code: 'ERRO_INTERNO' };
+    }
+  }
+
+  async function chavepix(id_pagamento) {
+    try {
+      const resposta = await pixchave(id_pagamento);
+      return resposta;
+    } catch (e) {
+      console.log("Erro completo (chavepix):", e.response?.data);
+      return e?.response?.data ?? { error: true, code: 'ERRO_INTERNO' };
+    }
+  }
 
   async function verificarEmailC(email) {
     try {
@@ -357,8 +393,14 @@ export function AuthProvider({ children }) {
   // Inicia ou recupera um chat com um psicólogo
   // dados: { psicologo_id: number }
   async function iniciarChatCont(dados) {
+    console.log("USER:", user);
+    console.log("PACIENTE:", user?.paciente);
+    console.log("ID PACIENTE:", user?.paciente?.id_paciente);
     try {
-      const resposta = await iniciarChat(dados);
+      const resposta = await iniciarChat({
+        ...dados,
+        id_paciente: user?.paciente?.id_paciente,
+      });
       return { sucesso: true, dados: resposta };
     } catch (e) {
       console.log("Erro completo (iniciarChatCont):", e.response?.data || e.message);
@@ -519,7 +561,8 @@ export function AuthProvider({ children }) {
 
         aprovarSessao,
         recusarSessao,
-
+        avaliarC,
+        chavepix,
 
         // Psicologo
         verPsicologo,
@@ -532,6 +575,7 @@ export function AuthProvider({ children }) {
         detalhesCons,
         SolReagendarCons,
         mSessoes,
+        linkSessãoEntrar,
 
         // Chat
         listarMeusPsicologosCont,

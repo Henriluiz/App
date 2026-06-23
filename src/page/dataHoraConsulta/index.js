@@ -35,7 +35,7 @@ export default function DataHoraConsulta({ route }) {
     const agora = new Date();
     const offset = agora.getTimezoneOffset() * 60000;
     const dataLocal = new Date(agora.getTime() - offset);
-    
+
     // Começa a partir de amanhã (24 horas a partir de agora)
     dataLocal.setHours(0, 0, 0, 0);
     dataLocal.setDate(dataLocal.getDate() + 1);
@@ -91,52 +91,82 @@ export default function DataHoraConsulta({ route }) {
   const diasLista = gerarDiasList();
   const diaSelecionado = diasLista[indexDiaSelecionado];
 
-  // 📅 Filtrar horários que ainda não passaram
-  const filtrarHorariosValidos = (horariosRecebidos) => {
+  // 📅 Filtrar horários que estão a menos de 24h a partir de agora
+  // Regra: o slot só aparece se (data do dia + hora do slot) >= (agora + 24h).
+  // Isso cobre tanto "hoje" quanto o caso do dia seguinte que ainda cai
+  // dentro da janela de 24h (ex: hoje 23 às 17h -> dia 24 antes das 17h some,
+  // só aparecem horários do dia 24 a partir das 17h em diante, ou do dia 25).
+  //
+  // IMPORTANTE: recebe o "dia" como parâmetro explícito (e não via estado
+  // diaSelecionado), porque setIndexDiaSelecionado é assíncrono e o estado
+  // ainda não está atualizado no momento em que esta função roda.
+  const filtrarHorariosValidos = (horariosRecebidos, dia) => {
     if (!Array.isArray(horariosRecebidos) || horariosRecebidos.length === 0) {
       return [];
     }
 
     const agora = new Date();
-    const offset = agora.getTimezoneOffset() * 60000;
-    const dataLocal = new Date(agora.getTime() - offset);
-    const horaAtual = dataLocal.getHours();
-    const minutoAtual = dataLocal.getMinutes();
-    const horaDiaAtualEmMinutos = horaAtual * 60 + minutoAtual;
 
-    // Se for hoje, filtra horários que já passaram
-    // Se for amanhã ou depois, mostra todos os horários
-    if (diaSelecionado.iso === `${dataLocal.getFullYear()}-${String(dataLocal.getMonth() + 1).padStart(2, '0')}-${String(dataLocal.getDate()).padStart(2, '0')}`) {
-      return horariosRecebidos.filter((hora) => {
-        const [h, m] = hora.split(":").map(Number);
-        const horaDaListaEmMinutos = h * 60 + m;
-        return horaDaListaEmMinutos > horaDiaAtualEmMinutos + 60; // Pelo menos 1 hora a partir de agora
-      });
-    }
+    // Limite mínimo: agora + 24 horas
+    const limite24h = new Date(agora.getTime() + 24 * 60 * 60 * 1000);
 
-    // Para outros dias, mostra todos os horários
-    return horariosRecebidos;
+    return horariosRecebidos.filter((hora) => {
+      const [h, m] = hora.split(":").map(Number);
+
+      // Monta a data/hora completa do slot, no dia recebido, em horário local
+      const dataSlot = new Date(
+        dia.dataObj.getFullYear(),
+        dia.dataObj.getMonth(),
+        dia.dataObj.getDate(),
+        h,
+        m,
+        0,
+        0
+      );
+
+      // Só mostra o horário se ele estiver a 24h ou mais de distância de agora
+      return dataSlot.getTime() >= limite24h.getTime();
+    });
   };
+
+  // 🔒 Controle de concorrência: guarda o índice da requisição mais recente.
+  // Se uma resposta antiga chegar depois de uma mais nova, ela é ignorada.
+  const requisicaoAtualRef = useRef(0);
 
   // 📅 Carregar horários quando dia é selecionado
   const handleSelectDia = async (index) => {
+    const idDestaRequisicao = ++requisicaoAtualRef.current;
+
     setIndexDiaSelecionado(index);
     setHoraSelecionada(null);
     setLoading(true);
 
+    const item = diasLista[index];
+
     try {
-      const item = diasLista[index];
       const dados = await verHorariosDisponiveis(
         psicologo.id_psicologo,
         item.iso
       );
-      const horariosValidos = filtrarHorariosValidos(dados || []);
+
+      // Se outra seleção de dia aconteceu enquanto esperávamos a resposta,
+      // esta resposta está obsoleta — descarta para não sobrescrever o estado.
+      if (idDestaRequisicao !== requisicaoAtualRef.current) {
+        return;
+      }
+
+      const horariosValidos = filtrarHorariosValidos(dados || [], item);
       setHorarios(horariosValidos);
     } catch (error) {
+      if (idDestaRequisicao !== requisicaoAtualRef.current) {
+        return;
+      }
       console.error("Erro ao carregar horários:", error);
       setHorarios([]);
     } finally {
-      setLoading(false);
+      if (idDestaRequisicao === requisicaoAtualRef.current) {
+        setLoading(false);
+      }
     }
   };
 

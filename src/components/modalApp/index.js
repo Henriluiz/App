@@ -80,6 +80,8 @@ export default function ModalApp({
   confirmarLoading = false,
   cancelarTexto = "Cancelar",
   onCancelar,
+
+  semBotao = false,
 }) {
   const icone = tipo ? ICONE_CONFIG[tipo] : null;
  
@@ -105,30 +107,45 @@ export default function ModalApp({
           <Text style={styles.mensagem}>{mensagem}</Text>
  
           {/* ── BOTÕES ── */}
-          {duplo ? (
-            // Modo duplo: confirmar + cancelar
-            <View style={styles.botoesLinha}>
-              <Pressable style={styles.botaoCancelar} onPress={onCancelar}>
-                <Text style={styles.botaoCancelarTexto}>{cancelarTexto}</Text>
-              </Pressable>
- 
+          {!semBotao && (
+            duplo ? (
+              <View style={styles.botoesLinha}>
+                <Pressable
+                  style={styles.botaoCancelar}
+                  onPress={onCancelar}
+                >
+                  <Text style={styles.botaoCancelarTexto}>
+                    {cancelarTexto}
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  style={[
+                    styles.botaoConfirmar,
+                    confirmarLoading && { opacity: 0.7 },
+                  ]}
+                  onPress={onConfirmar}
+                  disabled={confirmarLoading}
+                >
+                  {confirmarLoading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.botaoConfirmarTexto}>
+                      {confirmarTexto}
+                    </Text>
+                  )}
+                </Pressable>
+              </View>
+            ) : (
               <Pressable
-                style={[styles.botaoConfirmar, confirmarLoading && { opacity: 0.7 }]}
-                onPress={onConfirmar}
-                disabled={confirmarLoading}
+                style={styles.botaoOk}
+                onPress={onOk}
               >
-                {confirmarLoading ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <Text style={styles.botaoConfirmarTexto}>{confirmarTexto}</Text>
-                )}
+                <Text style={styles.botaoOkTexto}>
+                  {okTexto}
+                </Text>
               </Pressable>
-            </View>
-          ) : (
-            // Modo padrão: botão único OK
-            <Pressable style={styles.botaoOk} onPress={onOk}>
-              <Text style={styles.botaoOkTexto}>{okTexto}</Text>
-            </Pressable>
+            )
           )}
  
         </View>

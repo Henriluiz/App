@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useAuth } from "../../context/AuthContext";
 
+
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -16,6 +17,7 @@ export default function Login() {
   const [login, setLogin] = useState(""); // * Login aqui é o Email!!
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
+  const [verSenha, setVerSenha] = useState(false);
    
   const [loading, setLoading] = useState(false);
 
@@ -117,12 +119,20 @@ export default function Login() {
                 <MaterialIcons name="password" size={24} color="#A383FB" />
 
                 <TextInput
-                  style={styles.input}
+                  style={styles.inputSenha}
                   onChangeText={setSenha}
                   value={senha}
-                  // secureTextEntry
+                  secureTextEntry={!verSenha}
                   maxLength={20}
                 />
+
+                <Pressable onPress={() => setVerSenha(!verSenha)}>
+                  <MaterialIcons
+                    name={verSenha ? "visibility" : "visibility-off"}
+                    size={25}
+                    color="#A383FB"
+                  />
+                </Pressable>
               </View>
 
               <Pressable onPress={() => enviar("emailRec")}>

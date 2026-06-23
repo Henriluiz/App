@@ -211,12 +211,14 @@ export default function VisualizarPsi({ route }) {
             </Text>
             <Text style={styles.profissao}>Psicóloga Clínica</Text>
 
-            <View style={styles.infoContainer}>
-              <View style={styles.estrelas}>
-                <Ionicons name="star" size={18} color="#FFD700" />
-                <Text style={styles.textoAvaliacao}>{psicologo.avaliacao}</Text>
-              </View>
-            </View>
+            <View style={styles.estrelas}>
+            <Ionicons name="star" size={18} color="#FFD700" />
+            <Text style={styles.textoAvaliacao}>
+              {psicologo?.avaliacao?.total > 0
+                ? `${psicologo.avaliacao.media.toFixed(1)}/${psicologo.avaliacao.total}`
+                : "N/A"}
+            </Text>
+          </View>
 
             {/* INFORMAÇÕES */}
             <View style={styles.container2}>

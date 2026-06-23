@@ -182,6 +182,21 @@ export default function MinhasSessoes({ route }) {
         return { label: "Cancelamento Solicitado", cor: "#E53935", corFundo: "#FFEBEE", borderCor: "#E53935" };
       case "reagendamento_solicitado":
         return { label: "Reagendamento Solicitado", cor: "#1E88E5", corFundo: "#E3F2FD", borderCor: "#1E88E5" };
+      case "reagendamentoPsicologo":
+          return {
+            label: "Pedido de Reagendamento",
+            cor: "#FB8C00",        // laranja
+            corFundo: "#FFF3E0",  // laranja claro
+            borderCor: "#FB8C00",
+          };
+
+        case "cancelamentoPsicologo":
+          return {
+            label: "Pedido de Cancelamento",
+            cor: "#E53935",        // vermelho
+            corFundo: "#FFEBEE",  // vermelho claro
+            borderCor: "#E53935",
+        };
       case "recusada":
         return { label: "Recusada", cor: "#B71C1C", corFundo: "#FFCDD2", borderCor: "#B71C1C" };
       default:
@@ -265,34 +280,36 @@ export default function MinhasSessoes({ route }) {
             ) : sessoes.length > 0 ? (
               <View style={styles.sessoesLista}>
                 {sessoes.map((sessao) => {
-                  const config = getStatusConfig(sessao.status_sessao);
-                  return (
-                    <Pressable
-                      key={sessao.id_sessao ?? sessao.id}
-                      style={[
-                        styles.sessaoCard,
-                        { backgroundColor: config.corFundo, borderLeftColor: config.borderCor },
-                      ]}
-                      onPress={() => abrirModal(sessao)}
-                      android_ripple={{ color: "rgba(142,124,255,0.1)" }}
-                    >
-                      <Text style={[styles.sessaoStatus, { color: config.cor }]}>
-                        {config.label}{" "}
-                        {(config.label === "Cancelada" || config.label === "Recusada") && (
-                          sessao.observacoes ? (
-                            <Text>- Motivo: {sessao.observacoes}</Text>
-                          ) : (
-                            <Text>por mim</Text>
-                          )
-                        )}
+                const config = getStatusConfig(sessao.status_sessao);
+
+                return (
+                  <Pressable
+                    key={sessao.id_sessao ?? sessao.id}
+                    style={[
+                    styles.sessaoCard,
+                    {
+                    backgroundColor: config.corFundo,
+                    borderLeftColor: config.borderCor,
+                    },
+                    ]}
+                    onPress={() => abrirModal(sessao)}
+                  >
+                    <Text style={[styles.sessaoStatus, { color: config.cor }]}>
+                    {config.label}
+                    </Text>
+
+                    <Text style={styles.sessaoNome}>
+                      {getNomePsicologo(sessao)}
+                    </Text>
+
+                    <View style={styles.sessaoHorarioRow}>
+                      <Ionicons name="time-outline" size={16} color="#666" />
+                      <Text style={styles.sessaoHorario}>
+                        Horário: {formatarHora(sessao.hora_inicio)}
                       </Text>
-                      <Text style={styles.sessaoNome}>{getNomePsicologo(sessao)}</Text>
-                      <View style={styles.sessaoHorarioRow}>
-                        <Ionicons name="time-outline" size={16} color="#666" />
-                        <Text style={styles.sessaoHorario}>Horário: {formatarHora(sessao.hora_inicio)}</Text>
-                      </View>
-                    </Pressable>
-                  );
+                    </View>
+                  </Pressable>
+                );
                 })}
               </View>
             ) : null}
@@ -315,7 +332,7 @@ export default function MinhasSessoes({ route }) {
           <View style={styles.bottomSheetHandle} />
 
           {sessaoSelecionada && (() => {
-            const config = getStatusConfig(sessaoSelecionada.status);
+            const config = getStatusConfig(sessaoSelecionada.status_sessao);
             return (
               <View style={styles.bottomSheetSessaoInfo}>
                 <Text style={[styles.sessaoStatus, { color: config.cor, marginBottom: 4 }]}>

@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Modal,
   TextInput,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -38,6 +39,7 @@ export default function AprovacaoSol({ route }) {
       setBuscando(true);
       setErroBusca(null);
       const resultado = await detalhesConsulta(id_sessao);
+      console.log("DETALHES DA CONSULTA:",resultado)
       if (resultado.sucesso) {
         setSessao(resultado.dados.sessao);
       } else {
@@ -69,11 +71,19 @@ export default function AprovacaoSol({ route }) {
   const corBadgeBg        = isCancelamento ? "#FFF1F1" : "#FFFBEB";
 
   const nomePsicologo     = sessao?.psicologo?.usuario?.nome ?? "—";
-  const bioPsicologo      = sessao?.psicologo?.biografia ?? sessao?.psicologo?.especialidade ?? "";
+  const especialidade =
+  Array.isArray(sessao?.psicologo?.especialidades)
+    ? sessao.psicologo.especialidades[0]?.nome        // array de objetos
+        ?? sessao.psicologo.especialidades[0]          // array de strings
+        ?? ""
+    : sessao?.psicologo?.especialidade                 // string direta
+        ?? sessao?.psicologo?.biografia                // fallback bio
+        ?? "";
   const dataOriginal      = formatarData(sessao?.data_sessao);
   const horaOriginal      = formatarHora(sessao?.hora_inicio);
   const dataNovaFormatada = formatarData(sessao?.data_solicitada);
   const horaNovaFormatada = formatarHora(sessao?.hora_solicitada);
+  const motivoCancelamento = sessao?.observacoes?.trim();
 
   // ── Ações ─────────────────────────────────────────────────────────────────────
   const abrirModal = (tipoAcao) => {
@@ -175,15 +185,40 @@ export default function AprovacaoSol({ route }) {
         <View style={styles.card}>
           <Text style={styles.cardTitulo}>Psicólogo</Text>
           <View style={styles.psicRow}>
-            <View style={styles.avatarCircle}>
-              <Ionicons name="person" size={28} color="#8E7CFF" />
-            </View>
+
+            {/* Foto ou avatar fallback */}
+            {sessao?.psicologo?.foto_url ? (
+              <Image
+                source={{ uri: sessao.psicologo.foto_url }}
+                style={styles.avatarFoto}
+              />
+            ) : (
+              <View style={styles.avatarCircle}>
+                <Ionicons name="person" size={28} color="#8E7CFF" />
+              </View>
+            )}
+
             <View style={{ flex: 1 }}>
-              <Text style={styles.psicNome}>{nomePsicologo}</Text>
-              <Text style={styles.psicBio} numberOfLines={2}>{bioPsicologo}</Text>
+              <Text style={styles.psicNome}>
+                {nomePsicologo}
+              </Text>
             </View>
+
           </View>
         </View>
+
+        {/* CARD MOTIVO — só aparece se houver observação preenchida */}
+        {motivoCancelamento && (
+          <View style={[styles.card, styles.cardMotivo]}>
+            <View style={styles.cardMotivoHeader}>
+              <Ionicons name="chatbox-ellipses-outline" size={18} color="#FF5A5F" />
+              <Text style={[styles.cardTitulo, { marginBottom: 0, marginLeft: 6, color: "#FF5A5F" }]}>
+                Motivo informado
+              </Text>
+            </View>
+            <Text style={styles.motivoTexto}>{motivoCancelamento}</Text>
+          </View>
+        )}
 
         {/* CARD SESSÃO ORIGINAL */}
         <View style={styles.card}>

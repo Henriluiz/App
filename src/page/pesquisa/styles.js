@@ -4,6 +4,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F4F6FB",
+    marginBottom: 15,
   },
 
   // 🔹 HEADER
@@ -128,10 +129,11 @@ export default StyleSheet.create({
   },
 
   rating: {
-    backgroundColor: "#FFE9A8",
+    // backgroundColor: "#FFE9A8",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+    alignItems: "center"
   },
 
   // 🔹 FOOTER

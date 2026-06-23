@@ -184,4 +184,30 @@ export default StyleSheet.create({
     fontSize: width * 0.06,
     fontWeight: "bold",
   },
+
+  // Adicione estas novas propriedades ao seu StyleSheet
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: "#A383FB",
+    borderWidth: 1.5,
+    borderRadius: 12,
+    width: "100%",
+    height: 50,
+    paddingHorizontal: 15,
+    backgroundColor: "#ffffff",
+  },
+
+  inputSenhaWithIcon: {
+    flex: 1,
+    height: 50,
+    fontSize: width * 0.04,
+    paddingRight: 10,
+    color: "#A383FB",
+    backgroundColor: "#ffffff",
+  },
+
+  iconEye: {
+    paddingHorizontal: 5,
+  },
 });

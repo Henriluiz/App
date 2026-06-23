@@ -131,7 +131,8 @@ const styles = StyleSheet.create({
   promoCard: {
     backgroundColor: "#fff",
     borderRadius: 24,
-    marginHorizontal: 24,
+    marginLeft: 25,
+    marginRight: 33,
     marginTop: 18,
     padding: 18,
     flexDirection: "row",

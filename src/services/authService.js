@@ -65,12 +65,18 @@ export async function cadastroPaciente(data) {
 }
 
 export async function login(login, senha) {
-  const response = await api.post("/login", {
-    login,
-    senha,
-  });
+  try {
+    const response = await api.post("/login", {
+      login,
+      senha,
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error.response?.status);
+    console.log(error.response?.data);
+    console.log(error.response?.headers);
+  }
 
-  return response.data;
 }
 
 export async function getPerfil() {
@@ -180,6 +186,25 @@ export async function verificarEmail(email) {
     return error.response?.data ?? { error: true, message: "Erro de conexão." }
   }
 }
+
+export async function avaliar(id_psicologo, nota) {
+  try {
+    const response = await api.post(
+      `/avaliacao/${id_psicologo}/`,
+      {
+        nota,
+      },
+    );
+    console.log("Resposta de avaliar o psicologo: " + response);
+    return response.data;
+  } catch (error) {
+    console.log(error.response?.status);
+    console.log(error.response?.data);
+    console.log(error.response?.headers);
+
+    return error.response?.data ?? { error: true, message: "Erro de conexão." }
+  }
+}
 export async function verificarEmailConfirmar(email, code) {
   try {
     const response = await api.post(
@@ -243,6 +268,20 @@ export async function verificarEmailConfirmar(email, code) {
 
 export async function notificacao() {
     const resposta = await api.get('/notifications');
+    console.log("Status:", resposta.status);
+    console.log("Data:", JSON.stringify(resposta.data));
+    return resposta.data;
+};
+
+export async function linkSessão(id_sessao) {
+    const resposta = await api.get(`/link/sessao/${id_sessao}`);
+    console.log("Status:", resposta.status);
+    console.log("Data:", JSON.stringify(resposta.data));
+    return resposta.data;
+};
+
+export async function pixchave(id_pagamento) {
+    const resposta = await api.get(`/pix/pagamento/${id_pagamento}}`);
     console.log("Status:", resposta.status);
     console.log("Data:", JSON.stringify(resposta.data));
     return resposta.data;

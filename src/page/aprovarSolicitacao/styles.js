@@ -75,6 +75,26 @@ export default StyleSheet.create({
     marginBottom: 4,
   },
 
+  // ── Card "motivo" com borda vermelha clara ───────────────────────────────────
+  cardMotivo: {
+    borderWidth: 1.5,
+    borderColor: "#FFD1D3",
+    backgroundColor: "#FFF8F8",
+  },
+
+  cardMotivoHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+
+  motivoTexto: {
+    fontSize: 14,
+    color: "#444",
+    lineHeight: 20,
+    fontStyle: "italic",
+  },
+
   // ── Linha de info ────────────────────────────────────────────────────────────
   infoBox: {
     backgroundColor: "#F7F5FF",
@@ -117,6 +137,13 @@ export default StyleSheet.create({
     gap: 14,
   },
 
+  avatarFoto: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    marginRight: 12,
+  },
+
   avatarCircle: {
     width: 52,
     height: 52,
@@ -127,7 +154,7 @@ export default StyleSheet.create({
   },
 
   psicNome: {
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "700",
     color: "#290041",
     marginBottom: 2,

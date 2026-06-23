@@ -13,10 +13,11 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./styles";
+import * as Clipboard from "expo-clipboard";
 
 export default function Pagamento() {
   const navigation = useNavigation();
-  const { AnexarComprovante, PagamentoPendente } = useAuth(); // ✅ apenas o que é usado
+  const { AnexarComprovante, PagamentoPendente, chavepix } = useAuth(); // ✅ apenas o que é usado
 
   const [agendando, setAgendando] = useState(false);
   const [pagamento, setPagamento] = useState(null);           // ✅ estado declarado
@@ -25,6 +26,11 @@ export default function Pagamento() {
   const [fotoComprovante, setFotoComprovante] = useState(null);
   const [modalSucesso, setModalSucesso] = useState(false)
   const [erro, setErro] = useState('')
+
+  const [modalPix, setModalPix] = useState(false);
+  const [dadosPix, setDadosPix] = useState(null);
+  const [loadingPix, setLoadingPix] = useState(false);
+  const [copiado, setCopiado] = useState(false);
 
   useEffect(() => {
   const buscar = async () => {
@@ -82,6 +88,32 @@ export default function Pagamento() {
       style: "currency",
       currency: "BRL",
     });
+  };
+
+  const handleCopiarCodigo = async () => {
+    if (!pagamento?.id_pagamento) return;
+
+    setLoadingPix(true);
+    setModalPix(true);
+
+    try {
+      const resposta = await chavepix(pagamento.id_pagamento);
+
+      if (resposta?.error) {
+        setDadosPix(null);
+      } else {
+        setDadosPix(resposta);
+        if (resposta?.pix_chave) {
+          await Clipboard.setStringAsync(resposta.pix_chave);
+          setCopiado(true);
+          setTimeout(() => setCopiado(false), 3000);
+        }
+      }
+    } catch (e) {
+      setDadosPix(null);
+    } finally {
+      setLoadingPix(false);
+    }
   };
 
   const psicologo = proximaSessao?.psicologo?.usuario?.nome ?? "Profissional";
@@ -190,7 +222,7 @@ export default function Pagamento() {
               <Ionicons name="qr-code-outline" size={15} color="#8E7CFF" />
               <Text style={styles.pixHeaderText}>QR Code Pix</Text>
 
-              <Pressable style={styles.copyButton}>
+              <Pressable style={styles.copyButton} onPress={handleCopiarCodigo}>
                 <Text style={styles.copyButtonText}>Copiar código</Text>
               </Pressable>
             </View>
@@ -281,7 +313,65 @@ export default function Pagamento() {
           </View>
         </View>
       </Modal>
+      <Modal
+        visible={modalPix}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setModalPix(false)}
+      >
+        <Pressable style={styles.pixModalOverlay} onPress={() => setModalPix(false)}>
+          <Pressable onPress={() => {}} style={styles.pixModalContainer}>
 
+            <View style={styles.pixModalAlca} />
+
+            {loadingPix ? (
+              <ActivityIndicator size="large" color="#8E7CFF" style={{ marginVertical: 32 }} />
+            ) : dadosPix ? (
+              <>
+                <Text style={styles.pixModalTitulo}>Dados do Pix</Text>
+                <Text style={styles.pixModalSubtitulo}>Chave copiada automaticamente ✓</Text>
+
+                <View style={[styles.pixModalCard, styles.pixModalCardDestinatario]}>
+                  <Text style={[styles.pixModalCardLabel, styles.pixModalLabelDestinatario]}>Destinatário</Text>
+                  <Text style={styles.pixModalNomeRecebedor}>{dadosPix.pix_nome_recebedor}</Text>
+                  {dadosPix.pix_cidade && (
+                    <Text style={styles.pixModalCidade}>{dadosPix.pix_cidade}</Text>
+                  )}
+                </View>
+
+                <View style={[styles.pixModalCard, styles.pixModalCardChave]}>
+                  <Text style={[styles.pixModalCardLabel, styles.pixModalLabelChave]}>{dadosPix.pix_tipo ?? "Chave Pix"}</Text>
+                  <Text style={styles.pixModalChaveTexto}>{dadosPix.pix_chave}</Text>
+                </View>
+
+                <View style={[styles.pixModalCard, styles.pixModalCardValor]}>
+                  <Text style={[styles.pixModalCardLabel, styles.pixModalLabelValor]}>Valor a pagar</Text>
+                  <Text style={styles.pixModalValorTexto}>{formatarValor(dadosPix.valor)}</Text>
+                </View>
+
+                <Pressable
+                  onPress={async () => {
+                    await Clipboard.setStringAsync(dadosPix.pix_chave);
+                    setCopiado(true);
+                    setTimeout(() => setCopiado(false), 3000);
+                  }}
+                  style={[styles.pixModalBotao, copiado ? styles.pixModalBotaoCopiado : styles.pixModalBotaoPadrao]}
+                >
+                  <Text style={styles.pixModalBotaoTexto}>
+                    {copiado ? "Chave copiada ✓" : "Copiar chave novamente"}
+                  </Text>
+                </Pressable>
+              </>
+            ) : (
+              <View style={styles.pixModalErroContainer}>
+                <Ionicons name="alert-circle-outline" size={48} color="#FF6B6B" />
+                <Text style={styles.pixModalErroTexto}>Não foi possível carregar os dados Pix.</Text>
+              </View>
+            )}
+
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
